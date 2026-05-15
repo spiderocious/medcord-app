@@ -49,6 +49,34 @@ const BannersScreen = lazy(() =>
   import('@features/banners/banners-screen').then((m) => ({ default: m.BannersScreen })),
 );
 
+const TablesScreen = lazy(() =>
+  import('@features/tables/tables-screen').then((m) => ({ default: m.TablesScreen })),
+);
+
+const ModalsScreen = lazy(() =>
+  import('@features/modals/modals-screen').then((m) => ({ default: m.ModalsScreen })),
+);
+
+const NavigationScreen = lazy(() =>
+  import('@features/navigation/navigation-screen').then((m) => ({ default: m.NavigationScreen })),
+);
+
+const FeedbackScreen = lazy(() =>
+  import('@features/feedback/feedback-screen').then((m) => ({ default: m.FeedbackScreen })),
+);
+
+const LabScreen = lazy(() =>
+  import('@features/lab/lab-screen').then((m) => ({ default: m.LabScreen })),
+);
+
+const VitalsScreen = lazy(() =>
+  import('@features/vitals/vitals-screen').then((m) => ({ default: m.VitalsScreen })),
+);
+
+const ChartsScreen = lazy(() =>
+  import('@features/charts/charts-screen').then((m) => ({ default: m.ChartsScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -77,14 +105,14 @@ export const routes: RouteObject[] = [
       { path: ROUTES.SKELETON_PROGRESS, element: <Lazy><SkeletonProgressScreen /></Lazy> },
       { path: ROUTES.TOOLTIP, element: <Lazy><TooltipScreen /></Lazy> },
       { path: ROUTES.CARDS, element: <Lazy><CardsScreen /></Lazy> },
-      { path: ROUTES.TABLES, element: <PlaceholderScreen name="Tables" /> },
-      { path: ROUTES.MODALS, element: <PlaceholderScreen name="Modals" /> },
+      { path: ROUTES.TABLES, element: <Lazy><TablesScreen /></Lazy> },
+      { path: ROUTES.MODALS, element: <Lazy><ModalsScreen /></Lazy> },
       { path: ROUTES.BANNERS, element: <Lazy><BannersScreen /></Lazy> },
-      { path: ROUTES.NAVIGATION, element: <PlaceholderScreen name="Navigation" /> },
-      { path: ROUTES.FEEDBACK, element: <PlaceholderScreen name="Feedback" /> },
-      { path: ROUTES.LAB, element: <PlaceholderScreen name="Lab" /> },
-      { path: ROUTES.VITALS, element: <PlaceholderScreen name="Vitals" /> },
-      { path: ROUTES.CHARTS, element: <PlaceholderScreen name="Charts" /> },
+      { path: ROUTES.NAVIGATION, element: <Lazy><NavigationScreen /></Lazy> },
+      { path: ROUTES.FEEDBACK, element: <Lazy><FeedbackScreen /></Lazy> },
+      { path: ROUTES.LAB, element: <Lazy><LabScreen /></Lazy> },
+      { path: ROUTES.VITALS, element: <Lazy><VitalsScreen /></Lazy> },
+      { path: ROUTES.CHARTS, element: <Lazy><ChartsScreen /></Lazy> },
       { path: ROUTES.EMR, element: <PlaceholderScreen name="EMR" /> },
       { path: ROUTES.BED_BOARD, element: <PlaceholderScreen name="Bed Board" /> },
       { path: ROUTES.TELEHEALTH, element: <PlaceholderScreen name="Telehealth" /> },

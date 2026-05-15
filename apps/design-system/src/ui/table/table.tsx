@@ -21,11 +21,10 @@ export interface TableColumn<T> {
   readonly width?: string | number;
 }
 
-export interface TableRow {
+export type TableRow = {
   readonly id: string;
   readonly critical?: boolean;
-  readonly [key: string]: unknown;
-}
+} & Record<string, unknown>;
 
 export interface TableFilterChip {
   readonly label: string;
