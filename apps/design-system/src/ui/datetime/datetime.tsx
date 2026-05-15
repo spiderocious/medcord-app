@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from '@icons';
-import { useState, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from '@icons';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 /* ============================================================
    Shared utils
@@ -316,36 +316,75 @@ function DrumColumn({
   values,
   selected,
   onSelect,
+  label,
 }: {
   readonly values: ReadonlyArray<number>;
   readonly selected: number;
   readonly onSelect: (v: number) => void;
+  readonly label: string;
 }) {
+  const colRef = useRef<HTMLDivElement>(null);
   const selectedIdx = values.indexOf(selected);
 
+  function step(delta: number) {
+    const nextIdx = (selectedIdx + delta + values.length) % values.length;
+    const next = values[nextIdx];
+    if (next !== undefined) onSelect(next);
+  }
+
+  useEffect(() => {
+    const el = colRef.current;
+    if (!el) return;
+    function handleWheel(e: WheelEvent) {
+      e.preventDefault();
+      step(e.deltaY > 0 ? 1 : -1);
+    }
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  });
+
   return (
-    <div className="flex flex-col items-center overflow-hidden w-14 h-[124px] border-r border-dashed border-[var(--border-default)] last:border-r-0">
-      {values.map((v, i) => {
-        const distance = Math.abs(i - selectedIdx);
-        const isSelected = v === selected;
-        return (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onSelect(v)}
-            className={[
-              'font-mono [font-feature-settings:"tnum"_1] border-0 bg-transparent cursor-pointer w-full text-center transition-all duration-[100ms]',
-              isSelected
-                ? 'text-[var(--text-primary)] text-[28px] font-medium py-1.5 tracking-[-0.02em]'
-                : distance === 1
-                ? 'text-[var(--text-tertiary)] text-[14px] py-1.5'
-                : 'text-[var(--text-disabled)] text-[12px] py-1',
-            ].join(' ')}
-          >
-            {String(v).padStart(2, '0')}
-          </button>
-        );
-      })}
+    <div className="flex flex-col items-center border-r border-dashed border-[var(--border-default)] last:border-r-0 select-none">
+      <span className="font-mono text-[9px] text-[var(--text-tertiary)] uppercase tracking-[0.14em] pt-1.5 pb-0.5">{label}</span>
+      <button
+        type="button"
+        onClick={() => step(-1)}
+        className="flex items-center justify-center w-14 h-6 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-transparent border-0 cursor-pointer transition-colors duration-100"
+        aria-label={`Decrease ${label}`}
+      >
+        <ChevronUp size={13} />
+      </button>
+      <div ref={colRef} className="flex flex-col items-center overflow-hidden w-14 h-[100px]">
+        {values.map((v, i) => {
+          const distance = Math.abs(i - selectedIdx);
+          const isSelected = v === selected;
+          return (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onSelect(v)}
+              className={[
+                'font-mono [font-feature-settings:"tnum"_1] border-0 bg-transparent cursor-pointer w-full text-center transition-all duration-[100ms]',
+                isSelected
+                  ? 'text-[var(--text-primary)] text-[26px] font-medium py-1 tracking-[-0.02em]'
+                  : distance === 1
+                  ? 'text-[var(--text-tertiary)] text-[13px] py-1.5'
+                  : 'text-[var(--text-disabled)] text-[11px] py-1',
+              ].join(' ')}
+            >
+              {String(v).padStart(2, '0')}
+            </button>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        onClick={() => step(1)}
+        className="flex items-center justify-center w-14 h-6 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-transparent border-0 cursor-pointer transition-colors duration-100"
+        aria-label={`Increase ${label}`}
+      >
+        <ChevronDown size={13} />
+      </button>
     </div>
   );
 }
@@ -361,22 +400,22 @@ export function TimeDrum({ value = { hours: 8, minutes: 30, seconds: 15 }, onCha
         values={HOURS}
         selected={value.hours}
         onSelect={(hours) => onChange?.({ ...value, hours })}
+        label="hh"
       />
       <DrumColumn
         values={MINUTES}
         selected={value.minutes}
         onSelect={(minutes) => onChange?.({ ...value, minutes })}
+        label="mm"
       />
       {showSeconds && (
         <DrumColumn
           values={SECONDS}
           selected={value.seconds ?? 0}
           onSelect={(seconds) => onChange?.({ ...value, seconds })}
+          label="ss"
         />
       )}
-      <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0.06em] self-center ml-2">
-        hh : mm{showSeconds ? ' : ss' : ''}
-      </span>
     </div>
   );
 }

@@ -89,7 +89,7 @@ export function ButtonsScreen() {
             ]}
             defaultValue="sign"
             side="bottom"
-            onSelect={(opt) => console.log('selected:', opt)}
+            onSelect={() => { /* demo: log selected option */ }}
           />
           <SplitButton
             options={[

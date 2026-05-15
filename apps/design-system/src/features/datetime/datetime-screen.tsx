@@ -18,6 +18,7 @@ export function DatetimeScreen() {
     end: new Date(2026, 4, 18),
   });
   const [drumTime, setDrumTime] = useState<TimeValue>({ hours: 8, minutes: 30, seconds: 15 });
+  const [drumOpen, setDrumOpen] = useState(true);
   const [dob, setDob] = useState('1962-03-14');
 
   const [los, setLos] = useState('4');
@@ -86,14 +87,21 @@ export function DatetimeScreen() {
             <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-2.5">
               Drum — first dose
             </div>
-            <TimeDrum
-              value={drumTime}
-              onChange={setDrumTime}
-              showSeconds
-            />
-            <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-2.5 tracking-[0]">
+            {drumOpen ? (
+              <TimeDrum
+                value={drumTime}
+                onChange={setDrumTime}
+                showSeconds
+              />
+            ) : null}
+            <button
+              type="button"
+              onClick={() => setDrumOpen((v) => !v)}
+              className="mt-2.5 font-mono text-[11px] text-[var(--text-tertiary)] bg-transparent border-0 p-0 cursor-pointer hover:text-[var(--text-primary)] transition-colors duration-100 tracking-[0]"
+              title={drumOpen ? 'Close picker' : 'Open picker'}
+            >
               {String(drumTime.hours).padStart(2, '0')} : {String(drumTime.minutes).padStart(2, '0')} : {String(drumTime.seconds ?? 0).padStart(2, '0')} — clinical time, 24-hour
-            </div>
+            </button>
           </div>
 
           <div>

@@ -124,7 +124,7 @@ export function DropZone({
               ? 'Upload failed.'
               : 'Drop a file or click to upload.')}
       </div>
-      {sublabel != null && (
+      {sublabel !== null && sublabel !== undefined && (
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-1.5 tracking-[0]">
           {sublabel}
         </div>
@@ -163,7 +163,7 @@ export function FileRow({ name, size, status, progress, statusLabel, onRemove }:
     >
       <Paperclip size={14} className="text-[var(--text-tertiary)]" />
       <span className={`text-[14px] ${nameColor}`}>{name}</span>
-      {status === 'uploading' && progress != null ? (
+      {status === 'uploading' && progress !== null && progress !== undefined ? (
         <div className="w-[120px] h-1 bg-[var(--surface-sunken)]">
           <div
             className="h-full bg-[var(--text-primary)] transition-all duration-200"
@@ -176,10 +176,10 @@ export function FileRow({ name, size, status, progress, statusLabel, onRemove }:
         </span>
       )}
       <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
-        {status === 'uploading' && progress != null
+        {status === 'uploading' && progress !== null && progress !== undefined
           ? `${progress}%${size ? ` · ${size}` : ''}`
           : (size ?? '')}
-        {onRemove != null && (
+        {onRemove !== null && onRemove !== undefined && (
           <button
             type="button"
             onClick={onRemove}
@@ -262,7 +262,7 @@ export function PinInput({
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   function handleKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Backspace' && value[idx] == null) {
+    if (e.key === 'Backspace' && (value[idx] === null || value[idx] === undefined)) {
       const prev = inputsRef.current[idx - 1];
       if (prev) {
         prev.focus();
@@ -287,7 +287,7 @@ export function PinInput({
     <div
       className={`bg-[var(--surface-raised)] border border-[var(--text-primary)] p-[22px] max-w-[480px] ${className}`}
     >
-      {label != null && (
+      {label !== null && label !== undefined && (
         <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3.5">
           {label}
         </div>
@@ -296,7 +296,7 @@ export function PinInput({
         {Array.from({ length }, (_, i) => {
           const char = value[i] ?? '';
           const isFilled = char !== '';
-          const isNext = !isFilled && (i === 0 || value[i - 1] != null);
+          const isNext = !isFilled && (i === 0 || (value[i - 1] !== null && value[i - 1] !== undefined));
           return (
             <input
               key={i}
@@ -321,7 +321,7 @@ export function PinInput({
           );
         })}
       </div>
-      {note != null && (
+      {note !== null && note !== undefined && (
         <div className="font-serif italic text-[13px] text-[var(--text-tertiary)] mt-3.5 leading-[1.45]">
           {note}
         </div>
@@ -387,12 +387,12 @@ export function StarRating({
           </button>
         ))}
       </div>
-      {score != null && (
+      {score !== null && score !== undefined && (
         <div>
           <div className="font-serif text-[22px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
             {score.toFixed(1)}
           </div>
-          {scoreLabel != null && (
+          {scoreLabel !== null && scoreLabel !== undefined && (
             <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
               {scoreLabel}
             </div>
@@ -434,12 +434,12 @@ export function SignaturePad({
       <div className="flex items-baseline justify-between">
         <span className="font-serif italic text-[14px] text-[var(--text-primary)]">{label}</span>
         <div className="flex items-center gap-2">
-          {meta != null && (
+          {meta !== null && meta !== undefined && (
             <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
               {meta}
             </span>
           )}
-          {onClear != null && (
+          {onClear !== null && onClear !== undefined && (
             <button
               type="button"
               onClick={onClear}
@@ -458,7 +458,7 @@ export function SignaturePad({
           padding: '0 8px',
         }}
       >
-        {signaturePath != null ? (
+        {signaturePath !== null && signaturePath !== undefined ? (
           <svg viewBox="0 0 240 60" preserveAspectRatio="none" className="w-full h-full">
             <path d={signaturePath} stroke={strokeColor} strokeWidth="1.5" fill="none" />
           </svg>
@@ -732,7 +732,7 @@ export function MarkdownEditor({
       <div className="flex justify-between px-3.5 py-2 border-t border-[var(--text-primary)] font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
         <span>Mention @ · ⌘B bold · ⌘I italic · ⌘K link</span>
         <span>
-          {savedAt != null ? `auto-saved ${savedAt} · ` : ''}
+          {savedAt !== null && savedAt !== undefined ? `auto-saved ${savedAt} · ` : ''}
           {charCount} chars
         </span>
       </div>
@@ -742,6 +742,8 @@ export function MarkdownEditor({
 
 /* ============================================================
    BodyDiagram — front + back SVG body map with marked regions.
+   Features: click to add, drag to move, select to edit label/color, delete.
+   allowFullView opens an overlay fullscreen view.
    ============================================================ */
 
 export interface BodyMarking {
@@ -758,21 +760,23 @@ export interface BodyMarking {
 export interface BodyDiagramProps {
   readonly markings?: ReadonlyArray<BodyMarking>;
   readonly onMark?: (view: 'anterior' | 'posterior', x: number, y: number) => void;
+  readonly onMarkingsChange?: (markings: BodyMarking[]) => void;
+  readonly allowFullView?: boolean;
   readonly className?: string;
 }
 
-const MARKING_COLORS: Record<BodyMarking['color'], { fill: string; stroke: string; text: string }> =
-  {
-    danger: { fill: 'var(--danger-bg)', stroke: 'var(--danger-icon)', text: 'var(--danger-icon)' },
-    warning: {
-      fill: 'var(--warning-bg)',
-      stroke: 'var(--warning-icon)',
-      text: 'var(--warning-icon)',
-    },
-    info: { fill: 'var(--patient-50)', stroke: 'var(--patient-600)', text: 'var(--patient-700)' },
-  };
+const MARKING_COLORS: Record<BodyMarking['color'], { fill: string; stroke: string; text: string }> = {
+  danger: { fill: 'var(--danger-bg)', stroke: 'var(--danger-icon)', text: 'var(--danger-icon)' },
+  warning: { fill: 'var(--warning-bg)', stroke: 'var(--warning-icon)', text: 'var(--warning-icon)' },
+  info: { fill: 'var(--patient-50)', stroke: 'var(--patient-600)', text: 'var(--patient-700)' },
+};
 
-/* Landmark dot: small circle with accessible title and label */
+const MARKING_COLOR_LABELS: Record<BodyMarking['color'], string> = {
+  danger: 'Danger',
+  warning: 'Warning',
+  info: 'Info',
+};
+
 function LandmarkDot({ cx, cy, label }: { readonly cx: number; readonly cy: number; readonly label: string }) {
   return (
     <g>
@@ -783,7 +787,6 @@ function LandmarkDot({ cx, cy, label }: { readonly cx: number; readonly cy: numb
   );
 }
 
-/* All landmark positions are in the 100×220 SVG coordinate space */
 const ANTERIOR_LANDMARKS = [
   { cx: 50, cy: 10, label: 'Crown' },
   { cx: 39, cy: 17, label: 'R Temple' },
@@ -841,71 +844,126 @@ const POSTERIOR_LANDMARKS = [
   { cx: 66, cy: 212, label: 'L Heel' },
 ];
 
-function BodySvg({
+function BodySvgCanvas({
   view,
-  markings = [],
+  markings,
+  selectedId,
   onMark,
+  onSelect,
+  onMove,
+  compact = false,
 }: {
   readonly view: 'anterior' | 'posterior';
   readonly markings: ReadonlyArray<BodyMarking>;
+  readonly selectedId: string | null;
   readonly onMark?: (view: 'anterior' | 'posterior', x: number, y: number) => void;
+  readonly onSelect: (id: string | null) => void;
+  readonly onMove: (id: string, cx: number, cy: number) => void;
+  readonly compact?: boolean;
 }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const draggingRef = useRef<{ id: string; startClientX: number; startClientY: number; startCx: number; startCy: number } | null>(null);
   const myMarkings = markings.filter((m) => m.view === view);
   const landmarks = view === 'anterior' ? ANTERIOR_LANDMARKS : POSTERIOR_LANDMARKS;
+  const w = compact ? 150 : 180;
+  const h = compact ? 300 : 360;
 
-  function handleClick(e: React.MouseEvent<SVGSVGElement>) {
-    const svg = e.currentTarget;
+  function svgCoords(clientX: number, clientY: number): { x: number; y: number } {
+    const svg = svgRef.current;
+    if (!svg) return { x: 0, y: 0 };
     const rect = svg.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 220;
+    return {
+      x: ((clientX - rect.left) / rect.width) * 100,
+      y: ((clientY - rect.top) / rect.height) * 220,
+    };
+  }
+
+  function handleSvgClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (draggingRef.current !== null) return;
+    const { x, y } = svgCoords(e.clientX, e.clientY);
+    onSelect(null);
     onMark?.(view, Math.round(x), Math.round(y));
   }
 
+  function handleMarkPointerDown(e: React.PointerEvent<SVGGElement>, m: BodyMarking) {
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    draggingRef.current = { id: m.id, startClientX: e.clientX, startClientY: e.clientY, startCx: m.cx, startCy: m.cy };
+    onSelect(m.id);
+  }
+
+  function handleMarkPointerMove(e: React.PointerEvent<SVGGElement>) {
+    const d = draggingRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.startClientX;
+    const dy = e.clientY - d.startClientY;
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const scaleX = 100 / rect.width;
+    const scaleY = 220 / rect.height;
+    const newCx = Math.max(5, Math.min(95, Math.round(d.startCx + dx * scaleX)));
+    const newCy = Math.max(5, Math.min(215, Math.round(d.startCy + dy * scaleY)));
+    onMove(d.id, newCx, newCy);
+  }
+
+  function handleMarkPointerUp(e: React.PointerEvent<SVGGElement>) {
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    draggingRef.current = null;
+  }
+
   return (
-    <div className="bg-[var(--surface-raised)] border border-[var(--text-primary)] p-3">
+    <div className="bg-[var(--surface-raised)] border border-[var(--text-primary)] p-3 flex-shrink-0">
       <div className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-2">
         {view === 'anterior' ? 'Anterior' : 'Posterior'}
       </div>
       <svg
+        ref={svgRef}
         viewBox="0 0 100 220"
-        width="180"
-        height="360"
+        width={w}
+        height={h}
         fill="none"
         stroke="var(--text-secondary)"
         strokeWidth="1"
-        onClick={handleClick}
+        onClick={handleSvgClick}
         className="cursor-crosshair block"
       >
-        {/* Body silhouette */}
         <circle cx="50" cy="22" r="13" fill="var(--surface-sunken)" />
-        {/* Neck */}
         <path d="M 44 33 L 44 42 L 56 42 L 56 33 Z" fill="var(--surface-sunken)" />
-        {/* Torso */}
         <path d="M 30 42 Q 30 80 36 130 L 64 130 Q 70 80 70 42 Z" fill="var(--surface-sunken)" />
-        {/* Left arm */}
         <path d="M 30 44 Q 18 70 14 110 L 22 112 Q 26 76 36 50 Z" fill="var(--surface-sunken)" />
-        {/* Right arm */}
         <path d="M 70 44 Q 82 70 86 110 L 78 112 Q 74 76 64 50 Z" fill="var(--surface-sunken)" />
-        {/* Left leg */}
         <path d="M 36 130 L 32 210 L 48 210 L 48 132 Z" fill="var(--surface-sunken)" />
-        {/* Right leg */}
         <path d="M 64 130 L 68 210 L 52 210 L 52 132 Z" fill="var(--surface-sunken)" />
-
-        {/* Posterior-only spine line */}
         {view === 'posterior' && (
           <line x1="50" y1="35" x2="50" y2="120" stroke="var(--border-default)" strokeWidth="0.6" strokeDasharray="2 2" />
         )}
-
-        {/* Landmark dots */}
         {landmarks.map((lm) => (
           <LandmarkDot key={lm.label} cx={lm.cx} cy={lm.cy} label={lm.label} />
         ))}
-
-        {/* Markings overlay */}
         {myMarkings.map((m) => {
           const c = MARKING_COLORS[m.color];
+          const isSelected = m.id === selectedId;
           return (
-            <g key={m.id}>
+            <g
+              key={m.id}
+              style={{ cursor: 'grab' }}
+              onPointerDown={(e) => handleMarkPointerDown(e, m)}
+              onPointerMove={handleMarkPointerMove}
+              onPointerUp={handleMarkPointerUp}
+            >
+              {isSelected && (
+                <ellipse
+                  cx={m.cx}
+                  cy={m.cy}
+                  rx={m.rx + 3}
+                  ry={m.ry + 3}
+                  fill="none"
+                  stroke="var(--brand-500)"
+                  strokeWidth="1.5"
+                  strokeDasharray="3 2"
+                />
+              )}
               <ellipse
                 cx={m.cx}
                 cy={m.cy}
@@ -914,7 +972,7 @@ function BodySvg({
                 fill={c.fill}
                 stroke={c.stroke}
                 strokeWidth="1.5"
-                opacity="0.85"
+                opacity="0.9"
               />
               <text
                 x={m.cx}
@@ -924,6 +982,7 @@ function BodySvg({
                 fontSize="6"
                 fill={c.text}
                 fontWeight="600"
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
               >
                 {m.label}
               </text>
@@ -935,36 +994,174 @@ function BodySvg({
   );
 }
 
-export function BodyDiagram({ markings = [], onMark, className = '' }: BodyDiagramProps) {
-  const MARKING_COLOR_KEYS: Record<BodyMarking['color'], string> = {
-    danger: 'var(--danger-icon)',
-    warning: 'var(--warning-icon)',
-    info: 'var(--patient-600)',
+function MarkingEditor({
+  marking,
+  onUpdate,
+  onDelete,
+}: {
+  readonly marking: BodyMarking;
+  readonly onUpdate: (patch: Partial<Pick<BodyMarking, 'label' | 'color'>>) => void;
+  readonly onDelete: () => void;
+}) {
+  return (
+    <div className="border border-[var(--brand-500)] bg-[var(--surface-raised)] p-4 flex flex-col gap-3 min-w-[180px]">
+      <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
+        Edit marking
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.12em]">Label</label>
+        <input
+          type="text"
+          value={marking.label}
+          maxLength={8}
+          onChange={(e) => onUpdate({ label: e.target.value.toUpperCase() })}
+          className="border border-[var(--border-default)] bg-[var(--surface-sunken)] px-2 py-1.5 font-mono text-[13px] text-[var(--text-primary)] outline-none focus:border-[var(--brand-500)] w-full"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.12em]">Color</label>
+        <div className="flex gap-2">
+          {(Object.keys(MARKING_COLORS) as BodyMarking['color'][]).map((key) => {
+            const c = MARKING_COLORS[key];
+            const isActive = marking.color === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => onUpdate({ color: key })}
+                title={MARKING_COLOR_LABELS[key]}
+                className={[
+                  'w-6 h-6 rounded-full border-2 transition-transform duration-100',
+                  isActive ? 'scale-125 border-[var(--text-primary)]' : 'border-transparent hover:scale-110',
+                ].join(' ')}
+                style={{ background: c.stroke }}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={onDelete}
+        className="mt-1 font-mono text-[11px] text-[var(--danger-icon)] bg-transparent border border-[var(--danger-icon)] px-3 py-1.5 hover:bg-[var(--danger-bg)] transition-colors duration-100 cursor-pointer"
+      >
+        Remove marking
+      </button>
+    </div>
+  );
+}
+
+export function BodyDiagram({ markings = [], onMark, onMarkingsChange, allowFullView = false, className = '' }: BodyDiagramProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [fullView, setFullView] = useState(false);
+
+  const selectedMarking = selectedId !== null ? markings.find((m) => m.id === selectedId) ?? null : null;
+
+  function handleMove(id: string, cx: number, cy: number) {
+    if (!onMarkingsChange) return;
+    onMarkingsChange(markings.map((m) => m.id === id ? { ...m, cx, cy } : m) as BodyMarking[]);
+  }
+
+  function handleUpdate(patch: Partial<Pick<BodyMarking, 'label' | 'color'>>) {
+    if (!onMarkingsChange || !selectedId) return;
+    onMarkingsChange(markings.map((m) => m.id === selectedId ? { ...m, ...patch } : m) as BodyMarking[]);
+  }
+
+  function handleDelete() {
+    if (!onMarkingsChange || !selectedId) return;
+    onMarkingsChange(markings.filter((m) => m.id !== selectedId) as BodyMarking[]);
+    setSelectedId(null);
+  }
+
+  const svgProps = {
+    markings,
+    selectedId,
+    onMark,
+    onSelect: setSelectedId,
+    onMove: handleMove,
   };
 
-  return (
-    <div className={`flex gap-5 items-start flex-wrap ${className}`}>
-      <BodySvg view="anterior" markings={markings} onMark={onMark} />
-      <BodySvg view="posterior" markings={markings} onMark={onMark} />
-      {markings.length > 0 && (
+  const diagramContent = (compact: boolean) => (
+    <div className="flex gap-4 items-start flex-wrap">
+      <BodySvgCanvas view="anterior" {...svgProps} compact={compact} />
+      <BodySvgCanvas view="posterior" {...svgProps} compact={compact} />
+      {selectedMarking !== null && onMarkingsChange !== null && onMarkingsChange !== undefined && (
+        <div className="self-center">
+          <MarkingEditor marking={selectedMarking} onUpdate={handleUpdate} onDelete={handleDelete} />
+        </div>
+      )}
+      {selectedMarking === null && markings.length > 0 && (
         <div className="pt-8">
           <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3">
             Marked regions
           </div>
           <ul className="flex flex-col gap-2 p-0 m-0 list-none">
-            {markings.map((m) => (
-              <li
-                key={m.id}
-                className="flex items-baseline gap-2 font-serif italic text-[14px] text-[var(--text-primary)]"
-              >
-                <span
-                  className="w-2 h-2 rounded-full flex-shrink-0 translate-y-[-1px]"
-                  style={{ background: MARKING_COLOR_KEYS[m.color] }}
-                />
-                {m.label}
-              </li>
-            ))}
+            {markings.map((m) => {
+              const c = MARKING_COLORS[m.color];
+              return (
+                <li key={m.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(m.id)}
+                    className="flex items-baseline gap-2 font-serif italic text-[14px] text-[var(--text-primary)] bg-transparent border-0 p-0 cursor-pointer hover:underline"
+                  >
+                    <span className="w-2 h-2 rounded-full flex-shrink-0 translate-y-[-1px]" style={{ background: c.stroke }} />
+                    {m.view === 'anterior' ? 'Ant' : 'Post'} — {m.label}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className={className}>
+      <div className="flex items-center gap-3 mb-3">
+        <span className="font-mono text-[11px] text-[var(--text-tertiary)]">
+          Click diagram to add · drag marking to move · click marking to select
+        </span>
+        {allowFullView && (
+          <button
+            type="button"
+            onClick={() => setFullView(true)}
+            className="ml-auto font-mono text-[11px] text-[var(--brand-600)] bg-transparent border border-[var(--brand-300)] px-2.5 py-1 hover:bg-[var(--brand-50)] transition-colors duration-100 cursor-pointer"
+          >
+            Full view
+          </button>
+        )}
+      </div>
+
+      {diagramContent(false)}
+
+      {fullView && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-6"
+          onClick={() => setFullView(false)}
+        >
+          <div
+            className="bg-[var(--surface-raised)] border border-[var(--text-primary)] p-6 overflow-auto max-h-screen max-w-[calc(100vw-48px)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-mono text-[12px] font-semibold text-[var(--text-primary)] uppercase tracking-[0.14em]">
+                Body Diagram — Full View
+              </span>
+              <button
+                type="button"
+                onClick={() => setFullView(false)}
+                className="w-7 h-7 flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-transparent border-0 cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            {diagramContent(false)}
+          </div>
         </div>
       )}
     </div>

@@ -24,6 +24,7 @@ export const ROUTES = {
   EQUIPMENT: '/equipment',
   STAFF: '/staff',
   REGISTRATION: '/registration',
+  DRAWER: '/drawer',
 } as const;
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];

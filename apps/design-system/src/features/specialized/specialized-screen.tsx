@@ -66,6 +66,10 @@ export function SpecializedScreen() {
   const [soap, setSoap] = useState<SoapSection[]>(INITIAL_SOAP);
   const [bodyMarkings, setBodyMarkings] = useState<BodyMarking[]>(INITIAL_MARKINGS);
 
+  function handleBodyMark(view: 'anterior' | 'posterior', cx: number, cy: number) {
+    setBodyMarkings(prev => [...prev, { id: `${view}-${Date.now()}`, view, cx, cy, rx: 8, ry: 6, label: 'NEW', color: 'info' }]);
+  }
+
   function handleSoapChange(key: string, content: string) {
     setSoap(prev => prev.map(s => s.key === key ? { ...s, content } : s));
   }
@@ -220,7 +224,12 @@ export function SpecializedScreen() {
         title="Body diagram — front &amp; back."
         description="Named landmarks on every major region — head, crown, temples, ears, jaw, shoulders, elbows, wrists, chest, abdomen, hips, knees, ankles, and spine landmarks on the posterior. Click anywhere to add a new marking at that coordinate."
       >
-        <BodyDiagram markings={bodyMarkings} onMark={(view, cx, cy) => setBodyMarkings(prev => [...prev, { id: `${view}-${Date.now()}`, view, cx, cy, rx: 8, ry: 6, label: 'NEW', color: 'info' }])} />
+        <BodyDiagram
+          markings={bodyMarkings}
+          onMark={handleBodyMark}
+          onMarkingsChange={setBodyMarkings}
+          allowFullView
+        />
       </Section>
 
       {/* SOAP */}

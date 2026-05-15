@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { ShellScreen } from '@features/shell/shell-screen';
 import { HomeScreen } from '@features/shell/parts/home-screen';
-import { PlaceholderScreen } from '@features/shell/parts/placeholder-screen';
+
 import { ROUTES } from '@shared/routes';
 
 const TokensScreen = lazy(() =>
@@ -101,6 +101,10 @@ const RegistrationScreen = lazy(() =>
   import('@features/registration/registration-screen').then((m) => ({ default: m.RegistrationScreen })),
 );
 
+const DrawerScreen = lazy(() =>
+  import('@features/drawer/drawer-screen').then((m) => ({ default: m.DrawerScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -143,6 +147,7 @@ export const routes: RouteObject[] = [
       { path: ROUTES.EQUIPMENT, element: <Lazy><EquipmentScreen /></Lazy> },
       { path: ROUTES.STAFF, element: <Lazy><StaffScreen /></Lazy> },
       { path: ROUTES.REGISTRATION, element: <Lazy><RegistrationScreen /></Lazy> },
+      { path: ROUTES.DRAWER, element: <Lazy><DrawerScreen /></Lazy> },
     ],
   },
 ];

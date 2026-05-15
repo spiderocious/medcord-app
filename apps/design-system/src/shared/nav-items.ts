@@ -30,6 +30,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   // Navigation & Feedback
   { label: 'Navigation', route: ROUTES.NAVIGATION, group: 'Navigation & Feedback' },
   { label: 'Feedback', route: ROUTES.FEEDBACK, group: 'Navigation & Feedback' },
+  { label: 'Drawer Service', route: ROUTES.DRAWER, group: 'Navigation & Feedback' },
   // Domain
   { label: 'Lab', route: ROUTES.LAB, group: 'Domain' },
   { label: 'Vitals', route: ROUTES.VITALS, group: 'Domain' },

@@ -35,8 +35,8 @@ export function Topbar({
   const [query, setQuery] = useState('');
 
   return (
-    <div className="grid items-center gap-4 px-4 py-0 bg-[var(--surface-base)] border-b border-[var(--text-primary)] h-[52px]"
-      style={{ gridTemplateColumns: '220px 1fr auto auto auto auto auto' }}>
+    <div className="grid items-center gap-2 sm:gap-4 px-3 sm:px-4 py-0 bg-[var(--surface-base)] border-b border-[var(--text-primary)] h-[52px] overflow-x-auto"
+      style={{ gridTemplateColumns: 'minmax(120px,220px) 1fr auto auto auto auto auto' }}>
       {/* Tenant */}
       <div className="flex items-center gap-2.5 cursor-pointer">
         <span className="w-8 h-8 bg-[var(--text-primary)] text-[var(--neutral-0)] flex items-center justify-center font-serif text-[16px] font-bold rounded-[4px] tracking-[-0.04em]">

@@ -203,11 +203,11 @@ function Icd10Search() {
               <div className="font-ui text-[15px] font-medium text-[var(--text-primary)] tracking-[-0.005em] leading-[1.25]">
                 {result.name}
               </div>
-              {result.meta != null && (
+              {result.meta !== null && result.meta !== undefined && (
                 <div className="text-[12px] text-[var(--text-secondary)] mt-0.5">{result.meta}</div>
               )}
             </div>
-            {result.badge != null && (
+            {result.badge !== null && result.badge !== undefined && (
               <span className={[
                 'font-mono text-[10px] font-semibold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-[1px] border flex-shrink-0',
                 result.badgeVariant === 'warn'

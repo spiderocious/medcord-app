@@ -7,6 +7,7 @@ import type { NavGroup } from '@shared/nav-items';
 interface SidebarProps {
   readonly isDark: boolean;
   readonly onToggleDark: () => void;
+  readonly className?: string;
 }
 
 function Logo() {
@@ -94,7 +95,7 @@ function NavSection({ group, isOpen, onToggle, items }: {
   );
 }
 
-export function Sidebar({ isDark, onToggleDark }: SidebarProps) {
+export function Sidebar({ isDark, onToggleDark, className = '' }: SidebarProps) {
   const [search, setSearch] = useState('');
   const location = useLocation();
 
@@ -115,7 +116,7 @@ export function Sidebar({ isDark, onToggleDark }: SidebarProps) {
   const totalComponents = NAV_ITEMS.length - 1; // exclude Tokens
 
   return (
-    <aside className="w-56 flex-shrink-0 flex flex-col h-screen border-r border-[var(--border-default)] bg-[var(--surface-raised)] overflow-hidden">
+    <aside className={['hidden sm:flex w-56 flex-shrink-0 flex-col h-full border-r border-[var(--border-default)] bg-[var(--surface-raised)] overflow-hidden', className].join(' ')}>
       <Logo />
       <SearchBar value={search} onChange={setSearch} />
 
