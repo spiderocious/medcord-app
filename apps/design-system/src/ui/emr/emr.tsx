@@ -740,17 +740,17 @@ export function EMRChart({ banner, sidebar, record, margin }: EMRChartProps) {
     <div>
       {banner}
       <div
-        className="min-h-[720px]"
+        className="min-h-[720px] overflow-x-auto"
         style={{
           display: 'grid',
-          gridTemplateColumns: '156px 1fr 220px',
+          gridTemplateColumns: 'minmax(160px, 200px) minmax(0, 1fr) minmax(180px, 240px)',
           border: '1px solid var(--text-primary)',
           borderTop: 0,
           background: 'var(--surface-base)',
         }}
       >
         {sidebar}
-        <main className="px-9 py-7 min-w-0">{record}</main>
+        <main className="px-8 py-6 min-w-0">{record}</main>
         {margin}
       </div>
     </div>

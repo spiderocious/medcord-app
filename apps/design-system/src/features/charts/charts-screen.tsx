@@ -38,7 +38,7 @@ export function ChartsScreen() {
         title="Charts — printed, ink-only."
         description="No coloured fills, no gradients. The chart is the bones: hairline grid, ink lines, mono labels. Color only for state (warn/crit)."
       >
-        <div className="grid gap-6 mb-9" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="grid gap-6 mb-9 grid-cols-1 sm:grid-cols-2">
           {/* Stacked bar */}
           <ChartCard
             title="Admissions · last 7 days"
@@ -155,7 +155,7 @@ export function ChartsScreen() {
           </ChartCard>
         </div>
 
-        <div className="grid gap-6 mb-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="grid gap-6 mb-6 grid-cols-1 sm:grid-cols-2">
           {/* Heatmap */}
           <ChartCard
             title="ED arrivals — heatmap"

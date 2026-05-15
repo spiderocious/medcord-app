@@ -111,8 +111,8 @@ export function EquipmentRosterRow({
 
   return (
     <div
-      className={['border-b border-dashed border-[var(--border-default)] last:border-b-0 px-5 py-[14px] items-center', rowClass].join(' ')}
-      style={{ display: 'grid', gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 90px', gap: 14 }}
+      className={['border-b border-dashed border-[var(--border-default)] last:border-b-0 px-3 sm:px-5 py-[14px] items-center flex flex-wrap sm:grid gap-2 sm:gap-[14px]', rowClass].join(' ')}
+      style={{ gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 90px' }}
     >
       <div className="w-10 h-10 border border-[var(--text-primary)] bg-[var(--surface-sunken)] rounded flex items-center justify-center text-[var(--text-primary)]">
         {icon}
@@ -167,8 +167,8 @@ export function EquipmentRoster({ title, meta, rows }: EquipmentRosterProps) {
       </div>
 
       <div
-        className="bg-[var(--surface-sunken)] font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] border-b border-[var(--text-primary)] px-5 py-2 items-center"
-        style={{ display: 'grid', gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 90px', gap: 14 }}
+        className="hidden sm:grid bg-[var(--surface-sunken)] font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] border-b border-[var(--text-primary)] px-5 py-2 items-center"
+        style={{ gridTemplateColumns: '40px 2fr 1fr 1fr 1fr 90px', gap: 14 }}
       >
         <div />
         <div>Asset</div>

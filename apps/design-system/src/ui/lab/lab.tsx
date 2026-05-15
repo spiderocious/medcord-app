@@ -171,13 +171,14 @@ export function LabSpotlight({
   acknowledged = false, onAcknowledge,
 }: LabSpotlightProps) {
   return (
-    <div className="relative bg-[var(--surface-raised)] border border-[var(--text-primary)] overflow-hidden"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 36, alignItems: 'center', padding: '32px 36px 28px' }}>
+    <div className="relative bg-[var(--surface-raised)] border border-[var(--text-primary)] grid gap-6 px-6 sm:px-10 pt-9 pb-7"
+      style={{ gridTemplateColumns: 'minmax(0,1fr) minmax(0,280px)', alignItems: 'start' }}
+      >
       {/* 6px left bleed */}
       <span className="absolute left-0 top-0 bottom-0 w-[6px] bg-[var(--danger-icon)]" />
-      {/* stamp */}
-      <span className="absolute font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--danger-icon)] border border-[var(--danger-icon)] bg-[var(--surface-base)] px-2.5 py-0"
-        style={{ top: -1, left: 36, transform: 'translateY(-50%)' }}>
+      {/* stamp — sits above the top border; parent must NOT have overflow-hidden */}
+      <span className="absolute font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--danger-icon)] border border-[var(--danger-icon)] bg-[var(--surface-raised)] px-2.5 py-[1px]"
+        style={{ top: 0, left: 42, transform: 'translateY(-50%)' }}>
         Critical · acknowledge required
       </span>
 
@@ -278,8 +279,8 @@ const VAL_COLOR: Record<LabFlag, string> = {
 export function LabRow({ name, alt, ordinal, value, unit, flag = 'normal', rangeBar, trend }: LabRowProps) {
   return (
     <div
-      className={['border-b border-[var(--border-default)] last:border-b-0 px-5 py-[14px] items-center', ROW_BG[flag]].join(' ')}
-      style={{ display: 'grid', gridTemplateColumns: '1.4fr 1.2fr 1fr', columnGap: 24 }}
+      className={['border-b border-[var(--border-default)] last:border-b-0 px-4 sm:px-5 py-[14px] items-center', ROW_BG[flag]].join(' ')}
+      style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', columnGap: 16 }}
     >
       {/* Name column */}
       <div>

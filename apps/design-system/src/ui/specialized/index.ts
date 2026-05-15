@@ -7,6 +7,7 @@ export {
   SignaturePad,
   SoapNote,
   MarkdownEditor,
+  MarkdownViewer,
   BodyDiagram,
 } from './specialized';
 
@@ -22,6 +23,7 @@ export type {
   SoapNoteProps,
   SoapSection,
   MarkdownEditorProps,
+  MarkdownViewerProps,
   BodyDiagramProps,
   BodyMarking,
 } from './specialized';

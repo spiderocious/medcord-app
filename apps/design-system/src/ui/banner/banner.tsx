@@ -164,7 +164,7 @@ export function PatientBanner({
       )}
 
       {/* Main grid */}
-      <div className="grid gap-6 px-7 py-[22px_28px_18px]" style={{ gridTemplateColumns: '64px 1fr 280px' }}>
+      <div className="grid gap-4 sm:gap-6 px-4 sm:px-7 pt-6 pb-4" style={{ gridTemplateColumns: '56px minmax(0,1fr)' }} data-grid="banner">
         {/* Avatar */}
         <div
           className="w-16 h-16 rounded-[4px] flex items-center justify-center font-ui font-semibold text-[22px] tracking-[0.02em] flex-shrink-0"
@@ -201,9 +201,9 @@ export function PatientBanner({
           </div>
         </div>
 
-        {/* Right column */}
+        {/* Right column — spans full width on mobile, normal column on sm+ */}
         {mergedRight.length > 0 && (
-          <div className="flex flex-col gap-2.5 border-l border-[var(--border-default)] pl-6">
+          <div className="col-span-2 sm:col-span-1 flex flex-col gap-2 sm:gap-2.5 border-t sm:border-t-0 sm:border-l border-[var(--border-default)] pt-3 sm:pt-0 sm:pl-6">
             {mergedRight.map((row) => (
               <div key={row.label} className="flex items-baseline gap-3">
                 <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.14em] w-20 flex-shrink-0">{row.label}</span>
@@ -278,8 +278,8 @@ export function PatientBanner({
       {/* Vitals rail */}
       {vitals.length > 0 && (
         <div
-          className="grid bg-[var(--surface-raised)] border-t border-b border-[var(--border-default)]"
-          style={{ gridTemplateColumns: `repeat(${vitals.length}, 1fr)` }}
+          className="grid bg-[var(--surface-raised)] border-t border-b border-[var(--border-default)] overflow-x-auto"
+          style={{ gridTemplateColumns: `repeat(${vitals.length}, minmax(100px, 1fr))` }}
         >
           {vitals.map((v, i) => (
             <div

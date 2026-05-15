@@ -24,8 +24,8 @@ export interface StaffStatsStripProps {
 export function StaffStatsStrip({ cells }: StaffStatsStripProps) {
   return (
     <div
-      className="border border-[var(--text-primary)] mb-7"
-      style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', background: 'var(--surface-raised)' }}
+      className="border border-[var(--text-primary)] mb-7 grid grid-cols-2 sm:grid-cols-4"
+      style={{ background: 'var(--surface-raised)' }}
     >
       {cells.map((cell, i) => (
         <div

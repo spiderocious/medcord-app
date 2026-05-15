@@ -78,7 +78,7 @@ export function RegistrationStepper({ steps }: RegistrationStepperProps) {
   return (
     <div
       className="border border-[var(--text-primary)] mb-7"
-      style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', background: 'var(--surface-raised)' }}
+      style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', background: 'var(--surface-raised)' }}
     >
       {steps.map((step, i) => (
         <RegistrationStep key={i} {...step} />

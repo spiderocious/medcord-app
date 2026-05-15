@@ -77,37 +77,39 @@ export function VideoControls({ duration, onEndCall }: VideoControlsProps) {
   const activeBtn = `${baseBtn} bg-[rgba(244,239,230,1)] border-[rgba(244,239,230,1)] text-[#1A1714]`;
 
   return (
-    <div className="bg-[#1A1714] border-t border-[rgba(255,255,255,0.08)] px-6 py-3 flex items-center gap-2">
-      <span className="font-mono text-[11px] text-[rgba(244,239,230,0.55)] mr-auto pl-2.5 tracking-[0]">
+    <div className="bg-[#1A1714] border-t border-[rgba(255,255,255,0.08)] px-4 py-2.5 flex items-center gap-1.5 flex-wrap min-w-0">
+      <span className="font-mono text-[11px] text-[rgba(244,239,230,0.55)] tracking-[0] flex-shrink-0 mr-2">
         {duration}
       </span>
 
-      <button type="button" className={muted ? activeBtn : defaultBtn} onClick={() => setMuted((v) => !v)} title="Mute">
-        {muted ? <MicOff size={16} strokeWidth={1.6} /> : <Mic size={16} strokeWidth={1.6} />}
-      </button>
+      <div className="flex items-center gap-1.5 flex-1 justify-center flex-wrap">
+        <button type="button" className={muted ? activeBtn : defaultBtn} onClick={() => setMuted((v) => !v)} title="Mute">
+          {muted ? <MicOff size={15} strokeWidth={1.6} /> : <Mic size={15} strokeWidth={1.6} />}
+        </button>
 
-      <button type="button" className={cameraOff ? activeBtn : defaultBtn} onClick={() => setCameraOff((v) => !v)} title="Camera">
-        {cameraOff ? <VideoOff size={16} strokeWidth={1.6} /> : <Video size={16} strokeWidth={1.6} />}
-      </button>
+        <button type="button" className={cameraOff ? activeBtn : defaultBtn} onClick={() => setCameraOff((v) => !v)} title="Camera">
+          {cameraOff ? <VideoOff size={15} strokeWidth={1.6} /> : <Video size={15} strokeWidth={1.6} />}
+        </button>
 
-      <button type="button" className={captionsOn ? activeBtn : defaultBtn} onClick={() => setCaptionsOn((v) => !v)} title="Captions">
-        <Captions size={16} strokeWidth={1.6} />
-      </button>
+        <button type="button" className={captionsOn ? activeBtn : defaultBtn} onClick={() => setCaptionsOn((v) => !v)} title="Captions">
+          <Captions size={15} strokeWidth={1.6} />
+        </button>
 
-      <button type="button" className={defaultBtn} title="Share screen">
-        <MonitorUp size={16} strokeWidth={1.6} />
-      </button>
+        <button type="button" className={defaultBtn} title="Share screen">
+          <MonitorUp size={15} strokeWidth={1.6} />
+        </button>
 
-      <button type="button" className={defaultBtn} title="Chat">
-        <MessageSquare size={16} strokeWidth={1.6} />
-      </button>
+        <button type="button" className={defaultBtn} title="Chat">
+          <MessageSquare size={15} strokeWidth={1.6} />
+        </button>
+      </div>
 
       <button
         type="button"
         onClick={onEndCall}
-        className="ml-auto flex items-center gap-2 h-9 px-3.5 rounded bg-[var(--danger-icon)] text-white border border-[var(--danger-icon)] font-sans text-[12px] font-medium cursor-pointer hover:bg-[#9A1B12] hover:border-[#9A1B12] transition-colors"
+        className="flex-shrink-0 flex items-center gap-1.5 h-9 px-3 rounded bg-[var(--danger-icon)] text-white border border-[var(--danger-icon)] font-sans text-[12px] font-medium cursor-pointer hover:bg-[#9A1B12] hover:border-[#9A1B12] transition-colors whitespace-nowrap"
       >
-        <PhoneOff size={16} strokeWidth={1.6} />
+        <PhoneOff size={15} strokeWidth={1.6} />
         End call
       </button>
     </div>
@@ -151,7 +153,7 @@ export interface VideoCallProps {
 export function VideoCall({ tiles, captions, duration, onEndCall }: VideoCallProps) {
   return (
     <div className="bg-[#1A1714] border border-[#1A1714] text-[rgba(244,239,230,1)]" style={{ display: 'grid', gridTemplateRows: '1fr auto auto' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 1, background: 'rgba(255,255,255,0.08)', height: 360 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-px min-h-[200px] sm:min-h-[360px]" style={{ background: 'rgba(255,255,255,0.08)' }}>
         <VideoTile {...tiles[0]} />
         <VideoTile {...tiles[1]} />
       </div>
@@ -294,31 +296,35 @@ export function DictationNote({ title, meta, paragraphs, aiChips = [], aiDisclai
         ))}
       </div>
 
-      <div className="border-t border-[var(--border-default)] px-[22px] py-3 flex items-center gap-3 bg-[var(--surface-sunken)]">
-        {aiChips.map((chip) => (
-          <button
-            key={chip}
-            type="button"
-            className="inline-flex items-center gap-1.5 h-7 px-2.5 bg-[var(--surface-base)] border border-dashed border-[var(--text-primary)] font-mono text-[11px] text-[var(--text-primary)] tracking-[0.04em] cursor-pointer hover:bg-[var(--surface-sunken)] transition-colors"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-3 h-3" aria-hidden="true">
-              <path d="m12 2 2 7 7 2-7 2-2 7-2-7-7-2 7-2z" />
-            </svg>
-            {chip}
+      <div className="border-t border-[var(--border-default)] px-[22px] py-3 flex items-center gap-2 bg-[var(--surface-sunken)] flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+          {aiChips.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              className="inline-flex items-center gap-1.5 h-7 px-2.5 bg-[var(--surface-base)] border border-dashed border-[var(--text-primary)] font-mono text-[11px] text-[var(--text-primary)] tracking-[0.04em] cursor-pointer hover:bg-[var(--surface-sunken)] transition-colors whitespace-nowrap"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-3 h-3" aria-hidden="true">
+                <path d="m12 2 2 7 7 2-7 2-2 7-2-7-7-2 7-2z" />
+              </svg>
+              {chip}
+            </button>
+          ))}
+          {aiDisclaimer != null && (
+            <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] ml-auto">{aiDisclaimer}</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
+          <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-[var(--text-tertiary)] cursor-pointer bg-transparent border-0 hover:text-[var(--text-primary)] transition-colors whitespace-nowrap">
+            Save draft
           </button>
-        ))}
-        {aiDisclaimer != null && (
-          <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] ml-auto">{aiDisclaimer}</span>
-        )}
-        <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-[var(--text-tertiary)] cursor-pointer bg-transparent border-0 hover:text-[var(--text-primary)] transition-colors">
-          Save draft
-        </button>
-        <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-[var(--text-primary)] border border-[var(--text-primary)] bg-transparent cursor-pointer hover:bg-[var(--surface-sunken)] transition-colors">
-          Send for co-sign
-        </button>
-        <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-white bg-[var(--records-700)] border border-[var(--records-700)] cursor-pointer hover:bg-[var(--records-800)] transition-colors">
-          Sign &amp; close visit
-        </button>
+          <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-[var(--text-primary)] border border-[var(--text-primary)] bg-transparent cursor-pointer hover:bg-[var(--surface-sunken)] transition-colors whitespace-nowrap">
+            Send for co-sign
+          </button>
+          <button type="button" className="h-8 px-3.5 rounded font-sans text-[12px] font-medium text-white bg-[var(--records-700)] border border-[var(--records-700)] cursor-pointer hover:bg-[var(--records-800)] transition-colors whitespace-nowrap">
+            Sign &amp; close visit
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -335,7 +341,7 @@ export interface TelehealthRoomProps {
 
 export function TelehealthRoom({ call, sidePanel }: TelehealthRoomProps) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+    <div className="grid gap-6 grid-cols-1 lg:grid-cols-[1fr_320px]">
       <VideoCall {...call} />
       <TelehealthSidePanel {...sidePanel} />
     </div>

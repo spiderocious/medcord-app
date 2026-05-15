@@ -1,6 +1,6 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { Check } from '@icons';
+import { Check, ChevronDown } from '@icons';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'quiet';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -194,63 +194,146 @@ export function IrreversibleButton({
    SplitButton — primary action + dropdown chevron
    ============================================================ */
 
-export interface SplitButtonProps {
+export interface SplitButtonOption {
   readonly label: string;
+  readonly value: string;
+  readonly disabled?: boolean;
+}
+
+export type SplitButtonSide = 'bottom' | 'top' | 'left' | 'right';
+
+export interface SplitButtonProps {
+  readonly options: readonly SplitButtonOption[];
+  readonly defaultValue?: string;
   readonly size?: ButtonSize;
-  readonly onPrimary?: () => void;
-  readonly onDropdown?: () => void;
+  readonly side?: SplitButtonSide;
+  readonly onSelect?: (option: SplitButtonOption) => void;
   readonly disabled?: boolean;
 }
 
 export function SplitButton({
-  label,
+  options,
+  defaultValue,
   size = 'md',
-  onPrimary,
-  onDropdown,
+  side = 'bottom',
+  onSelect,
   disabled = false,
 }: SplitButtonProps) {
+  const firstOption = options.find((o) => o.value === defaultValue) ?? options[0];
+  const [selected, setSelected] = useState<SplitButtonOption | undefined>(firstOption);
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [open]);
+
   const heightClass = { sm: 'h-7', md: 'h-[34px]', lg: 'h-10' }[size];
   const textClass = { sm: 'text-[12px] px-3', md: 'text-[13px] px-4', lg: 'text-[14px] px-5' }[size];
   const iconPad = { sm: 'px-2', md: 'px-3', lg: 'px-3' }[size];
+  const itemPy = { sm: 'py-1.5', md: 'py-2', lg: 'py-2.5' }[size];
+  const itemText = { sm: 'text-[11px]', md: 'text-[12px]', lg: 'text-[13px]' }[size];
+
+  const menuPositionClass: Record<SplitButtonSide, string> = {
+    bottom: 'top-full left-0 mt-1',
+    top: 'bottom-full left-0 mb-1',
+    left: 'right-full top-0 mr-1',
+    right: 'left-full top-0 ml-1',
+  };
+
+  function handlePrimary() {
+    if (selected != null) onSelect?.(selected);
+  }
+
+  function handleSelect(option: SplitButtonOption) {
+    setSelected(option);
+    setOpen(false);
+    onSelect?.(option);
+  }
 
   return (
-    <div className="inline-flex rounded-md overflow-hidden">
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={onPrimary}
-        className={[
-          'inline-flex items-center gap-2 font-ui font-medium tracking-[0.005em]',
-          'bg-[var(--records-700)] text-white border border-[var(--records-700)]',
-          'hover:bg-[var(--records-800)] border-r-white/20',
-          'disabled:opacity-[0.38] disabled:pointer-events-none',
-          'outline-none transition-colors duration-[100ms]',
-          'rounded-none border-r border-r-white/20',
-          heightClass,
-          textClass,
-        ].join(' ')}
-      >
-        {label}
-      </button>
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={onDropdown}
-        aria-label="More options"
-        className={[
-          'inline-flex items-center justify-center',
-          'bg-[var(--records-700)] text-white border border-[var(--records-700)] border-l-0',
-          'hover:bg-[var(--records-800)]',
-          'disabled:opacity-[0.38] disabled:pointer-events-none',
-          'outline-none transition-colors duration-[100ms] rounded-none',
-          heightClass,
-          iconPad,
-        ].join(' ')}
-      >
-        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 stroke-current fill-none stroke-[1.7]">
-          <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+    <div className="relative inline-flex" ref={containerRef}>
+      <div className="inline-flex rounded-md overflow-hidden">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={handlePrimary}
+          className={[
+            'inline-flex items-center gap-2 font-ui font-medium tracking-[0.005em]',
+            'bg-[var(--records-700)] text-white border border-[var(--records-700)]',
+            'hover:bg-[var(--records-800)]',
+            'disabled:opacity-[0.38] disabled:pointer-events-none',
+            'outline-none transition-colors duration-[100ms]',
+            'rounded-none border-r border-r-white/20',
+            heightClass,
+            textClass,
+          ].join(' ')}
+        >
+          {selected?.label ?? 'Select'}
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => setOpen((v) => !v)}
+          aria-label="More options"
+          aria-expanded={open}
+          className={[
+            'inline-flex items-center justify-center',
+            'bg-[var(--records-700)] text-white border border-[var(--records-700)] border-l-0',
+            'hover:bg-[var(--records-800)]',
+            'disabled:opacity-[0.38] disabled:pointer-events-none',
+            'outline-none transition-colors duration-[100ms] rounded-none',
+            heightClass,
+            iconPad,
+          ].join(' ')}
+        >
+          <ChevronDown
+            size={14}
+            strokeWidth={1.7}
+            className={['transition-transform duration-150', open ? 'rotate-180' : ''].join(' ')}
+          />
+        </button>
+      </div>
+
+      {open && options.length > 0 && (
+        <div
+          className={[
+            'absolute z-50 min-w-full bg-[var(--surface-raised)] border border-[var(--text-primary)]',
+            'shadow-[0_4px_16px_rgba(0,0,0,0.12)] overflow-hidden',
+            menuPositionClass[side],
+          ].join(' ')}
+          role="listbox"
+        >
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="option"
+              aria-selected={selected?.value === option.value}
+              disabled={option.disabled}
+              onClick={() => handleSelect(option)}
+              className={[
+                `w-full text-left px-3.5 ${itemPy} ${itemText} font-ui font-medium whitespace-nowrap`,
+                'border-b border-dashed border-[var(--border-default)] last:border-b-0',
+                'transition-colors duration-[80ms] cursor-pointer',
+                'disabled:opacity-40 disabled:cursor-not-allowed',
+                selected?.value === option.value
+                  ? 'bg-[var(--surface-sunken)] text-[var(--text-primary)]'
+                  : 'bg-transparent text-[var(--text-primary)] hover:bg-[var(--surface-sunken)]',
+              ].join(' ')}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

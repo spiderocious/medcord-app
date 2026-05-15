@@ -70,7 +70,7 @@ export function BedStatusStrip({
   return (
     <div
       className="grid border border-[var(--text-primary)] mb-7 bg-[var(--surface-raised)]"
-      style={{ gridTemplateColumns: '1.4fr 1fr 1fr 1fr' }}
+      style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}
     >
       <StripCell label="Charge nurse">
         <p className="font-serif text-[22px] font-medium tracking-[-0.012em] leading-[1.1] text-[var(--text-primary)]">
@@ -324,8 +324,8 @@ export interface BedFloorProps {
 export function BedFloor({ beds }: BedFloorProps) {
   return (
     <div
-      className="grid border border-[var(--text-primary)] bg-[var(--surface-raised)]"
-      style={{ gridTemplateColumns: 'repeat(6, 1fr)' }}
+      className="grid border border-[var(--text-primary)] bg-[var(--surface-raised)] overflow-x-auto"
+      style={{ gridTemplateColumns: 'repeat(6, minmax(160px, 1fr))' }}
     >
       {beds.map((bed) => (
         <BedCell key={bed.bedNumber} {...bed} />
@@ -487,7 +487,7 @@ export function BedBoard({ strip, floor, queue }: BedBoardProps) {
   return (
     <div>
       <BedStatusStrip {...strip} />
-      <div className="grid gap-6 items-start" style={{ gridTemplateColumns: '1fr 280px' }}>
+      <div className="grid gap-6 items-start grid-cols-1 lg:grid-cols-[1fr_280px]">
         <BedFloor {...floor} />
         <BedQueue {...queue} />
       </div>

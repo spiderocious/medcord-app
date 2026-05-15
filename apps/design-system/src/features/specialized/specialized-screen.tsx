@@ -9,6 +9,7 @@ import {
   SignaturePad,
   SoapNote,
   MarkdownEditor,
+  MarkdownViewer,
   BodyDiagram,
 } from '@ui/specialized';
 import type { BodyMarking, SoapSection } from '@ui/specialized';
@@ -44,8 +45,18 @@ const DICOM_IMAGES = [
 ] as const;
 
 const INITIAL_MARKINGS: BodyMarking[] = [
-  { id: 'ant-chest', view: 'anterior', cx: 50, cy: 80, rx: 14, ry: 10, label: 'PAIN', color: 'danger' },
-  { id: 'post-lumbar', view: 'posterior', cx: 50, cy: 100, rx: 12, ry: 10, label: 'STIFF', color: 'warning' },
+  // Anterior markings
+  { id: 'ant-chest', view: 'anterior', cx: 50, cy: 65, rx: 14, ry: 10, label: 'PAIN', color: 'danger' },
+  { id: 'ant-shoulder-r', view: 'anterior', cx: 30, cy: 44, rx: 7, ry: 6, label: 'TENDER', color: 'warning' },
+  { id: 'ant-elbow-l', view: 'anterior', cx: 85, cy: 80, rx: 6, ry: 5, label: 'BRUISE', color: 'info' },
+  { id: 'ant-knee-r', view: 'anterior', cx: 38, cy: 170, rx: 7, ry: 6, label: 'SWELL', color: 'warning' },
+  { id: 'ant-abdomen', view: 'anterior', cx: 50, cy: 108, rx: 10, ry: 8, label: 'GUARD', color: 'danger' },
+  { id: 'ant-head', view: 'anterior', cx: 50, cy: 15, rx: 8, ry: 6, label: 'LACR', color: 'danger' },
+  // Posterior markings
+  { id: 'post-lumbar', view: 'posterior', cx: 50, cy: 95, rx: 12, ry: 10, label: 'SPASM', color: 'warning' },
+  { id: 'post-scapula-r', view: 'posterior', cx: 38, cy: 58, rx: 8, ry: 7, label: 'PAIN', color: 'danger' },
+  { id: 'post-sacrum', view: 'posterior', cx: 50, cy: 118, rx: 9, ry: 7, label: 'PRESS', color: 'info' },
+  { id: 'post-calf', view: 'posterior', cx: 50, cy: 185, rx: 8, ry: 6, label: 'DVT?', color: 'danger' },
 ];
 
 export function SpecializedScreen() {
@@ -66,7 +77,7 @@ export function SpecializedScreen() {
         title="Drop zone — and the file row."
         description="A dashed edge with a serif inscription. Once files are dropped, the rows below carry them like stamped paperclips."
       >
-        <div className="grid gap-[18px] mb-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="grid gap-[18px] mb-6 grid-cols-1 sm:grid-cols-2">
           <DropZone sublabel="PDF · JPEG · PNG · DICOM · max 50 MB" />
           <DropZone state="hover" label="Release to upload three files." sublabel="labs.pdf · echo.dcm · consent.pdf" />
           <DropZone state="ok" label="Three files uploaded." sublabel="labs.pdf · echo.dcm · consent.pdf" />
@@ -85,7 +96,7 @@ export function SpecializedScreen() {
         title="DICOM — the radiology thumb."
         description="Greyscale stripes, mono badge, modality and timestamp typeset like a film header. Click to open the viewer."
       >
-        <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
           {DICOM_IMAGES.map((d) => (
             <DicomThumb
               key={d.modality}
@@ -103,7 +114,7 @@ export function SpecializedScreen() {
         title="Insurance &amp; ID — paired front &amp; back."
         description="Two slots side-by-side. The front carries colour because it is a real card; the back is mostly text and nothing else."
       >
-        <div className="grid gap-[22px]" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+        <div className="grid gap-[22px] grid-cols-1 sm:grid-cols-2">
           {/* Insurance card */}
           <div className="border border-[var(--text-primary)] bg-[var(--surface-raised)]">
             <div className="flex items-baseline gap-2 px-4 py-3 border-b border-[var(--text-primary)]">
@@ -188,7 +199,7 @@ export function SpecializedScreen() {
         title="Signatures — patient &amp; witness."
         description="A paper-tape with ruled lines. The signature is drawn over the rules, not in a box. Witness signature uses a quieter paper."
       >
-        <div className="grid gap-[22px]" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="grid gap-[22px] grid-cols-1 sm:grid-cols-2">
           <SignaturePad
             label="Patient signature"
             meta="Adebayo, O. · 14:08"
@@ -207,9 +218,9 @@ export function SpecializedScreen() {
       {/* Body Diagram */}
       <Section
         title="Body diagram — front &amp; back."
-        description="Tap a region to mark a finding. Each region is drawn with a hairline stroke and labelled inline; the marked regions appear in the legend with a serif italic name."
+        description="Named landmarks on every major region — head, crown, temples, ears, jaw, shoulders, elbows, wrists, chest, abdomen, hips, knees, ankles, and spine landmarks on the posterior. Click anywhere to add a new marking at that coordinate."
       >
-        <BodyDiagram markings={bodyMarkings} />
+        <BodyDiagram markings={bodyMarkings} onMark={(view, cx, cy) => setBodyMarkings(prev => [...prev, { id: `${view}-${Date.now()}`, view, cx, cy, rx: 8, ry: 6, label: 'NEW', color: 'info' }])} />
       </Section>
 
       {/* SOAP */}
@@ -223,13 +234,25 @@ export function SpecializedScreen() {
       {/* Markdown editor */}
       <Section
         title="Markdown editor — clinical narration."
-        description="The body is set in serif, large, like a doctor's letter. The toolbar is mono, hairline. Mention with @, code-tag with backticks, that's it."
+        description="The body is set in serif, large, like a doctor's letter. The toolbar is mono, hairline. Toolbar buttons apply real markdown syntax. Keyboard shortcuts: ⌘B bold, ⌘I italic, ⌘K link."
       >
         <MarkdownEditor
           value={markdown}
           onChange={setMarkdown}
           savedAt="14:08"
         />
+      </Section>
+
+      {/* Markdown viewer */}
+      <Section
+        title="Markdown viewer — rendered output."
+        description="Pass any markdown string as children. Headings use serif, code uses mono, blockquotes indent with a hairline left rule."
+      >
+        <div className="border border-[var(--text-primary)] bg-[var(--surface-raised)] p-6">
+          <MarkdownViewer>
+            {`## Discharge Summary\n\n**Patient:** Adebayo, Olumide · 64 M · MRN 10458291\n\n**Attending:** Dr. R. Patel, MD — Cardiology\n\n### Diagnosis\n\n- NSTEMI \`I21.4\` — confirmed by troponin rise\n- Essential hypertension \`I10\`\n- Hyperlipidemia \`E78.5\`\n\n### Hospital Course\n\nPatient presented with _substernal chest pressure_ radiating to the left arm × 2 hours. Initial troponin 0.04 ng/mL; repeat at 14:42 returned critical at **2.10 ng/mL**.\n\nCardiac catheterisation on May 1 revealed 85% LAD stenosis. Drug-eluting stent placed without complication.\n\n> Patient tolerated the procedure well. Ejection fraction post-procedure 52%, improved from 45% on admission.\n\n### Discharge Medications\n\n1. Aspirin 81 mg PO daily\n2. Clopidogrel 75 mg PO daily × 12 months\n3. Atorvastatin 80 mg PO QHS\n4. Metoprolol succinate 50 mg PO daily\n5. Lisinopril 10 mg PO daily\n\n---\n\n*Follow-up with cardiology in 1 week. Call 911 for any recurrence of chest pain.*`}
+          </MarkdownViewer>
+        </div>
       </Section>
     </div>
   );

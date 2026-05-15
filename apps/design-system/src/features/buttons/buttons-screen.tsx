@@ -79,11 +79,47 @@ export function ButtonsScreen() {
         <ToolbarScene />
       </Section>
 
-      <Section title="Split — primary with related">
-        <ComponentRow>
-          <SplitButton label="Sign & submit" />
-          <SplitButton label="Sign & submit" size="sm" />
-          <SplitButton label="Sign & submit" size="lg" />
+      <Section title="Split — primary with related" description="Clicking the left label performs the selected action. The chevron opens a dropdown to change the selection. Side controls where the menu appears.">
+        <ComponentRow label="Bottom (default)">
+          <SplitButton
+            options={[
+              { label: 'Sign & submit', value: 'sign' },
+              { label: 'Save draft', value: 'draft' },
+              { label: 'Send for co-sign', value: 'cosign' },
+            ]}
+            defaultValue="sign"
+            side="bottom"
+            onSelect={(opt) => console.log('selected:', opt)}
+          />
+          <SplitButton
+            options={[
+              { label: 'Sign & submit', value: 'sign' },
+              { label: 'Save draft', value: 'draft' },
+            ]}
+            size="sm"
+            side="bottom"
+          />
+          <SplitButton
+            options={[
+              { label: 'Sign & submit', value: 'sign' },
+              { label: 'Save draft', value: 'draft' },
+              { label: 'Send for co-sign', value: 'cosign' },
+              { label: 'Discard changes', value: 'discard', disabled: true },
+            ]}
+            size="lg"
+            side="bottom"
+          />
+        </ComponentRow>
+        <ComponentRow label="Top">
+          <SplitButton
+            options={[
+              { label: 'Admit patient', value: 'admit' },
+              { label: 'Hold pending labs', value: 'hold' },
+              { label: 'Refer to specialist', value: 'refer' },
+            ]}
+            defaultValue="admit"
+            side="top"
+          />
         </ComponentRow>
       </Section>
 

@@ -77,12 +77,28 @@ const ChartsScreen = lazy(() =>
   import('@features/charts/charts-screen').then((m) => ({ default: m.ChartsScreen })),
 );
 
+const TelehealthScreen = lazy(() =>
+  import('@features/telehealth/telehealth-screen').then((m) => ({ default: m.TelehealthScreen })),
+);
+
+const EquipmentScreen = lazy(() =>
+  import('@features/equipment/equipment-screen').then((m) => ({ default: m.EquipmentScreen })),
+);
+
 const BedBoardScreen = lazy(() =>
   import('@features/bed-board/bed-board-screen').then((m) => ({ default: m.BedBoardScreen })),
 );
 
 const EMRScreen = lazy(() =>
   import('@features/emr/emr-screen').then((m) => ({ default: m.EMRScreen })),
+);
+
+const StaffScreen = lazy(() =>
+  import('@features/staff/staff-screen').then((m) => ({ default: m.StaffScreen })),
+);
+
+const RegistrationScreen = lazy(() =>
+  import('@features/registration/registration-screen').then((m) => ({ default: m.RegistrationScreen })),
 );
 
 function Loading() {
@@ -123,10 +139,10 @@ export const routes: RouteObject[] = [
       { path: ROUTES.CHARTS, element: <Lazy><ChartsScreen /></Lazy> },
       { path: ROUTES.EMR, element: <Lazy><EMRScreen /></Lazy> },
       { path: ROUTES.BED_BOARD, element: <Lazy><BedBoardScreen /></Lazy> },
-      { path: ROUTES.TELEHEALTH, element: <PlaceholderScreen name="Telehealth" /> },
-      { path: ROUTES.EQUIPMENT, element: <PlaceholderScreen name="Equipment" /> },
-      { path: ROUTES.STAFF, element: <PlaceholderScreen name="Staff" /> },
-      { path: ROUTES.REGISTRATION, element: <PlaceholderScreen name="Registration" /> },
+      { path: ROUTES.TELEHEALTH, element: <Lazy><TelehealthScreen /></Lazy> },
+      { path: ROUTES.EQUIPMENT, element: <Lazy><EquipmentScreen /></Lazy> },
+      { path: ROUTES.STAFF, element: <Lazy><StaffScreen /></Lazy> },
+      { path: ROUTES.REGISTRATION, element: <Lazy><RegistrationScreen /></Lazy> },
     ],
   },
 ];

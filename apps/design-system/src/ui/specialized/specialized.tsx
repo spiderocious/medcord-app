@@ -1,5 +1,6 @@
 import { X, Paperclip } from '@icons';
 import { useCallback, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 /* ============================================================
    DropZone — dashed edge with serif inscription.
@@ -17,14 +18,44 @@ export interface DropZoneProps {
   readonly className?: string;
 }
 
-const DZ_VARIANTS: Record<DropZoneState, { border: string; bg: string; titleColor: string; glyph: string }> = {
-  idle: { border: 'border-[var(--text-tertiary)]', bg: 'bg-[var(--surface-raised)]', titleColor: 'text-[var(--text-primary)]', glyph: '↑' },
-  hover: { border: 'border-[var(--text-primary)]', bg: 'bg-[var(--surface-sunken)]', titleColor: 'text-[var(--text-primary)]', glyph: '↑' },
-  ok: { border: 'border-[var(--records-700)]', bg: 'bg-[var(--records-50)]', titleColor: 'text-[var(--records-800)]', glyph: '✓' },
-  error: { border: 'border-[var(--danger-icon)]', bg: 'bg-[var(--danger-bg)]', titleColor: 'text-[var(--danger-icon)]', glyph: '×' },
+const DZ_VARIANTS: Record<
+  DropZoneState,
+  { border: string; bg: string; titleColor: string; glyph: string }
+> = {
+  idle: {
+    border: 'border-[var(--text-tertiary)]',
+    bg: 'bg-[var(--surface-raised)]',
+    titleColor: 'text-[var(--text-primary)]',
+    glyph: '↑',
+  },
+  hover: {
+    border: 'border-[var(--text-primary)]',
+    bg: 'bg-[var(--surface-sunken)]',
+    titleColor: 'text-[var(--text-primary)]',
+    glyph: '↑',
+  },
+  ok: {
+    border: 'border-[var(--records-700)]',
+    bg: 'bg-[var(--records-50)]',
+    titleColor: 'text-[var(--records-800)]',
+    glyph: '✓',
+  },
+  error: {
+    border: 'border-[var(--danger-icon)]',
+    bg: 'bg-[var(--danger-bg)]',
+    titleColor: 'text-[var(--danger-icon)]',
+    glyph: '×',
+  },
 };
 
-export function DropZone({ state = 'idle', onDrop, accept, label, sublabel, className = '' }: DropZoneProps) {
+export function DropZone({
+  state = 'idle',
+  onDrop,
+  accept,
+  label,
+  sublabel,
+  className = '',
+}: DropZoneProps) {
   const [dragState, setDragState] = useState<DropZoneState>(state);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,13 +71,16 @@ export function DropZone({ state = 'idle', onDrop, accept, label, sublabel, clas
     setDragState('idle');
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragState('idle');
-    if (e.dataTransfer.files.length > 0) {
-      onDrop?.(e.dataTransfer.files);
-    }
-  }, [onDrop]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragState('idle');
+      if (e.dataTransfer.files.length > 0) {
+        onDrop?.(e.dataTransfer.files);
+      }
+    },
+    [onDrop],
+  );
 
   function handleClick() {
     inputRef.current?.click();
@@ -62,17 +96,33 @@ export function DropZone({ state = 'idle', onDrop, accept, label, sublabel, clas
     <div
       className={[
         'border-[1.5px] border-dashed text-center px-7 py-9 cursor-pointer transition-colors duration-[100ms]',
-        v.border, v.bg, className,
+        v.border,
+        v.bg,
+        className,
       ].join(' ')}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
     >
-      <input ref={inputRef} type="file" accept={accept} multiple className="sr-only" onChange={handleChange} />
-      <div className="font-serif text-[36px] text-[var(--text-primary)] leading-none">{v.glyph}</div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple
+        className="sr-only"
+        onChange={handleChange}
+      />
+      <div className="font-serif text-[36px] text-[var(--text-primary)] leading-none">
+        {v.glyph}
+      </div>
       <div className={`font-serif italic text-[18px] mt-2.5 tracking-[-0.005em] ${v.titleColor}`}>
-        {label ?? (effectiveState === 'ok' ? 'Files uploaded.' : effectiveState === 'error' ? 'Upload failed.' : 'Drop a file or click to upload.')}
+        {label ??
+          (effectiveState === 'ok'
+            ? 'Files uploaded.'
+            : effectiveState === 'error'
+              ? 'Upload failed.'
+              : 'Drop a file or click to upload.')}
       </div>
       {sublabel != null && (
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-1.5 tracking-[0]">
@@ -99,15 +149,26 @@ export interface FileRowProps {
 }
 
 export function FileRow({ name, size, status, progress, statusLabel, onRemove }: FileRowProps) {
-  const nameColor = status === 'ok' ? 'text-[var(--records-800)]' : status === 'error' ? 'text-[var(--danger-icon)]' : 'text-[var(--text-primary)]';
+  const nameColor =
+    status === 'ok'
+      ? 'text-[var(--records-800)]'
+      : status === 'error'
+        ? 'text-[var(--danger-icon)]'
+        : 'text-[var(--text-primary)]';
 
   return (
-    <div className="grid items-center gap-3 py-3 border-b border-dashed border-[var(--border-default)] last:border-b-0" style={{ gridTemplateColumns: '18px 1fr auto auto' }}>
+    <div
+      className="grid items-center gap-3 py-3 border-b border-dashed border-[var(--border-default)] last:border-b-0"
+      style={{ gridTemplateColumns: '18px 1fr auto auto' }}
+    >
       <Paperclip size={14} className="text-[var(--text-tertiary)]" />
       <span className={`text-[14px] ${nameColor}`}>{name}</span>
       {status === 'uploading' && progress != null ? (
         <div className="w-[120px] h-1 bg-[var(--surface-sunken)]">
-          <div className="h-full bg-[var(--text-primary)] transition-all duration-200" style={{ width: `${progress}%` }} />
+          <div
+            className="h-full bg-[var(--text-primary)] transition-all duration-200"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       ) : (
         <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
@@ -115,9 +176,15 @@ export function FileRow({ name, size, status, progress, statusLabel, onRemove }:
         </span>
       )}
       <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
-        {status === 'uploading' && progress != null ? `${progress}%${size ? ` · ${size}` : ''}` : size ?? ''}
+        {status === 'uploading' && progress != null
+          ? `${progress}%${size ? ` · ${size}` : ''}`
+          : (size ?? '')}
         {onRemove != null && (
-          <button type="button" onClick={onRemove} className="ml-1.5 text-[var(--text-tertiary)] bg-transparent border-0 cursor-pointer p-0">
+          <button
+            type="button"
+            onClick={onRemove}
+            className="ml-1.5 text-[var(--text-tertiary)] bg-transparent border-0 cursor-pointer p-0"
+          >
             <X size={10} />
           </button>
         )}
@@ -140,7 +207,14 @@ export interface DicomThumbProps {
   readonly className?: string;
 }
 
-export function DicomThumb({ modality, date, label, gradient, onClick, className = '' }: DicomThumbProps) {
+export function DicomThumb({
+  modality,
+  date,
+  label,
+  gradient,
+  onClick,
+  className = '',
+}: DicomThumbProps) {
   const defaultGradient = 'linear-gradient(135deg, #2A2520, #6E665B 60%, #A39A8A)';
   return (
     <div
@@ -177,13 +251,23 @@ export interface PinInputProps {
   readonly className?: string;
 }
 
-export function PinInput({ length = 6, value = '', onChange, label, note, className = '' }: PinInputProps) {
+export function PinInput({
+  length = 6,
+  value = '',
+  onChange,
+  label,
+  note,
+  className = '',
+}: PinInputProps) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   function handleKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Backspace' && value[idx] == null) {
       const prev = inputsRef.current[idx - 1];
-      if (prev) { prev.focus(); onChange?.(value.slice(0, idx - 1)); }
+      if (prev) {
+        prev.focus();
+        onChange?.(value.slice(0, idx - 1));
+      }
     }
   }
 
@@ -200,7 +284,9 @@ export function PinInput({ length = 6, value = '', onChange, label, note, classN
   }
 
   return (
-    <div className={`bg-[var(--surface-raised)] border border-[var(--text-primary)] p-[22px] max-w-[480px] ${className}`}>
+    <div
+      className={`bg-[var(--surface-raised)] border border-[var(--text-primary)] p-[22px] max-w-[480px] ${className}`}
+    >
       {label != null && (
         <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3.5">
           {label}
@@ -214,7 +300,9 @@ export function PinInput({ length = 6, value = '', onChange, label, note, classN
           return (
             <input
               key={i}
-              ref={(el) => { inputsRef.current[i] = el; }}
+              ref={(el) => {
+                inputsRef.current[i] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -270,7 +358,15 @@ function StarIcon({ filled, size = 22 }: { readonly filled: boolean; readonly si
   );
 }
 
-export function StarRating({ value = 0, onChange, max = 5, readOnly = false, score, scoreLabel, className = '' }: StarRatingProps) {
+export function StarRating({
+  value = 0,
+  onChange,
+  max = 5,
+  readOnly = false,
+  score,
+  scoreLabel,
+  className = '',
+}: StarRatingProps) {
   const [hover, setHover] = useState<number | null>(null);
 
   return (
@@ -297,7 +393,9 @@ export function StarRating({ value = 0, onChange, max = 5, readOnly = false, sco
             {score.toFixed(1)}
           </div>
           {scoreLabel != null && (
-            <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{scoreLabel}</div>
+            <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
+              {scoreLabel}
+            </div>
           )}
         </div>
       )}
@@ -320,15 +418,33 @@ export interface SignaturePadProps {
   readonly className?: string;
 }
 
-export function SignaturePad({ label = 'Signature', meta, signaturePath, strokeColor = 'var(--text-primary)', quiet = false, onClear, className = '' }: SignaturePadProps) {
+export function SignaturePad({
+  label = 'Signature',
+  meta,
+  signaturePath,
+  strokeColor = 'var(--text-primary)',
+  quiet = false,
+  onClear,
+  className = '',
+}: SignaturePadProps) {
   return (
-    <div className={`border border-[var(--text-primary)] ${quiet ? 'bg-[var(--surface-sunken)]' : 'bg-[var(--surface-raised)]'} p-[10px_14px] flex flex-col gap-1.5 ${className}`}>
+    <div
+      className={`border border-[var(--text-primary)] ${quiet ? 'bg-[var(--surface-sunken)]' : 'bg-[var(--surface-raised)]'} p-[10px_14px] flex flex-col gap-1.5 ${className}`}
+    >
       <div className="flex items-baseline justify-between">
         <span className="font-serif italic text-[14px] text-[var(--text-primary)]">{label}</span>
         <div className="flex items-center gap-2">
-          {meta != null && <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{meta}</span>}
+          {meta != null && (
+            <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
+              {meta}
+            </span>
+          )}
           {onClear != null && (
-            <button type="button" onClick={onClear} className="font-mono text-[10px] text-[var(--text-tertiary)] bg-transparent border-0 cursor-pointer uppercase tracking-[0.16em] hover:text-[var(--text-primary)]">
+            <button
+              type="button"
+              onClick={onClear}
+              className="font-mono text-[10px] text-[var(--text-tertiary)] bg-transparent border-0 cursor-pointer uppercase tracking-[0.16em] hover:text-[var(--text-primary)]"
+            >
               Clear
             </button>
           )}
@@ -336,14 +452,20 @@ export function SignaturePad({ label = 'Signature', meta, signaturePath, strokeC
       </div>
       <div
         className="h-20 relative border-b-[1.5px] border-[var(--text-primary)]"
-        style={{ background: 'repeating-linear-gradient(0deg, transparent 0 19px, var(--border-default) 19px 20px)', padding: '0 8px' }}
+        style={{
+          background:
+            'repeating-linear-gradient(0deg, transparent 0 19px, var(--border-default) 19px 20px)',
+          padding: '0 8px',
+        }}
       >
         {signaturePath != null ? (
           <svg viewBox="0 0 240 60" preserveAspectRatio="none" className="w-full h-full">
             <path d={signaturePath} stroke={strokeColor} strokeWidth="1.5" fill="none" />
           </svg>
         ) : null}
-        <span className="absolute bottom-1.5 left-3.5 font-serif text-[18px] text-[var(--text-tertiary)]">×</span>
+        <span className="absolute bottom-1.5 left-3.5 font-serif text-[18px] text-[var(--text-tertiary)]">
+          ×
+        </span>
       </div>
     </div>
   );
@@ -366,7 +488,12 @@ export interface SoapNoteProps {
   readonly className?: string;
 }
 
-export function SoapNote({ sections, readOnly = false, onSectionChange, className = '' }: SoapNoteProps) {
+export function SoapNote({
+  sections,
+  readOnly = false,
+  onSectionChange,
+  className = '',
+}: SoapNoteProps) {
   return (
     <div className={`border border-[var(--text-primary)] bg-[var(--surface-raised)] ${className}`}>
       {sections.map((section, i) => (
@@ -405,6 +532,7 @@ export function SoapNote({ sections, readOnly = false, onSectionChange, classNam
 /* ============================================================
    MarkdownEditor — clinical narration editor.
    Serif body, mono toolbar, hairline chrome.
+   Toolbar buttons apply real markdown syntax to the textarea selection.
    ============================================================ */
 
 export interface MarkdownEditorProps {
@@ -415,41 +543,198 @@ export interface MarkdownEditorProps {
   readonly className?: string;
 }
 
-const TOOLBAR_ACTIONS = [
-  { label: 'B', bold: true },
-  { label: 'I', italic: true },
-  { label: 'U', underline: true },
-] as const;
+function applyInline(
+  ta: HTMLTextAreaElement,
+  value: string,
+  onChange: ((v: string) => void) | undefined,
+  prefix: string,
+  suffix: string,
+) {
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const sel = value.slice(start, end);
+  const replacement = sel.length > 0 ? `${prefix}${sel}${suffix}` : `${prefix}${suffix}`;
+  const next = value.slice(0, start) + replacement + value.slice(end);
+  onChange?.(next);
+  const cursor = sel.length > 0 ? start + replacement.length : start + prefix.length;
+  requestAnimationFrame(() => {
+    ta.focus();
+    ta.setSelectionRange(cursor, cursor);
+  });
+}
 
-export function MarkdownEditor({ value = '', onChange, placeholder, savedAt, className = '' }: MarkdownEditorProps) {
+function applyLinePrefix(
+  ta: HTMLTextAreaElement,
+  value: string,
+  onChange: ((v: string) => void) | undefined,
+  makePrefix: (lineIdx: number) => string,
+) {
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const before = value.slice(0, start);
+  const lineStart = before.lastIndexOf('\n') + 1;
+  const selected = value.slice(lineStart, end);
+  const lines = selected.split('\n');
+  const prefixed = lines.map((l, i) => `${makePrefix(i)}${l}`).join('\n');
+  const next = value.slice(0, lineStart) + prefixed + value.slice(end);
+  onChange?.(next);
+  requestAnimationFrame(() => {
+    ta.focus();
+    ta.setSelectionRange(lineStart, lineStart + prefixed.length);
+  });
+}
+
+export function MarkdownEditor({
+  value = '',
+  onChange,
+  placeholder,
+  savedAt,
+  className = '',
+}: MarkdownEditorProps) {
+  const taRef = useRef<HTMLTextAreaElement>(null);
   const charCount = value.length;
+
+  function wrap(prefix: string, suffix: string) {
+    if (taRef.current === null || taRef.current === undefined) return;
+    applyInline(taRef.current, value, onChange, prefix, suffix);
+  }
+
+  function linePrefix(makePrefix: (i: number) => string) {
+    if (taRef.current === null || taRef.current === undefined) return;
+    applyLinePrefix(taRef.current, value, onChange, makePrefix);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      wrap('**', '**');
+    }
+    if (e.key === 'i' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      wrap('_', '_');
+    }
+    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      wrap('[', '](url)');
+    }
+  }
+
+  const btnBase =
+    'bg-transparent border-0 px-1.5 py-1 cursor-pointer font-mono text-[11px] hover:text-[var(--text-primary)] transition-colors';
 
   return (
     <div className={`border border-[var(--text-primary)] bg-[var(--surface-raised)] ${className}`}>
-      <div className="flex items-center gap-1 px-2.5 py-2 border-b border-[var(--text-primary)] text-[var(--text-tertiary)] font-mono text-[11px]">
-        <button type="button" className="bg-transparent border-0 font-bold text-[var(--text-primary)] border-b-[1.5px] border-[var(--text-primary)] px-1.5 py-1 cursor-pointer">B</button>
-        <button type="button" className="bg-transparent border-0 italic px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">I</button>
-        <button type="button" className="bg-transparent border-0 underline px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">U</button>
-        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1" />
-        <button type="button" className="bg-transparent border-0 px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">•</button>
-        <button type="button" className="bg-transparent border-0 px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">1.</button>
-        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1" />
-        <button type="button" className="bg-transparent border-0 px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">{'{ }'}</button>
-        <button type="button" className="bg-transparent border-0 px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">{'" "'}</button>
-        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1" />
-        <button type="button" className="bg-transparent border-0 px-1.5 py-1 cursor-pointer hover:text-[var(--text-primary)]">@</button>
-        <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)]">⌘B · ⌘I · ⌘K</span>
+      <div className="flex items-center gap-0.5 px-2.5 py-2 border-b border-[var(--text-primary)] text-[var(--text-tertiary)]">
+        <button
+          type="button"
+          title="Bold (⌘B)"
+          className={`${btnBase} font-bold`}
+          onClick={() => wrap('**', '**')}
+        >
+          B
+        </button>
+        <button
+          type="button"
+          title="Italic (⌘I)"
+          className={`${btnBase} italic`}
+          onClick={() => wrap('_', '_')}
+        >
+          I
+        </button>
+        <button
+          type="button"
+          title="Strikethrough"
+          className={`${btnBase} line-through`}
+          onClick={() => wrap('~~', '~~')}
+        >
+          S
+        </button>
+        <button
+          type="button"
+          title="Inline code"
+          className={`${btnBase} font-mono`}
+          onClick={() => wrap('`', '`')}
+        >
+          {'`'}
+        </button>
+        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1 flex-shrink-0" />
+        <button
+          type="button"
+          title="Bullet list"
+          className={btnBase}
+          onClick={() => linePrefix(() => '- ')}
+        >
+          •
+        </button>
+        <button
+          type="button"
+          title="Numbered list"
+          className={btnBase}
+          onClick={() => linePrefix((i) => `${i + 1}. `)}
+        >
+          1.
+        </button>
+        <button
+          type="button"
+          title="Quote block"
+          className={btnBase}
+          onClick={() => linePrefix(() => '> ')}
+        >
+          ›
+        </button>
+        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1 flex-shrink-0" />
+        <button
+          type="button"
+          title="Code block"
+          className={btnBase}
+          onClick={() => wrap('```\n', '\n```')}
+        >
+          {'{ }'}
+        </button>
+        <button
+          type="button"
+          title="Link (⌘K)"
+          className={btnBase}
+          onClick={() => wrap('[', '](url)')}
+        >
+          {'🔗'}
+        </button>
+        <button
+          type="button"
+          title="Heading"
+          className={btnBase}
+          onClick={() => linePrefix(() => '## ')}
+        >
+          H
+        </button>
+        <div className="w-px h-3.5 bg-[var(--border-default)] mx-1 flex-shrink-0" />
+        <button
+          type="button"
+          title="Mention staff or patient"
+          className={btnBase}
+          onClick={() => wrap('@', '')}
+        >
+          @
+        </button>
+        <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] flex-shrink-0">
+          ⌘B · ⌘I · ⌘K
+        </span>
       </div>
       <textarea
+        ref={taRef}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         rows={6}
-        className="w-full bg-transparent border-0 outline-none p-[16px_18px] font-serif text-[15px] text-[var(--text-primary)] leading-[1.6] tracking-[-0.005em] resize-none placeholder:text-[var(--text-disabled)]"
+        className="w-full bg-transparent border-0 outline-none p-[16px_18px] font-serif text-[15px] text-[var(--text-primary)] leading-[1.6] tracking-[-0.005em] resize-y placeholder:text-[var(--text-disabled)]"
       />
       <div className="flex justify-between px-3.5 py-2 border-t border-[var(--text-primary)] font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
-        <span>Mention @ to tag staff or patient</span>
-        <span>{savedAt != null ? `auto-saved ${savedAt} · ` : ''}{charCount} chars</span>
+        <span>Mention @ · ⌘B bold · ⌘I italic · ⌘K link</span>
+        <span>
+          {savedAt != null ? `auto-saved ${savedAt} · ` : ''}
+          {charCount} chars
+        </span>
       </div>
     </div>
   );
@@ -476,21 +761,104 @@ export interface BodyDiagramProps {
   readonly className?: string;
 }
 
-const MARKING_COLORS: Record<BodyMarking['color'], { fill: string; stroke: string; text: string }> = {
-  danger: { fill: 'var(--danger-bg)', stroke: 'var(--danger-icon)', text: 'var(--danger-icon)' },
-  warning: { fill: 'var(--warning-bg)', stroke: 'var(--warning-icon)', text: 'var(--warning-icon)' },
-  info: { fill: 'var(--patient-50)', stroke: 'var(--patient-600)', text: 'var(--patient-700)' },
-};
+const MARKING_COLORS: Record<BodyMarking['color'], { fill: string; stroke: string; text: string }> =
+  {
+    danger: { fill: 'var(--danger-bg)', stroke: 'var(--danger-icon)', text: 'var(--danger-icon)' },
+    warning: {
+      fill: 'var(--warning-bg)',
+      stroke: 'var(--warning-icon)',
+      text: 'var(--warning-icon)',
+    },
+    info: { fill: 'var(--patient-50)', stroke: 'var(--patient-600)', text: 'var(--patient-700)' },
+  };
 
-function BodySvg({ view, markings = [], onMark }: { readonly view: 'anterior' | 'posterior'; readonly markings: ReadonlyArray<BodyMarking>; readonly onMark?: (view: 'anterior' | 'posterior', x: number, y: number) => void }) {
-  const myMarkings = markings.filter(m => m.view === view);
+/* Landmark dot: small circle with accessible title and label */
+function LandmarkDot({ cx, cy, label }: { readonly cx: number; readonly cy: number; readonly label: string }) {
+  return (
+    <g>
+      <title>{label}</title>
+      <circle cx={cx} cy={cy} r="2.2" fill="var(--surface-raised)" stroke="var(--text-tertiary)" strokeWidth="0.8" />
+      <text x={cx} y={cy - 3.5} textAnchor="middle" fontFamily="JetBrains Mono" fontSize="4.2" fill="var(--text-tertiary)">{label}</text>
+    </g>
+  );
+}
+
+/* All landmark positions are in the 100×220 SVG coordinate space */
+const ANTERIOR_LANDMARKS = [
+  { cx: 50, cy: 10, label: 'Crown' },
+  { cx: 39, cy: 17, label: 'R Temple' },
+  { cx: 61, cy: 17, label: 'L Temple' },
+  { cx: 37, cy: 26, label: 'R Ear' },
+  { cx: 63, cy: 26, label: 'L Ear' },
+  { cx: 50, cy: 30, label: 'Jaw' },
+  { cx: 30, cy: 44, label: 'R Shoulder' },
+  { cx: 70, cy: 44, label: 'L Shoulder' },
+  { cx: 50, cy: 60, label: 'Sternum' },
+  { cx: 38, cy: 65, label: 'R Chest' },
+  { cx: 62, cy: 65, label: 'L Chest' },
+  { cx: 15, cy: 80, label: 'R Elbow' },
+  { cx: 85, cy: 80, label: 'L Elbow' },
+  { cx: 50, cy: 100, label: 'Abdomen' },
+  { cx: 50, cy: 116, label: 'Navel' },
+  { cx: 12, cy: 110, label: 'R Wrist' },
+  { cx: 88, cy: 110, label: 'L Wrist' },
+  { cx: 38, cy: 128, label: 'R Hip' },
+  { cx: 62, cy: 128, label: 'L Hip' },
+  { cx: 50, cy: 132, label: 'Groin' },
+  { cx: 38, cy: 170, label: 'R Knee' },
+  { cx: 62, cy: 170, label: 'L Knee' },
+  { cx: 36, cy: 200, label: 'R Ankle' },
+  { cx: 64, cy: 200, label: 'L Ankle' },
+  { cx: 34, cy: 212, label: 'R Foot' },
+  { cx: 66, cy: 212, label: 'L Foot' },
+];
+
+const POSTERIOR_LANDMARKS = [
+  { cx: 50, cy: 10, label: 'Crown' },
+  { cx: 37, cy: 26, label: 'R Ear' },
+  { cx: 63, cy: 26, label: 'L Ear' },
+  { cx: 50, cy: 30, label: 'Occiput' },
+  { cx: 50, cy: 38, label: 'C-spine' },
+  { cx: 30, cy: 44, label: 'R Shoulder' },
+  { cx: 70, cy: 44, label: 'L Shoulder' },
+  { cx: 38, cy: 58, label: 'R Scapula' },
+  { cx: 62, cy: 58, label: 'L Scapula' },
+  { cx: 50, cy: 70, label: 'T-spine' },
+  { cx: 15, cy: 80, label: 'R Elbow' },
+  { cx: 85, cy: 80, label: 'L Elbow' },
+  { cx: 50, cy: 95, label: 'L-spine' },
+  { cx: 12, cy: 110, label: 'R Wrist' },
+  { cx: 88, cy: 110, label: 'L Wrist' },
+  { cx: 50, cy: 118, label: 'Sacrum' },
+  { cx: 38, cy: 128, label: 'R Buttock' },
+  { cx: 62, cy: 128, label: 'L Buttock' },
+  { cx: 38, cy: 170, label: 'R Knee' },
+  { cx: 62, cy: 170, label: 'L Knee' },
+  { cx: 50, cy: 185, label: 'Calf' },
+  { cx: 36, cy: 200, label: 'R Ankle' },
+  { cx: 64, cy: 200, label: 'L Ankle' },
+  { cx: 34, cy: 212, label: 'R Heel' },
+  { cx: 66, cy: 212, label: 'L Heel' },
+];
+
+function BodySvg({
+  view,
+  markings = [],
+  onMark,
+}: {
+  readonly view: 'anterior' | 'posterior';
+  readonly markings: ReadonlyArray<BodyMarking>;
+  readonly onMark?: (view: 'anterior' | 'posterior', x: number, y: number) => void;
+}) {
+  const myMarkings = markings.filter((m) => m.view === view);
+  const landmarks = view === 'anterior' ? ANTERIOR_LANDMARKS : POSTERIOR_LANDMARKS;
 
   function handleClick(e: React.MouseEvent<SVGSVGElement>) {
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 220;
-    onMark?.(view, x, y);
+    onMark?.(view, Math.round(x), Math.round(y));
   }
 
   return (
@@ -500,42 +868,63 @@ function BodySvg({ view, markings = [], onMark }: { readonly view: 'anterior' | 
       </div>
       <svg
         viewBox="0 0 100 220"
-        width="160"
-        height="320"
+        width="180"
+        height="360"
         fill="none"
         stroke="var(--text-secondary)"
         strokeWidth="1"
         onClick={handleClick}
-        className="cursor-crosshair"
+        className="cursor-crosshair block"
       >
+        {/* Body silhouette */}
         <circle cx="50" cy="22" r="13" fill="var(--surface-sunken)" />
+        {/* Neck */}
         <path d="M 44 33 L 44 42 L 56 42 L 56 33 Z" fill="var(--surface-sunken)" />
+        {/* Torso */}
         <path d="M 30 42 Q 30 80 36 130 L 64 130 Q 70 80 70 42 Z" fill="var(--surface-sunken)" />
+        {/* Left arm */}
         <path d="M 30 44 Q 18 70 14 110 L 22 112 Q 26 76 36 50 Z" fill="var(--surface-sunken)" />
+        {/* Right arm */}
         <path d="M 70 44 Q 82 70 86 110 L 78 112 Q 74 76 64 50 Z" fill="var(--surface-sunken)" />
+        {/* Left leg */}
         <path d="M 36 130 L 32 210 L 48 210 L 48 132 Z" fill="var(--surface-sunken)" />
+        {/* Right leg */}
         <path d="M 64 130 L 68 210 L 52 210 L 52 132 Z" fill="var(--surface-sunken)" />
-        {view === 'anterior' ? (
-          <>
-            <circle cx="38" cy="60" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="62" cy="60" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="50" cy="110" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="40" cy="160" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="60" cy="160" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-          </>
-        ) : (
-          <>
-            <circle cx="50" cy="60" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="38" cy="80" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-            <circle cx="62" cy="80" r="3" fill="var(--surface-raised)" stroke="var(--text-tertiary)" />
-          </>
+
+        {/* Posterior-only spine line */}
+        {view === 'posterior' && (
+          <line x1="50" y1="35" x2="50" y2="120" stroke="var(--border-default)" strokeWidth="0.6" strokeDasharray="2 2" />
         )}
+
+        {/* Landmark dots */}
+        {landmarks.map((lm) => (
+          <LandmarkDot key={lm.label} cx={lm.cx} cy={lm.cy} label={lm.label} />
+        ))}
+
+        {/* Markings overlay */}
         {myMarkings.map((m) => {
           const c = MARKING_COLORS[m.color];
           return (
             <g key={m.id}>
-              <ellipse cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry} fill={c.fill} stroke={c.stroke} strokeWidth="1.5" />
-              <text x={m.cx} y={m.cy + 3} textAnchor="middle" fontFamily="JetBrains Mono" fontSize="6" fill={c.text} fontWeight="600">
+              <ellipse
+                cx={m.cx}
+                cy={m.cy}
+                rx={m.rx}
+                ry={m.ry}
+                fill={c.fill}
+                stroke={c.stroke}
+                strokeWidth="1.5"
+                opacity="0.85"
+              />
+              <text
+                x={m.cx}
+                y={m.cy + 3}
+                textAnchor="middle"
+                fontFamily="JetBrains Mono"
+                fontSize="6"
+                fill={c.text}
+                fontWeight="600"
+              >
                 {m.label}
               </text>
             </g>
@@ -564,7 +953,10 @@ export function BodyDiagram({ markings = [], onMark, className = '' }: BodyDiagr
           </div>
           <ul className="flex flex-col gap-2 p-0 m-0 list-none">
             {markings.map((m) => (
-              <li key={m.id} className="flex items-baseline gap-2 font-serif italic text-[14px] text-[var(--text-primary)]">
+              <li
+                key={m.id}
+                className="flex items-baseline gap-2 font-serif italic text-[14px] text-[var(--text-primary)]"
+              >
                 <span
                   className="w-2 h-2 rounded-full flex-shrink-0 translate-y-[-1px]"
                   style={{ background: MARKING_COLOR_KEYS[m.color] }}
@@ -575,6 +967,48 @@ export function BodyDiagram({ markings = [], onMark, className = '' }: BodyDiagr
           </ul>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ============================================================
+   MarkdownViewer — renders children content as formatted markdown.
+   Uses react-markdown; serif body, mono code, hairline rules.
+   ============================================================ */
+
+export interface MarkdownViewerProps {
+  readonly children: string;
+  readonly className?: string;
+}
+
+export function MarkdownViewer({ children, className = '' }: MarkdownViewerProps) {
+  return (
+    <div
+      className={[
+        'font-serif text-[15px] leading-[1.65] tracking-[-0.005em] text-[var(--text-primary)]',
+        '[&_h1]:font-serif [&_h1]:text-[28px] [&_h1]:font-medium [&_h1]:tracking-[-0.022em] [&_h1]:mb-4 [&_h1]:mt-6 [&_h1]:leading-[1.15]',
+        '[&_h2]:font-serif [&_h2]:text-[22px] [&_h2]:font-medium [&_h2]:tracking-[-0.012em] [&_h2]:mb-3 [&_h2]:mt-5 [&_h2]:leading-[1.2]',
+        '[&_h3]:font-serif [&_h3]:text-[18px] [&_h3]:font-medium [&_h3]:mb-2 [&_h3]:mt-4',
+        '[&_p]:mb-[14px] [&_p]:last:mb-0',
+        '[&_strong]:font-semibold [&_strong]:text-[var(--text-primary)]',
+        '[&_em]:italic [&_em]:text-[var(--text-secondary)]',
+        '[&_del]:line-through [&_del]:text-[var(--text-tertiary)]',
+        '[&_a]:text-[var(--records-700)] [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:text-[var(--records-800)]',
+        '[&_code]:font-mono [&_code]:text-[13px] [&_code]:bg-[var(--surface-sunken)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-[2px] [&_code]:text-[var(--text-primary)]',
+        '[&_pre]:bg-[var(--surface-sunken)] [&_pre]:border [&_pre]:border-[var(--border-default)] [&_pre]:p-4 [&_pre]:mb-4 [&_pre]:overflow-x-auto',
+        '[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-[13px]',
+        '[&_blockquote]:border-l-[3px] [&_blockquote]:border-[var(--text-primary)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[var(--text-secondary)] [&_blockquote]:mb-4',
+        '[&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:list-disc',
+        '[&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:list-decimal',
+        '[&_li]:mb-1',
+        '[&_hr]:border-0 [&_hr]:border-t [&_hr]:border-[var(--border-default)] [&_hr]:my-5',
+        '[&_table]:w-full [&_table]:border-collapse [&_table]:mb-4',
+        '[&_th]:font-mono [&_th]:text-[11px] [&_th]:uppercase [&_th]:tracking-[0.14em] [&_th]:text-[var(--text-tertiary)] [&_th]:border-b [&_th]:border-[var(--text-primary)] [&_th]:py-2 [&_th]:text-left',
+        '[&_td]:border-b [&_td]:border-dashed [&_td]:border-[var(--border-default)] [&_td]:py-2 [&_td]:text-[14px]',
+        className,
+      ].join(' ')}
+    >
+      <ReactMarkdown>{children}</ReactMarkdown>
     </div>
   );
 }
