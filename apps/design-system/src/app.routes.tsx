@@ -9,6 +9,10 @@ const TokensScreen = lazy(() =>
   import('@features/tokens/tokens-screen').then((m) => ({ default: m.TokensScreen })),
 );
 
+const ButtonsScreen = lazy(() =>
+  import('@features/buttons/buttons-screen').then((m) => ({ default: m.ButtonsScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -28,7 +32,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <HomeScreen /> },
       { path: ROUTES.TOKENS, element: <Lazy><TokensScreen /></Lazy> },
-      { path: ROUTES.BUTTONS, element: <PlaceholderScreen name="Buttons" /> },
+      { path: ROUTES.BUTTONS, element: <Lazy><ButtonsScreen /></Lazy> },
       { path: ROUTES.INPUTS, element: <PlaceholderScreen name="Inputs" /> },
       { path: ROUTES.SELECTION, element: <PlaceholderScreen name="Selection" /> },
       { path: ROUTES.DATETIME, element: <PlaceholderScreen name="Date & Time" /> },
