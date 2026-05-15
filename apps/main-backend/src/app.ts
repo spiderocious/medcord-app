@@ -5,14 +5,13 @@ import helmet from 'helmet';
 
 import { register as registerAuth } from '@features/auth/index.js';
 import { register as registerHealth } from '@features/health/index.js';
-import { register as registerSimulator } from '@features/simulator/index.js';
 import { errorHandler } from '@middlewares/errorHandler.middleware.js';
 import { requestIdMiddleware } from '@middlewares/requestId.middleware.js';
 import { requestLogMiddleware } from '@middlewares/requestLog.middleware.js';
 
 import { env } from './env.js';
 
-const features = [registerHealth, registerAuth, registerSimulator];
+const features = [registerHealth, registerAuth];
 
 export const buildApp = (): express.Express => {
   const app = express();

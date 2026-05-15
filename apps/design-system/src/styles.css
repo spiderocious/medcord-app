@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   MEDCORD DESIGN SYSTEM — CSS Custom Properties
+   All tokens from colors_and_type.css, verbatim.
+   ============================================================ */
+
+:root {
+  /* Neutral scale */
+  --neutral-0:   #FFFFFF;
+  --neutral-25:  #F8FAFB;
+  --neutral-50:  #F1F5F8;
+  --neutral-100: #E2E8F0;
+  --neutral-200: #CBD5E1;
+  --neutral-300: #94A3B8;
+  --neutral-400: #64748B;
+  --neutral-500: #475569;
+  --neutral-600: #334155;
+  --neutral-700: #1E293B;
+  --neutral-800: #141E2B;
+  --neutral-900: #0E1117;
+
+  /* Brand teal */
+  --brand-50:  #E0F2F7;
+  --brand-100: #B3E3EF;
+  --brand-200: #7DD1E7;
+  --brand-300: #3DBEDD;
+  --brand-400: #0EB0D1;
+  --brand-500: #0A9DBD;
+  --brand-600: #0A87A3;
+  --brand-700: #0A6F87;
+  --brand-800: #0A5870;
+  --brand-900: #0A4F6E;
+
+  /* Module: Patient */
+  --patient-50:  #EFF6FF; --patient-100: #DBEAFE; --patient-200: #BFDBFE;
+  --patient-300: #93C5FD; --patient-400: #60A5FA; --patient-500: #3B82F6;
+  --patient-600: #2563EB; --patient-700: #1D4ED8; --patient-800: #1E40AF;
+  --patient-900: #1E3A8A;
+
+  /* Module: Staff */
+  --staff-50:  #F5F3FF; --staff-100: #EDE9FE; --staff-200: #DDD6FE;
+  --staff-300: #C4B5FD; --staff-400: #A78BFA; --staff-500: #8B5CF6;
+  --staff-600: #7C3AED; --staff-700: #6D28D9; --staff-800: #5B21B6;
+  --staff-900: #4C1D95;
+
+  /* Module: Consult */
+  --consult-50:  #F0FDFA; --consult-100: #CCFBF1; --consult-200: #99F6E4;
+  --consult-300: #5EEAD4; --consult-400: #2DD4BF; --consult-500: #14B8A6;
+  --consult-600: #0D9488; --consult-700: #0F766E; --consult-800: #115E59;
+  --consult-900: #134E4A;
+
+  /* Module: Records */
+  --records-50:  #F0FDF4; --records-100: #DCFCE7; --records-200: #BBF7D0;
+  --records-300: #86EFAC; --records-400: #4ADE80; --records-500: #22C55E;
+  --records-600: #16A34A; --records-700: #15803D; --records-800: #166534;
+  --records-900: #14532D;
+
+  /* Module: Equipment */
+  --equipment-50:  #FFFBEB; --equipment-100: #FEF3C7; --equipment-200: #FDE68A;
+  --equipment-300: #FCD34D; --equipment-400: #FBBF24; --equipment-500: #F59E0B;
+  --equipment-600: #D97706; --equipment-700: #B45309; --equipment-800: #92400E;
+  --equipment-900: #78350F;
+
+  /* Semantic: Success */
+  --success-bg: #F0FDF4; --success-border: #86EFAC; --success-fg: #15803D; --success-icon: #16A34A;
+
+  /* Semantic: Warning */
+  --warning-bg: #FFFBEB; --warning-border: #FCD34D; --warning-fg: #92400E; --warning-icon: #D97706;
+
+  /* Semantic: Danger */
+  --danger-bg: #FEF2F2; --danger-border: #FECACA; --danger-fg: #991B1B; --danger-icon: #DC2626;
+
+  /* Semantic: Info */
+  --info-bg: #EFF6FF; --info-border: #BFDBFE; --info-fg: #1E40AF; --info-icon: #2563EB;
+
+  /* Clinical semantic */
+  --clinical-critical-bg: #FEF2F2; --clinical-critical-border: #DC2626; --clinical-critical-fg: #7F1D1D;
+  --clinical-abnormal-high-bg: #FFF7ED; --clinical-abnormal-high-border: #FB923C; --clinical-abnormal-high-fg: #7C2D12;
+  --clinical-abnormal-low-bg: #FAF5FF; --clinical-abnormal-low-border: #A855F7; --clinical-abnormal-low-fg: #4C1D95;
+  --clinical-normal-bg: #F0FDF4; --clinical-normal-border: #4ADE80; --clinical-normal-fg: #14532D;
+  --clinical-pending-bg: #F8FAFB; --clinical-pending-border: #CBD5E1; --clinical-pending-fg: #475569;
+  --clinical-stat-bg: #FFF1F2; --clinical-stat-border: #FB7185; --clinical-stat-fg: #881337;
+
+  /* Allergy bands */
+  --allergy-band-bg: #DC2626; --allergy-band-fg: #FFFFFF;
+  --precaution-band-bg: #EA580C; --precaution-band-fg: #FFFFFF;
+  --advisory-band-bg: #CA8A04; --advisory-band-fg: #FFFFFF;
+
+  /* Workflow status */
+  --status-scheduled-bg: #EFF6FF; --status-scheduled-fg: #1D4ED8; --status-scheduled-border: #BFDBFE;
+  --status-checked-in-bg: #F0FDF4; --status-checked-in-fg: #15803D; --status-checked-in-border: #86EFAC;
+  --status-in-triage-bg: #FFF7ED; --status-in-triage-fg: #C2410C; --status-in-triage-border: #FED7AA;
+  --status-in-room-bg: #EEF2FF; --status-in-room-fg: #3730A3; --status-in-room-border: #C7D2FE;
+  --status-with-provider-bg: #F5F3FF; --status-with-provider-fg: #6D28D9; --status-with-provider-border: #DDD6FE;
+  --status-awaiting-labs-bg: #FFFBEB; --status-awaiting-labs-fg: #B45309; --status-awaiting-labs-border: #FDE68A;
+  --status-discharged-bg: #F1F5F8; --status-discharged-fg: #475569; --status-discharged-border: #CBD5E1;
+  --status-admitted-bg: #F0FDF4; --status-admitted-fg: #166534; --status-admitted-border: #BBF7D0;
+  --status-transferred-bg: #EFF6FF; --status-transferred-fg: #1E40AF; --status-transferred-border: #DBEAFE;
+  --status-no-show-bg: #FEF2F2; --status-no-show-fg: #B91C1C; --status-no-show-border: #FECACA;
+  --status-cancelled-bg: #FEF2F2; --status-cancelled-fg: #991B1B; --status-cancelled-border: #FCA5A5;
+
+  /* Data viz */
+  --dataviz-1: #0A87A3; --dataviz-2: #2563EB; --dataviz-3: #7C3AED; --dataviz-4: #16A34A;
+  --dataviz-5: #D97706; --dataviz-6: #DC2626; --dataviz-7: #0891B2; --dataviz-8: #BE185D;
+
+  /* Surfaces */
+  --surface-canvas:  #F8FAFB;
+  --surface-raised:  #FFFFFF;
+  --surface-sunken:  #F1F5F8;
+  --surface-overlay: rgba(14, 17, 23, 0.40);
+  --surface-scrim:   rgba(14, 17, 23, 0.60);
+
+  /* Borders */
+  --border-subtle:   #F1F5F8;
+  --border-default:  #E2E8F0;
+  --border-strong:   #94A3B8;
+  --border-focus:    #0EA5E9;
+  --border-critical: #DC2626;
+
+  /* Text */
+  --text-primary:    #0E1117;
+  --text-secondary:  #475569;
+  --text-tertiary:   #94A3B8;
+  --text-disabled:   #CBD5E1;
+  --text-inverse:    #FFFFFF;
+  --text-on-brand:   #FFFFFF;
+  --text-link:       #0A87A3;
+  --text-link-hover: #0A6F87;
+  --text-danger:     #DC2626;
+  --text-critical:   #7F1D1D;
+
+  /* Typography */
+  --font-ui:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-tabular: "tnum" 1, "lnum" 1;
+
+  /* Spacing */
+  --space-0: 0px;   --space-1: 4px;   --space-2: 8px;   --space-3: 12px;
+  --space-4: 16px;  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;
+  --space-10: 40px; --space-12: 48px; --space-16: 64px; --space-20: 80px;
+  --space-24: 96px;
+
+  /* Radius */
+  --radius-none: 0px; --radius-sm: 4px; --radius-md: 6px;
+  --radius-lg: 8px;   --radius-xl: 12px; --radius-2xl: 16px; --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(14,17,23,0.06), 0 0 0 1px rgba(14,17,23,0.04);
+  --shadow-2: 0 2px 8px rgba(14,17,23,0.08), 0 1px 2px rgba(14,17,23,0.04);
+  --shadow-3: 0 8px 24px rgba(14,17,23,0.10), 0 2px 4px rgba(14,17,23,0.05);
+  --shadow-4: 0 16px 48px rgba(14,17,23,0.14), 0 4px 8px rgba(14,17,23,0.06);
+  --shadow-5: 0 24px 64px rgba(14,17,23,0.18), 0 8px 16px rgba(14,17,23,0.08);
+
+  /* Motion */
+  --duration-instant: 0ms;  --duration-fast: 100ms;
+  --duration-normal: 200ms; --duration-slow: 350ms; --duration-slower: 500ms;
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --transition-fast:   all var(--duration-fast) var(--ease-in-out);
+  --transition-normal: all var(--duration-normal) var(--ease-in-out);
+  --transition-slow:   all var(--duration-slow) var(--ease-in-out);
+
+  /* Z-index */
+  --z-base: 0; --z-raised: 1; --z-dropdown: 1000; --z-sticky: 1100;
+  --z-modal-backdrop: 1200; --z-modal: 1300; --z-toast: 1400;
+  --z-tooltip: 1500; --z-critical-alert: 9999;
+
+  /* Density */
+  --density-compact-row-height: 32px; --density-compact-cell-padding: 4px 8px; --density-compact-font-size: 0.75rem;
+  --density-default-row-height: 44px; --density-default-cell-padding: 8px 12px; --density-default-font-size: 0.875rem;
+  --density-comfortable-row-height: 56px; --density-comfortable-cell-padding: 12px 16px; --density-comfortable-font-size: 1rem;
+}
+
+/* ============================================================
+   DARK THEME OVERRIDES
+   ============================================================ */
+
+[data-theme="dark"] {
+  --neutral-0:   #0E1117; --neutral-25:  #141E2B; --neutral-50:  #161B22;
+  --neutral-100: #1E2530; --neutral-200: #263040; --neutral-300: #3D4E63;
+  --neutral-400: #56697E; --neutral-500: #64748B; --neutral-600: #94A3B8;
+  --neutral-700: #CBD5E1; --neutral-800: #E2E8F0; --neutral-900: #F8FAFB;
+
+  --surface-canvas:  #0E1117; --surface-raised:  #161B22; --surface-sunken:  #0A0E13;
+  --surface-overlay: rgba(0,0,0,0.50); --surface-scrim: rgba(0,0,0,0.70);
+
+  --border-subtle:  #1E2530; --border-default: #21262D; --border-strong:  #3D4E63;
+
+  --text-primary:   #F1F5F8; --text-secondary: #94A3B8;
+  --text-tertiary:  #56697E; --text-disabled:  #3D4E63;
+  --text-link:      #3DBEDD; --text-link-hover:#7DD1E7;
+
+  --success-bg: #052E16; --success-border: #166534; --success-fg: #86EFAC;
+  --warning-bg: #2D1B00; --warning-border: #92400E; --warning-fg: #FCD34D;
+  --danger-bg:  #2D0505; --danger-border:  #991B1B; --danger-fg:  #FCA5A5;
+  --info-bg:    #041830; --info-border:    #1E40AF; --info-fg:    #93C5FD;
+
+  --clinical-critical-bg: #2D0505; --clinical-critical-fg: #FCA5A5; --clinical-critical-border: #991B1B;
+  --clinical-abnormal-high-bg: #2D1600; --clinical-abnormal-high-fg: #FCD34D; --clinical-abnormal-high-border: #92400E;
+  --clinical-abnormal-low-bg: #1E0530; --clinical-abnormal-low-fg: #C4B5FD; --clinical-abnormal-low-border: #5B21B6;
+  --clinical-normal-bg: #052E16; --clinical-normal-fg: #86EFAC; --clinical-normal-border: #166534;
+  --clinical-pending-bg: #141E2B; --clinical-pending-fg: #64748B; --clinical-pending-border: #263040;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.04);
+  --shadow-2: 0 2px 8px rgba(0,0,0,0.40), 0 1px 2px rgba(0,0,0,0.20);
+  --shadow-3: 0 8px 24px rgba(0,0,0,0.50), 0 2px 4px rgba(0,0,0,0.20);
+  --shadow-4: 0 16px 48px rgba(0,0,0,0.60), 0 4px 8px rgba(0,0,0,0.25);
+  --shadow-5: 0 24px 64px rgba(0,0,0,0.70), 0 8px 16px rgba(0,0,0,0.30);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--surface-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Tabular figures on numeric content */
+.numeric, code, kbd, samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}

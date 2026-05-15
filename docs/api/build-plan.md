@@ -14,7 +14,7 @@
 | Database | MongoDB via Mongoose |
 | Validation | Zod (feature.schema.ts per feature) |
 | Auth | JWT access + refresh tokens |
-| File storage | TBD (S3-compatible — needed for patient photos, documents, asset photos) |
+| File storage | External file service — frontend uploads directly, service returns a file key, we store the key. Backend never handles file bytes. |
 | Email | TBD (needed for invitations, verification, notifications) |
 | Real-time | Socket.io — deferred to when notifications module is wired |
 
@@ -44,6 +44,28 @@ Response envelope (always):
 Success  →  { data, meta? }
 Error    →  { error: { code, message, field_errors? } }
 ```
+
+---
+
+## File handling
+
+All file uploads and retrievals go through an external file service. Our backend never touches file bytes.
+
+**Upload flow:**
+1. Frontend requests an upload token/presigned URL from the file service directly
+2. Frontend uploads the file to the service
+3. File service returns a `fileKey` (opaque string)
+4. Frontend sends the `fileKey` to our API as part of the relevant request body (e.g. `{ photoKey: "abc123" }`)
+5. Backend stores the `fileKey` on the relevant document — nothing else
+
+**Retrieval flow:**
+1. Frontend passes a `fileKey` to the file service directly to get the file back
+2. Our API never proxies file bytes — it only ever returns keys
+
+**What this means for our data models:**
+- Anywhere a file is referenced, the field stores a `fileKey` string, not a URL or blob
+- Examples: `User.photoKey`, `Hospital.logoKey`, `Patient.photoKey`, `Patient.documents[].fileKey`, `Asset.photos[].fileKey`, `ChartDocument.fileKey`
+- Backend validates that a `fileKey` is a non-empty string — it does not verify the key exists in the file service
 
 ---
 
