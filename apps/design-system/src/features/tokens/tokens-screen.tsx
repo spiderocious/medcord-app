@@ -144,9 +144,8 @@ export function TokensScreen() {
                   fontSize: size,
                   fontWeight: weight,
                   fontFamily: mono ? 'var(--font-mono)' : 'var(--font-ui)',
-                  letterSpacing: weight === '700' ? '-0.025em' : weight === '600' ? '-0.015em' : '0',
+                  letterSpacing: label === 'overline' ? '0.1em' : weight === '700' ? '-0.025em' : weight === '600' ? '-0.015em' : '0',
                   textTransform: label === 'overline' ? 'uppercase' : 'none',
-                  letterSpacing: label === 'overline' ? '0.1em' : undefined,
                   fontFeatureSettings: mono ? '"tnum" 1, "lnum" 1' : undefined,
                 }}
                 className="text-[var(--text-primary)] leading-tight"
