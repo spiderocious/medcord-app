@@ -13,6 +13,10 @@ const ButtonsScreen = lazy(() =>
   import('@features/buttons/buttons-screen').then((m) => ({ default: m.ButtonsScreen })),
 );
 
+const InputsScreen = lazy(() =>
+  import('@features/inputs/inputs-screen').then((m) => ({ default: m.InputsScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -33,7 +37,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <HomeScreen /> },
       { path: ROUTES.TOKENS, element: <Lazy><TokensScreen /></Lazy> },
       { path: ROUTES.BUTTONS, element: <Lazy><ButtonsScreen /></Lazy> },
-      { path: ROUTES.INPUTS, element: <PlaceholderScreen name="Inputs" /> },
+      { path: ROUTES.INPUTS, element: <Lazy><InputsScreen /></Lazy> },
       { path: ROUTES.SELECTION, element: <PlaceholderScreen name="Selection" /> },
       { path: ROUTES.DATETIME, element: <PlaceholderScreen name="Date & Time" /> },
       { path: ROUTES.SPECIALIZED, element: <PlaceholderScreen name="Specialized Inputs" /> },

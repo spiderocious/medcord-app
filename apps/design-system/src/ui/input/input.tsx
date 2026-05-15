@@ -150,7 +150,7 @@ export function LineSelect({ label, help, status = 'default', options, mono = fa
    Used in tables, forms that need visual grid alignment.
    ============================================================ */
 
-export interface BlockInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
+export interface BlockInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children' | 'prefix'> {
   readonly label?: string;
   readonly help?: string;
   readonly status?: InputStatus;
