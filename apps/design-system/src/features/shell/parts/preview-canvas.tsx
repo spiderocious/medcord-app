@@ -25,7 +25,7 @@ export function Section({ title, description, children }: SectionProps) {
     <section className="mb-12">
       <div className="mb-6">
         <h2 className="text-[15px] font-semibold text-[var(--text-primary)] tracking-tight">{title}</h2>
-        {description !== null && (
+        {description != null && (
           <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{description}</p>
         )}
       </div>
@@ -49,7 +49,7 @@ export function ComponentRow({ label, children, background = 'default' }: Compon
 
   return (
     <div className="mb-4">
-      {label !== null && (
+      {label != null && (
         <div className="text-[11px] font-mono text-[var(--text-tertiary)] uppercase tracking-[0.08em] mb-2">
           {label}
         </div>
@@ -71,7 +71,7 @@ export function ComponentGrid({ label, children, cols = 3 }: ComponentGridProps)
   const colClass = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' }[cols];
   return (
     <div className="mb-4">
-      {label !== null && (
+      {label != null && (
         <div className="text-[11px] font-mono text-[var(--text-tertiary)] uppercase tracking-[0.08em] mb-2">
           {label}
         </div>

@@ -117,7 +117,7 @@ export function FormField({ label, value, type = 'text', options, mono, helpText
   return (
     <div className="flex flex-col gap-1.5">
       <div className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em]">{label}</div>
-      {type === 'select' && options !== null ? (
+      {type === 'select' && options != null ? (
         <select
           value={localValue}
           onChange={handleChange}
@@ -141,10 +141,10 @@ export function FormField({ label, value, type = 'text', options, mono, helpText
           style={{ borderBottom: `1px solid ${borderColor}`, padding: '4px 0 6px' }}
         />
       )}
-      {helpText !== null && (
+      {helpText != null && (
         <div className="font-serif italic text-[12px] text-[var(--text-tertiary)] leading-[1.4]">{helpText}</div>
       )}
-      {computedNote !== null && (
+      {computedNote != null && (
         <div className="font-serif italic text-[14px] text-[var(--text-tertiary)]">{computedNote}</div>
       )}
     </div>
@@ -270,7 +270,7 @@ export function InsuranceCard({ title, meta, frontFace, backFace }: InsuranceCar
         className="px-4 py-3 border-b border-[var(--text-primary)] bg-[var(--surface-sunken)] flex items-baseline gap-2"
       >
         <span className="font-serif text-[16px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">{title}</span>
-        {meta !== null && (
+        {meta != null && (
           <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{meta}</span>
         )}
       </div>
@@ -309,7 +309,7 @@ export function InsuranceCard({ title, meta, frontFace, backFace }: InsuranceCar
               {face.id}
             </div>
             {face.body}
-            {face.bottomLine !== null && (
+            {face.bottomLine != null && (
               <div
                 className="font-mono text-[11px] tracking-[0] mt-auto"
                 style={{ color: face.variant === 'dark' ? '#F4EFE6' : 'var(--text-secondary)' }}
@@ -386,7 +386,7 @@ export function RegistrationSheet({ title, subtitle, children }: RegistrationShe
         <h2 className="m-0 font-serif text-[22px] font-medium tracking-[-0.018em] text-[var(--text-primary)]">
           {title}
         </h2>
-        {subtitle !== null && (
+        {subtitle != null && (
           <p className="font-serif italic text-[14px] text-[var(--text-tertiary)] mt-1.5 leading-[1.5] max-w-[56ch] m-0 mt-1.5">
             {subtitle}
           </p>

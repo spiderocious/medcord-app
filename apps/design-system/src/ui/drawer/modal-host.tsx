@@ -152,7 +152,7 @@ function InputModal({ entry }: { readonly entry: InputModalEntry }) {
     <div className="relative bg-[var(--surface-raised)] border border-[var(--text-primary)] shadow-[0_24px_48px_rgba(24,22,19,0.24)] overflow-hidden">
       <div className="flex items-baseline gap-3 px-[22px] py-4 border-b border-[var(--text-primary)] bg-[var(--surface-sunken)]">
         <h2 className="m-0 font-serif text-[19px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">{entry.title}</h2>
-        {entry.stepLabel !== null && entry.stepLabel !== undefined && (
+        {entry.stepLabel != null && entry.stepLabel !== undefined && (
           <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em]">{entry.stepLabel}</span>
         )}
         <button type="button" onClick={dismiss} className="ml-auto bg-transparent border-0 cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] p-0">

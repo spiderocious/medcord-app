@@ -68,7 +68,7 @@ export function Topbar({
       <div />
 
       {/* Role pill */}
-      {roleLabel !== null && (
+      {roleLabel != null && (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-[var(--text-primary)] rounded-full font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-primary)]">
           {roleLabel}
         </span>
@@ -98,7 +98,7 @@ export function Topbar({
       </button>
 
       {/* Profile */}
-      {user !== null && (
+      {user != null && (
         <div className="flex items-center gap-2 cursor-pointer px-1.5">
           <span className="w-7 h-7 rounded-[4px] flex items-center justify-center font-ui font-semibold text-[11px]"
             style={{ background: '#DEE6D6', color: '#2F4226', border: '1px solid #C4D2BC' }}>
@@ -281,9 +281,9 @@ export function CommandPalette({ open, onClose, groups, activeId, onSelect }: Co
                   <span className="font-serif italic text-[18px] text-[var(--text-tertiary)] text-center leading-none">{item.glyph}</span>
                   <div>
                     <div className="font-serif text-[15px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">{item.name}</div>
-                    {item.meta !== null && <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{item.meta}</div>}
+                    {item.meta != null && <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{item.meta}</div>}
                   </div>
-                  {item.shortcut !== null && (
+                  {item.shortcut != null && (
                     <span className="font-mono text-[10px] text-[var(--text-tertiary)] border border-[var(--border-default)] px-1.5 py-px rounded-[2px]">{item.shortcut}</span>
                   )}
                 </button>
@@ -335,8 +335,8 @@ export function Drawer({ open, onClose, title, subtitle, avatarInitials, footer,
       >
         {/* Header */}
         <div className="grid items-center gap-2.5 px-5 py-3.5 border-b border-[var(--text-primary)] bg-[var(--surface-base)]"
-          style={{ gridTemplateColumns: avatarInitials !== null ? '36px 1fr auto' : '1fr auto' }}>
-          {avatarInitials !== null && (
+          style={{ gridTemplateColumns: avatarInitials != null ? '36px 1fr auto' : '1fr auto' }}>
+          {avatarInitials != null && (
             <span className="w-9 h-9 rounded-full flex items-center justify-center font-ui font-semibold text-[13px]"
               style={{ background: '#ECE3D6', color: '#5C4B30', border: '1px solid #D4C4A6' }}>
               {avatarInitials}
@@ -344,7 +344,7 @@ export function Drawer({ open, onClose, title, subtitle, avatarInitials, footer,
           )}
           <div>
             <div className="font-serif text-[18px] font-medium tracking-[-0.012em] leading-[1.1] text-[var(--text-primary)]">{title}</div>
-            {subtitle !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{subtitle}</div>}
+            {subtitle != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{subtitle}</div>}
           </div>
           <button type="button" onClick={onClose} className="text-[var(--text-tertiary)] cursor-pointer bg-transparent border-0 hover:text-[var(--text-primary)]">
             <X size={16} />
@@ -352,7 +352,7 @@ export function Drawer({ open, onClose, title, subtitle, avatarInitials, footer,
         </div>
 
         {/* Allergy band */}
-        {allergyText !== null && (
+        {allergyText != null && (
           <div className="px-5 py-2 bg-[var(--danger-icon)] font-serif italic text-[12px] text-[var(--neutral-0)] border-b border-[var(--text-primary)]">
             <span className="font-mono not-italic font-semibold tracking-[0.22em] text-[9px] mr-1">ALLERGY ·</span>
             {allergyText}
@@ -365,7 +365,7 @@ export function Drawer({ open, onClose, title, subtitle, avatarInitials, footer,
         </div>
 
         {/* Footer */}
-        {footer !== null && (
+        {footer != null && (
           <div className="px-4 py-3 border-t border-[var(--text-primary)] bg-[var(--surface-base)] flex items-center gap-2 justify-end">
             {footer}
           </div>
@@ -415,7 +415,7 @@ export function ModuleLauncher({ tiles }: ModuleLauncherProps) {
             {tile.icon}
           </span>
           <div className="font-serif text-[16px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">{tile.label}</div>
-          {tile.count !== null && (
+          {tile.count != null && (
             <div className={['font-mono text-[10px] tracking-[0] mt-auto', tile.active === true ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'].join(' ')}>
               {tile.count}
             </div>

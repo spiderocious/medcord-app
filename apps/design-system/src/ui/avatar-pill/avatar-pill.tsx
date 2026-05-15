@@ -38,7 +38,7 @@ export function PatientAvatar({ initials, size = 'md', critical = false, badge, 
       >
         {initials}
       </span>
-      {badge !== null && (
+      {badge != null && (
         <NotificationBadge count={badge} />
       )}
     </span>
@@ -107,7 +107,7 @@ export function StaffAvatar({ initials, size = 'md', role = 'other', onShift = f
       {onShift && (
         <span className="absolute -top-[2px] -right-[2px] w-2 h-2 rounded-full bg-[var(--records-600)] border-2 border-[var(--surface-base)]" />
       )}
-      {badge !== null && (
+      {badge != null && (
         <NotificationBadge count={badge} />
       )}
     </span>
@@ -130,7 +130,7 @@ export function AvatarStack({ children, overflow, className = '' }: AvatarStackP
       <span className="inline-flex [&>*+*]:-ml-2.5 [&>*]:shadow-[0_0_0_2px_var(--surface-base)]">
         {children}
       </span>
-      {overflow !== null && overflow > 0 && (
+      {overflow != null && overflow > 0 && (
         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--surface-base)] text-[var(--text-tertiary)] font-mono text-[11px] tracking-[0] border border-[var(--border-default)] shadow-[0_0_0_2px_var(--surface-base)] -ml-2.5">
           +{overflow}
         </span>
@@ -361,7 +361,7 @@ export function AllergyBand({ children, severity = 'anaphylactic', meta, classNa
         ALLERGY
       </span>
       <span className="flex-1">{children}</span>
-      {meta !== null && (
+      {meta != null && (
         <span className="font-mono not-italic text-[11px] text-white/70 tracking-[0] flex-shrink-0">{meta}</span>
       )}
     </div>

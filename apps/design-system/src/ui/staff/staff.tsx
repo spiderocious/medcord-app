@@ -166,7 +166,7 @@ export function ScheduleGrid({
         <h2 className="m-0 font-serif text-[20px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
           {title}
         </h2>
-        {meta !== null && (
+        {meta != null && (
           <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>
         )}
         <div className="flex gap-1.5">
@@ -218,7 +218,7 @@ export function ScheduleGrid({
                 key={di}
                 className="bg-[var(--surface-raised)] px-[6px] py-2 min-h-[60px] flex flex-col items-center justify-center gap-0.5 text-center"
               >
-                {block !== null && <ScheduleBlock {...block} />}
+                {block != null && <ScheduleBlock {...block} />}
               </div>
             ))}
           </div>
@@ -434,7 +434,7 @@ export function StaffPanel({ title, meta, rightSlot, children }: StaffPanelProps
         <h3 className="m-0 font-serif text-[18px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
           {title}
         </h3>
-        {meta !== null && (
+        {meta != null && (
           <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em]">
             {meta}
           </span>

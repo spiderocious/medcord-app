@@ -124,7 +124,7 @@ export function DropZone({
               ? 'Upload failed.'
               : 'Drop a file or click to upload.')}
       </div>
-      {sublabel !== null && sublabel !== undefined && (
+      {sublabel != null && sublabel !== undefined && (
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-1.5 tracking-[0]">
           {sublabel}
         </div>
@@ -163,7 +163,7 @@ export function FileRow({ name, size, status, progress, statusLabel, onRemove }:
     >
       <Paperclip size={14} className="text-[var(--text-tertiary)]" />
       <span className={`text-[14px] ${nameColor}`}>{name}</span>
-      {status === 'uploading' && progress !== null && progress !== undefined ? (
+      {status === 'uploading' && progress != null && progress !== undefined ? (
         <div className="w-[120px] h-1 bg-[var(--surface-sunken)]">
           <div
             className="h-full bg-[var(--text-primary)] transition-all duration-200"
@@ -176,10 +176,10 @@ export function FileRow({ name, size, status, progress, statusLabel, onRemove }:
         </span>
       )}
       <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
-        {status === 'uploading' && progress !== null && progress !== undefined
+        {status === 'uploading' && progress != null && progress !== undefined
           ? `${progress}%${size ? ` · ${size}` : ''}`
           : (size ?? '')}
-        {onRemove !== null && onRemove !== undefined && (
+        {onRemove != null && onRemove !== undefined && (
           <button
             type="button"
             onClick={onRemove}
@@ -262,7 +262,7 @@ export function PinInput({
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   function handleKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Backspace' && (value[idx] === null || value[idx] === undefined)) {
+    if (e.key === 'Backspace' && (value[idx] == null || value[idx] === undefined)) {
       const prev = inputsRef.current[idx - 1];
       if (prev) {
         prev.focus();
@@ -287,7 +287,7 @@ export function PinInput({
     <div
       className={`bg-[var(--surface-raised)] border border-[var(--text-primary)] p-[22px] max-w-[480px] ${className}`}
     >
-      {label !== null && label !== undefined && (
+      {label != null && label !== undefined && (
         <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3.5">
           {label}
         </div>
@@ -296,7 +296,7 @@ export function PinInput({
         {Array.from({ length }, (_, i) => {
           const char = value[i] ?? '';
           const isFilled = char !== '';
-          const isNext = !isFilled && (i === 0 || (value[i - 1] !== null && value[i - 1] !== undefined));
+          const isNext = !isFilled && (i === 0 || (value[i - 1] != null && value[i - 1] !== undefined));
           return (
             <input
               key={i}
@@ -321,7 +321,7 @@ export function PinInput({
           );
         })}
       </div>
-      {note !== null && note !== undefined && (
+      {note != null && note !== undefined && (
         <div className="font-serif italic text-[13px] text-[var(--text-tertiary)] mt-3.5 leading-[1.45]">
           {note}
         </div>
@@ -387,12 +387,12 @@ export function StarRating({
           </button>
         ))}
       </div>
-      {score !== null && score !== undefined && (
+      {score != null && score !== undefined && (
         <div>
           <div className="font-serif text-[22px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
             {score.toFixed(1)}
           </div>
-          {scoreLabel !== null && scoreLabel !== undefined && (
+          {scoreLabel != null && scoreLabel !== undefined && (
             <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
               {scoreLabel}
             </div>
@@ -434,12 +434,12 @@ export function SignaturePad({
       <div className="flex items-baseline justify-between">
         <span className="font-serif italic text-[14px] text-[var(--text-primary)]">{label}</span>
         <div className="flex items-center gap-2">
-          {meta !== null && meta !== undefined && (
+          {meta != null && meta !== undefined && (
             <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
               {meta}
             </span>
           )}
-          {onClear !== null && onClear !== undefined && (
+          {onClear != null && onClear !== undefined && (
             <button
               type="button"
               onClick={onClear}
@@ -458,7 +458,7 @@ export function SignaturePad({
           padding: '0 8px',
         }}
       >
-        {signaturePath !== null && signaturePath !== undefined ? (
+        {signaturePath != null && signaturePath !== undefined ? (
           <svg viewBox="0 0 240 60" preserveAspectRatio="none" className="w-full h-full">
             <path d={signaturePath} stroke={strokeColor} strokeWidth="1.5" fill="none" />
           </svg>
@@ -595,12 +595,12 @@ export function MarkdownEditor({
   const charCount = value.length;
 
   function wrap(prefix: string, suffix: string) {
-    if (taRef.current === null || taRef.current === undefined) return;
+    if (taRef.current == null || taRef.current === undefined) return;
     applyInline(taRef.current, value, onChange, prefix, suffix);
   }
 
   function linePrefix(makePrefix: (i: number) => string) {
-    if (taRef.current === null || taRef.current === undefined) return;
+    if (taRef.current == null || taRef.current === undefined) return;
     applyLinePrefix(taRef.current, value, onChange, makePrefix);
   }
 
@@ -732,7 +732,7 @@ export function MarkdownEditor({
       <div className="flex justify-between px-3.5 py-2 border-t border-[var(--text-primary)] font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">
         <span>Mention @ · ⌘B bold · ⌘I italic · ⌘K link</span>
         <span>
-          {savedAt !== null && savedAt !== undefined ? `auto-saved ${savedAt} · ` : ''}
+          {savedAt != null && savedAt !== undefined ? `auto-saved ${savedAt} · ` : ''}
           {charCount} chars
         </span>
       </div>
@@ -879,7 +879,7 @@ function BodySvgCanvas({
   }
 
   function handleSvgClick(e: React.MouseEvent<SVGSVGElement>) {
-    if (draggingRef.current !== null) return;
+    if (draggingRef.current != null) return;
     const { x, y } = svgCoords(e.clientX, e.clientY);
     onSelect(null);
     onMark?.(view, Math.round(x), Math.round(y));
@@ -1058,7 +1058,7 @@ export function BodyDiagram({ markings = [], onMark, onMarkingsChange, allowFull
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [fullView, setFullView] = useState(false);
 
-  const selectedMarking = selectedId !== null ? markings.find((m) => m.id === selectedId) ?? null : null;
+  const selectedMarking = selectedId != null ? markings.find((m) => m.id === selectedId) ?? null : null;
 
   function handleMove(id: string, cx: number, cy: number) {
     if (!onMarkingsChange) return;
@@ -1088,12 +1088,12 @@ export function BodyDiagram({ markings = [], onMark, onMarkingsChange, allowFull
     <div className="flex gap-4 items-start flex-wrap">
       <BodySvgCanvas view="anterior" {...svgProps} compact={compact} />
       <BodySvgCanvas view="posterior" {...svgProps} compact={compact} />
-      {selectedMarking !== null && onMarkingsChange !== null && onMarkingsChange !== undefined && (
+      {selectedMarking != null && onMarkingsChange != null && onMarkingsChange !== undefined && (
         <div className="self-center">
           <MarkingEditor marking={selectedMarking} onUpdate={handleUpdate} onDelete={handleDelete} />
         </div>
       )}
-      {selectedMarking === null && markings.length > 0 && (
+      {selectedMarking == null && markings.length > 0 && (
         <div className="pt-8">
           <div className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3">
             Marked regions

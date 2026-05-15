@@ -48,7 +48,7 @@ const TOAST_GLYPH_COLOR: Record<FeedbackVariant, string> = {
 
 export function Toast({ variant = 'info', title, description, actions = [], progress, onDismiss, autoDismissMs }: ToastProps) {
   useEffect(() => {
-    if (autoDismissMs === null || onDismiss === null) return;
+    if (autoDismissMs == null || onDismiss == null) return;
     const t = setTimeout(onDismiss, autoDismissMs);
     return () => clearTimeout(t);
   }, [autoDismissMs, onDismiss]);
@@ -65,7 +65,7 @@ export function Toast({ variant = 'info', title, description, actions = [], prog
       {/* Body */}
       <div>
         <div className="font-ui text-[13px] font-semibold text-[var(--text-primary)]">{title}</div>
-        {description !== null && (
+        {description != null && (
           <div className="font-serif italic text-[13px] text-[var(--text-tertiary)] mt-0.5 leading-[1.45]">{description}</div>
         )}
         {actions.length > 0 && (
@@ -87,14 +87,14 @@ export function Toast({ variant = 'info', title, description, actions = [], prog
             ))}
           </div>
         )}
-        {progress !== null && (
+        {progress != null && (
           <div className="mt-2 h-[3px] bg-[var(--surface-sunken)]">
             <span className="block h-full bg-[var(--text-primary)]" style={{ width: `${progress}%` }} />
           </div>
         )}
       </div>
       {/* Dismiss */}
-      {onDismiss !== null && (
+      {onDismiss != null && (
         <button type="button" onClick={onDismiss} className="text-[var(--text-tertiary)] cursor-pointer bg-transparent border-0 font-ui text-[16px] leading-none hover:text-[var(--text-primary)]">
           <X size={14} />
         </button>
@@ -153,7 +153,7 @@ export function ToastManager({ toasts, onDismiss }: ToastManagerProps) {
           <Toast
             {...toast}
             onDismiss={() => onDismiss(toast.id)}
-            autoDismissMs={toast.autoDismissMs ?? (toast.actions !== null && toast.actions.length > 0 ? undefined : 5000)}
+            autoDismissMs={toast.autoDismissMs ?? (toast.actions != null && toast.actions.length > 0 ? undefined : 5000)}
           />
         </div>
       ))}
@@ -238,12 +238,12 @@ export function PageBanner({ variant = 'info', stamp, message, action, onDismiss
         {message}
       </div>
       <div className="flex items-center gap-3">
-        {action !== null && (
+        {action != null && (
           <button type="button" onClick={action.onClick} className={['font-ui text-[12px] cursor-pointer bg-transparent border-0 pb-px border-b transition-colors', PAGE_BANNER_TEXT[variant], variant === 'system' ? 'border-[var(--neutral-0)]' : 'border-[var(--text-primary)]'].join(' ')}>
             {action.label}
           </button>
         )}
-        {onDismiss !== null && (
+        {onDismiss != null && (
           <button type="button" onClick={onDismiss} className={['bg-transparent border-0 cursor-pointer', PAGE_BANNER_TEXT[variant]].join(' ')}>
             <X size={14} />
           </button>
@@ -340,7 +340,7 @@ export function ContextMenu({ items, open, onClose }: ContextMenuProps) {
       {items.map((item) => (
         item.divider === true ? (
           <div key={item.id} className="h-px bg-[var(--border-default)] my-1 mx-2" />
-        ) : item.groupLabel !== null ? (
+        ) : item.groupLabel != null ? (
           <div key={item.id} className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] px-3.5 pt-2 pb-1">
             {item.groupLabel}
           </div>
@@ -358,7 +358,7 @@ export function ContextMenu({ items, open, onClose }: ContextMenuProps) {
           >
             <span className="font-serif italic text-[16px] text-[var(--text-tertiary)] text-center leading-none">{item.glyph ?? ''}</span>
             <span>{item.label ?? ''}</span>
-            {item.shortcut !== null && (
+            {item.shortcut != null && (
               <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]">{item.shortcut}</span>
             )}
           </button>

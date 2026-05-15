@@ -56,10 +56,10 @@ export function Checkbox({ label, help, indeterminate = false, checked, disabled
           )}
         </span>
       </span>
-      {label !== null && (
+      {label != null && (
         <span className="flex flex-col gap-0.5">
           <span className="text-[14px] text-[var(--text-primary)] leading-snug">{label}</span>
-          {help !== null && <span className="text-[12px] text-[var(--text-tertiary)]">{help}</span>}
+          {help != null && <span className="text-[12px] text-[var(--text-tertiary)]">{help}</span>}
         </span>
       )}
     </label>
@@ -106,10 +106,10 @@ export function Radio({ label, help, checked, disabled, className = '', ...rest 
           )}
         </span>
       </span>
-      {label !== null && (
+      {label != null && (
         <span className="flex flex-col gap-0.5">
           <span className="text-[14px] text-[var(--text-primary)] leading-snug">{label}</span>
-          {help !== null && <span className="text-[12px] text-[var(--text-tertiary)]">{help}</span>}
+          {help != null && <span className="text-[12px] text-[var(--text-tertiary)]">{help}</span>}
         </span>
       )}
     </label>
@@ -234,10 +234,10 @@ export function Switch({ checked = false, onChange, disabled = false, label, des
 
   return (
     <div className={`flex items-center justify-between gap-4 ${className}`}>
-      {(label !== null || description !== null) && (
+      {(label != null || description != null) && (
         <label htmlFor={id} className={`flex-1 cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
-          {label !== null && <div className="text-[14px] text-[var(--text-primary)]">{label}</div>}
-          {description !== null && <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5">{description}</div>}
+          {label != null && <div className="text-[14px] text-[var(--text-primary)]">{label}</div>}
+          {description != null && <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5">{description}</div>}
         </label>
       )}
       <button
@@ -300,7 +300,7 @@ export function Chip({ children, variant = 'default', onRemove, onClick, classNa
       onClick={onClick}
     >
       {children}
-      {onRemove !== null && (
+      {onRemove != null && (
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
@@ -370,7 +370,7 @@ export function AllergyInput({ chips, onRemove, onAdd, placeholder = 'Add allerg
           ].join(' ')}
         >
           {chip.label}
-          {onRemove !== null && (
+          {onRemove != null && (
             <button
               type="button"
               onClick={() => onRemove(chip.id)}

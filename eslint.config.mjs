@@ -53,7 +53,7 @@ export default tseslint.config(
       ],
 
       'no-console': ['error', { allow: ['warn', 'error'] }],
-      eqeqeq: ['error', 'always'],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
 
       ...prettier.rules,
     },

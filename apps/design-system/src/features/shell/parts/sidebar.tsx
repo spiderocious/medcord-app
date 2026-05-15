@@ -81,7 +81,7 @@ function NavSection({ group, isOpen, onToggle, items }: {
                 }
               >
                 {item.label}
-                {item.badge !== null && (
+                {item.badge != null && (
                   <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--brand-100)] text-[var(--brand-700)] font-medium">
                     {item.badge}
                   </span>
@@ -120,7 +120,7 @@ export function Sidebar({ isDark, onToggleDark, className = '' }: SidebarProps) 
       <SearchBar value={search} onChange={setSearch} />
 
       <nav className="flex-1 overflow-y-auto py-1">
-        {filtered !== null ? (
+        {filtered != null ? (
           <ul>
             {filtered.length === 0 && (
               <li className="px-4 py-6 text-center text-[12px] text-[var(--text-tertiary)]">No results</li>

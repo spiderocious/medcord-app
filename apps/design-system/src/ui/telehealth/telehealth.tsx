@@ -38,7 +38,7 @@ export function VideoTile({ variant, initials, name, role, showRec = false, netw
         </span>
       )}
 
-      {network !== null && (
+      {network != null && (
         <span className="absolute right-3 top-3 bg-[rgba(0,0,0,0.5)] flex items-center gap-1.5 px-2 py-[3px] rounded-sm font-mono text-[9px] text-[rgba(244,239,230,1)] tracking-[0.18em] uppercase">
           <span className="inline-flex items-end gap-px">
             {network.bars.map((h, i) => (
@@ -157,7 +157,7 @@ export function VideoCall({ tiles, captions, duration, onEndCall }: VideoCallPro
         <VideoTile {...tiles[0]} />
         <VideoTile {...tiles[1]} />
       </div>
-      {captions !== null && <CallCaptions {...captions} />}
+      {captions != null && <CallCaptions {...captions} />}
       <VideoControls duration={duration} onEndCall={onEndCall} />
     </div>
   );
@@ -254,7 +254,7 @@ export function PatientQueueRow({ name, age, reason, when, isActive = false, nee
           <span className="font-mono text-[11px] text-[var(--text-tertiary)] ml-1.5 font-normal">{age}</span>
         </div>
         <div className="font-serif italic text-[var(--text-tertiary)] text-[13px] mt-0.5">{reason}</div>
-        {when !== null && (
+        {when != null && (
           <div
             className={['font-mono text-[11px] mt-1 tracking-[0]', needsAttention ? 'text-[var(--warning-icon)]' : 'text-[var(--text-tertiary)]'].join(' ')}
           >
@@ -290,7 +290,7 @@ export function DictationNote({ title, meta, paragraphs, aiChips = [], aiDisclai
       <div className="px-7 py-[22px] font-serif text-[16px] leading-[1.65] text-[var(--text-primary)] tracking-[-0.005em]">
         {paragraphs.map((p, i) => (
           <p key={i} className="m-0 mb-[14px] last:mb-0">
-            {p.label !== null && <strong>{p.label} </strong>}
+            {p.label != null && <strong>{p.label} </strong>}
             <span dangerouslySetInnerHTML={{ __html: p.text }} />
           </p>
         ))}
@@ -310,7 +310,7 @@ export function DictationNote({ title, meta, paragraphs, aiChips = [], aiDisclai
               {chip}
             </button>
           ))}
-          {aiDisclaimer !== null && (
+          {aiDisclaimer != null && (
             <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] ml-auto">{aiDisclaimer}</span>
           )}
         </div>
