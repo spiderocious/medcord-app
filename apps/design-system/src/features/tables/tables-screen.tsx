@@ -82,7 +82,7 @@ function PatientCell({ row }: { readonly row: PatientRow }) {
       </span>
       <div>
         <div className="font-ui text-[14px] font-medium text-[var(--text-primary)]">{row.name}</div>
-        {row.subName != null && (
+        {row.subName !== null && (
           <div className={['font-mono text-[10px] tracking-[0] mt-0.5', row.critical === true ? 'text-[var(--danger-icon)]' : 'text-[var(--text-tertiary)]'].join(' ')}>
             {row.subName}
           </div>
@@ -105,8 +105,6 @@ export function TablesScreen() {
   const [density, setDensity] = useState<TableDensity>('regular');
   const [sortDir, setSortDir] = useState<TableSortDir>('asc');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [density2, setDensity2] = useState<TableDensity>('compact');
-
   function handleSort() {
     setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
   }
@@ -122,13 +120,13 @@ export function TablesScreen() {
     { key: 'attending', header: 'Attending' },
     {
       key: 'vitals', header: 'Last vitals', mono: true,
-      render: (row: PatientRow) => row.vitals != null ? (
-        <span style={row.vitalsColor != null ? { color: row.vitalsColor } : {}}>{row.vitals}</span>
+      render: (row: PatientRow) => row.vitals !== null ? (
+        <span style={row.vitalsColor !== null ? { color: row.vitalsColor } : {}}>{row.vitals}</span>
       ) : null,
     },
     {
       key: 'spark', header: 'Trend',
-      render: (row: PatientRow) => row.spark != null ? <SparkCell points={row.spark} color={row.sparkColor} /> : null,
+      render: (row: PatientRow) => row.spark !== null ? <SparkCell points={row.spark} color={row.sparkColor} /> : null,
     },
     {
       key: 'status', header: 'Status',
@@ -225,7 +223,7 @@ export function TablesScreen() {
                 columns={simpleColumns}
                 rows={PATIENTS.slice(0, 2)}
                 density={d}
-                onDensityChange={setDensity2}
+                onDensityChange={() => {}}
               />
             </div>
           ))}

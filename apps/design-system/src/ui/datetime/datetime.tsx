@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from '@icons';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 /* ============================================================
    Shared utils
@@ -114,7 +114,7 @@ export function Calendar({ value, onChange, markedDates = [], unavailableDates =
           </div>
         ))}
         {cells.map((cell, i) => {
-          const isSelected = value != null && isSameDay(cell.date, value);
+          const isSelected = value !== null && isSameDay(cell.date, value);
           const isTodayCell = cell.type === 'current' && isToday(viewYear, viewMonth, cell.day);
           const isMarked = markedDates.some(d => isSameDay(d, cell.date));
           const isUnavail = unavailableDates.some(d => isSameDay(d, cell.date));
@@ -185,7 +185,7 @@ export function DateRangePicker({ value, onChange, unavailableDates = [], classN
 
   function handleSelect(date: Date) {
     if (unavailableDates.some(d => isSameDay(d, date))) return;
-    if (value?.start == null || value.end != null) {
+    if (value?.start === null || value.end !== null) {
       onChange?.({ start: date, end: undefined });
     } else if (date < value.start) {
       onChange?.({ start: date, end: value.start });
@@ -210,10 +210,10 @@ export function DateRangePicker({ value, onChange, unavailableDates = [], classN
   }
 
   const rangeStart = value?.start;
-  const rangeEnd = value?.end ?? (rangeStart != null && hoverDate != null && hoverDate > rangeStart ? hoverDate : undefined);
+  const rangeEnd = value?.end ?? (rangeStart !== null && hoverDate !== null && hoverDate > rangeStart ? hoverDate : undefined);
 
   function workingDaysCount(start?: Date, end?: Date): number {
-    if (start == null || end == null) return 0;
+    if (start === null || end === null) return 0;
     let count = 0;
     const cur = new Date(start);
     while (cur <= end) {
@@ -227,7 +227,7 @@ export function DateRangePicker({ value, onChange, unavailableDates = [], classN
   const workDays = workingDaysCount(rangeStart, rangeEnd);
 
   function formatDate(d?: Date) {
-    if (d == null) return '—';
+    if (d === null) return '—';
     return `${d.getDate()} ${(MONTH_NAMES[d.getMonth()] ?? '').slice(0, 3)}`;
   }
 
@@ -255,9 +255,9 @@ export function DateRangePicker({ value, onChange, unavailableDates = [], classN
           const isMuted = cell.type !== 'current';
           const isUnavail = unavailableDates.some(d => isSameDay(d, cell.date));
           const isTodayCell = cell.type === 'current' && isToday(viewYear, viewMonth, cell.day);
-          const isRangeStart = rangeStart != null && isSameDay(cell.date, rangeStart);
-          const isRangeEnd = rangeEnd != null && isSameDay(cell.date, rangeEnd);
-          const isInRange = rangeStart != null && rangeEnd != null && cell.date > rangeStart && cell.date < rangeEnd;
+          const isRangeStart = rangeStart !== null && isSameDay(cell.date, rangeStart);
+          const isRangeEnd = rangeEnd !== null && isSameDay(cell.date, rangeEnd);
+          const isInRange = rangeStart !== null && rangeEnd !== null && cell.date > rangeStart && cell.date < rangeEnd;
 
           return (
             <button
@@ -285,7 +285,7 @@ export function DateRangePicker({ value, onChange, unavailableDates = [], classN
         })}
       </div>
 
-      {(rangeStart != null || rangeEnd != null) && (
+      {(rangeStart !== null || rangeEnd !== null) && (
         <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0] mt-2.5 text-center">
           {formatDate(rangeStart)} → {formatDate(rangeEnd)}{workDays > 0 ? ` · ${workDays} working days` : ''}
         </div>
@@ -501,7 +501,7 @@ export function ClockFace({ hours, minutes, label, size = 200 }: ClockFaceProps)
         />
         <circle cx={r} cy={r} r="3" fill="var(--text-primary)" />
       </svg>
-      {label != null && (
+      {label !== null && (
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] text-center" style={{ width: size }}>
           {label}
         </div>
@@ -549,7 +549,7 @@ export function DOBInput({ value = '', onChange, className = '' }: DOBInputProps
       </div>
       <div className="text-right">
         <div className="font-serif text-[38px] font-medium leading-none tracking-[-0.022em] text-[var(--text-primary)]">
-          {age != null ? age : '—'}
+          {age !== null ? age : '—'}
         </div>
         <div className="font-serif italic text-[14px] text-[var(--text-tertiary)]">years</div>
       </div>
@@ -580,7 +580,7 @@ const SHORTCUTS: Array<{ label: string; hours: number }> = [
 function computeDoseTimes(startTime: string, intervalHours: number, count = 5): string[] {
   if (intervalHours === 0) return [];
   const [h, m] = startTime.split(':').map(Number);
-  if (h == null || m == null || isNaN(h) || isNaN(m)) return [];
+  if (h === null || m === null || isNaN(h) || isNaN(m)) return [];
   const times: string[] = [];
   let totalMinutes = h * 60 + m;
   for (let i = 0; i < count; i++) {

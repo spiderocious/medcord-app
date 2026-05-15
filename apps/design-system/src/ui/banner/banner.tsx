@@ -177,7 +177,7 @@ export function PatientBanner({
         <div>
           <h1 className="m-0 mb-1 font-serif text-[30px] font-medium leading-none tracking-[-0.022em] text-[var(--text-primary)]">
             {name}
-            {nickname != null && <span className="text-[var(--text-tertiary)] italic font-normal"> &quot;{nickname}&quot;</span>}
+            {nickname !== null && <span className="text-[var(--text-tertiary)] italic font-normal"> &quot;{nickname}&quot;</span>}
           </h1>
           <div className="flex gap-3.5 items-baseline flex-wrap mt-1.5 font-ui text-[13px] text-[var(--text-secondary)]">
             <span><strong className="text-[var(--text-primary)] font-semibold">{age}</strong></span>
@@ -185,7 +185,7 @@ export function PatientBanner({
             <span>{sex}</span>
             <span className="text-[var(--border-default)]">·</span>
             <span>DOB <span className="font-mono tracking-[0]">{dob}</span></span>
-            {languages != null && (
+            {languages !== null && (
               <>
                 <span className="text-[var(--border-default)]">·</span>
                 <span className="text-[var(--text-tertiary)]">{languages}</span>
@@ -215,11 +215,11 @@ export function PatientBanner({
       </div>
 
       {/* Allergy band */}
-      {allergyVariant === 'allergy' && allergyText != null ? (
+      {allergyVariant === 'allergy' && allergyText !== null ? (
         <div className="bg-[var(--danger-icon)] text-[var(--neutral-0)] px-7 py-[9px] font-serif italic text-[14px] leading-[1.4] border-b-2 border-[var(--text-primary)] flex items-center gap-3.5">
           <span className="font-mono not-italic font-semibold tracking-[0.22em] text-[10px] bg-black/30 px-2 py-[3px] rounded-[2px] flex-shrink-0">ALLERGY</span>
           <span>{allergyText}</span>
-          {allergySrc != null && (
+          {allergySrc !== null && (
             <span className="ml-auto font-mono not-italic text-[11px] text-white/75 tracking-[0] flex-shrink-0">{allergySrc}</span>
           )}
         </div>
@@ -227,7 +227,7 @@ export function PatientBanner({
         <div className="px-7 py-2 bg-[var(--surface-sunken)] border-b border-[var(--text-primary)] font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--text-secondary)] flex items-center gap-3.5">
           <span className="font-serif not-uppercase italic text-[18px] tracking-normal text-[var(--text-tertiary)] leading-none">—</span>
           {allergyText ?? 'No known allergies'}
-          {allergySrc != null && (
+          {allergySrc !== null && (
             <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0.16em] normal-case">{allergySrc}</span>
           )}
         </div>
@@ -295,7 +295,7 @@ export function PatientBanner({
                 v.status === 'flagged' ? 'text-[var(--warning-icon)]' : v.status === 'critical' ? 'text-[var(--danger-icon)]' : 'text-[var(--text-primary)]',
               ].join(' ')}>
                 {v.value}
-                {v.unit != null && <span className="font-ui text-[11px] text-[var(--text-tertiary)] ml-1 font-medium tracking-[0.02em]">{v.unit}</span>}
+                {v.unit !== null && <span className="font-ui text-[11px] text-[var(--text-tertiary)] ml-1 font-medium tracking-[0.02em]">{v.unit}</span>}
               </div>
               <div className={[
                 'flex items-center gap-1.5 font-mono text-[10px] tracking-[0] mt-1',
@@ -306,7 +306,7 @@ export function PatientBanner({
                     points={v.spark}
                     color={v.status === 'flagged' ? '#B25E09' : v.status === 'critical' ? 'var(--danger-icon)' : '#3C3833'}
                   />
-                ) : v.meta != null ? (
+                ) : v.meta !== null ? (
                   <span>{v.meta}</span>
                 ) : null}
               </div>

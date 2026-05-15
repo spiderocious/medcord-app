@@ -84,7 +84,7 @@ export function Button({
       {loading && (
         <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 animate-pulse-dot flex-shrink-0" />
       )}
-      {!loading && leftIcon != null && (
+      {!loading && leftIcon !== null && (
         <span className="flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 [&>svg]:stroke-current [&>svg]:fill-none [&>svg]:stroke-[1.7]">
           {leftIcon}
         </span>
@@ -97,7 +97,7 @@ export function Button({
       ) : (
         children
       )}
-      {rightIcon != null && !loading && (
+      {rightIcon !== null && !loading && (
         <span className="flex-shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 [&>svg]:stroke-current [&>svg]:fill-none [&>svg]:stroke-[1.7]">
           {rightIcon}
         </span>
@@ -150,7 +150,7 @@ export function IrreversibleButton({
   }, [disabled, confirmed, holdDuration, onConfirm]);
 
   const stopHold = useCallback(() => {
-    if (intervalRef.current != null) clearInterval(intervalRef.current);
+    if (intervalRef.current !== null) clearInterval(intervalRef.current);
     if (!confirmed) setProgress(0);
   }, [confirmed]);
 
@@ -249,7 +249,7 @@ export function SplitButton({
   };
 
   function handlePrimary() {
-    if (selected != null) onSelect?.(selected);
+    if (selected !== null) onSelect?.(selected);
   }
 
   function handleSelect(option: SplitButtonOption) {

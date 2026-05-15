@@ -20,7 +20,7 @@ function Swatch({ name, value, textClass = 'text-white' }: SwatchProps) {
   );
 }
 
-function ColorRamp({ label, prefix, shades, darkShades = [] }: {
+function ColorRamp({ label, prefix, shades }: {
   readonly label: string;
   readonly prefix: string;
   readonly shades: number[];
@@ -160,7 +160,6 @@ export function TokensScreen() {
       <Section title="Spacing Scale">
         <div className="flex items-end gap-3 flex-wrap">
           {[0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24].map((step) => {
-            const px = [0,4,8,12,16,20,24,32,40,48,64,80,96][step > 6 ? [8,10,12,16,20,24].indexOf(step) + 7 : step] ?? 0;
             return (
               <div key={step} className="flex flex-col items-center gap-1">
                 <div

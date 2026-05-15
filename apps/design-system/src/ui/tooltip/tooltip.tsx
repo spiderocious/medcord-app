@@ -84,7 +84,7 @@ export function Tooltip({ children, content, placement = 'bottom', shortcut, dis
         >
           <div className="relative inline-flex items-center gap-2 bg-[var(--text-primary)] text-[var(--neutral-0)] px-2.5 py-[5px] rounded-sm text-[12px] font-ui tracking-[0.005em] shadow-[0_4px_8px_rgba(24,22,19,0.16)] whitespace-nowrap">
             {content}
-            {shortcut != null && (
+            {shortcut !== null && (
               <span className="font-mono text-[10px] bg-white/18 px-[5px] py-[1px] rounded-sm tracking-[0]">
                 {shortcut}
               </span>
@@ -157,7 +157,7 @@ export function PopoverHeader({ title, meta }: PopoverHeaderProps) {
   return (
     <div className="flex items-baseline gap-2 px-4 py-3 border-b border-[var(--border-default)]">
       <h4 className="m-0 font-serif text-[16px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">{title}</h4>
-      {meta != null && <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{meta}</span>}
+      {meta !== null && <span className="ml-auto font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{meta}</span>}
     </div>
   );
 }
@@ -203,7 +203,7 @@ export function MenuItem({ icon, label, shortcut, variant = 'default', onClick }
         {icon ?? ''}
       </span>
       <span>{label}</span>
-      {shortcut != null && (
+      {shortcut !== null && (
         <span className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]">{shortcut}</span>
       )}
     </button>

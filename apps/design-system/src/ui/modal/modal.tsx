@@ -64,7 +64,7 @@ export function Modal({ open, onClose, size = 'md', variant = 'default', title, 
             'm-0 font-serif text-[19px] font-medium tracking-[-0.012em]',
             variant === 'critical' ? 'text-[var(--neutral-0)]' : 'text-[var(--text-primary)]',
           ].join(' ')}>{title}</h2>
-          {meta != null && (
+          {meta !== null && (
             <span className={[
               'ml-auto font-mono text-[10px] uppercase tracking-[0.18em]',
               variant === 'critical' ? 'text-white/75' : 'text-[var(--text-tertiary)]',
@@ -86,7 +86,7 @@ export function Modal({ open, onClose, size = 'md', variant = 'default', title, 
           {children}
         </div>
         {/* Footer */}
-        {footer != null && (
+        {footer !== null && (
           <div className="flex items-center gap-2 px-[22px] py-3.5 border-t border-[var(--border-default)] bg-[var(--surface-sunken)]">
             {footer}
           </div>
@@ -202,7 +202,7 @@ export function TypedConfirmModal({ open, onClose, title, description, confirmWo
         </>
       }
     >
-      {description != null && (
+      {description !== null && (
         <p className="m-0 mb-3.5 text-[13px] text-[var(--text-secondary)] leading-[1.55]">{description}</p>
       )}
       <ModalField label={`Type ${confirmWord} to confirm`}>
@@ -299,23 +299,23 @@ export function TwoPersonModal({ open, onClose, title, medicationText, primary, 
             </ModalField>
             {primary.authenticated === true && (
               <div className="font-mono text-[11px] text-[var(--records-800)] tracking-[0] mt-2.5">
-                ✓ authenticated{primary.authenticatedAt != null ? ` · ${primary.authenticatedAt}` : ''}
+                ✓ authenticated{primary.authenticatedAt !== null ? ` · ${primary.authenticatedAt}` : ''}
               </div>
             )}
           </div>
           {/* Witness */}
-          <div className={['px-[22px] py-[22px]', witness == null ? 'bg-[var(--surface-sunken)]' : ''].join(' ')}>
+          <div className={['px-[22px] py-[22px]', witness === null ? 'bg-[var(--surface-sunken)]' : ''].join(' ')}>
             <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-3">Witness · second RN</div>
             <div className="flex items-center gap-2.5 mb-3.5 pb-3.5 border-b border-dashed border-[var(--border-default)]">
               <span className={[
                 'w-9 h-9 rounded-[4px] flex items-center justify-center font-ui font-semibold text-[13px] border',
-                witness != null ? '' : 'border-dashed border-[var(--border-default)] bg-[var(--surface-sunken)] text-[var(--text-tertiary)]',
+                witness !== null ? '' : 'border-dashed border-[var(--border-default)] bg-[var(--surface-sunken)] text-[var(--text-tertiary)]',
               ].join(' ')}
-                style={witness != null ? { background: '#DDE3D4', color: '#495939', border: '1px solid #C2CCB4' } : {}}>
+                style={witness !== null ? { background: '#DDE3D4', color: '#495939', border: '1px solid #C2CCB4' } : {}}>
                 {witness?.initials ?? '?'}
               </span>
               <div>
-                <div className={['font-serif text-[16px] font-medium tracking-[-0.005em]', witness != null ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] italic'].join(' ')}>
+                <div className={['font-serif text-[16px] font-medium tracking-[-0.005em]', witness !== null ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] italic'].join(' ')}>
                   {witness?.name ?? 'Awaiting witness'}
                 </div>
                 <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]">{witness?.role ?? 'scan badge or type ID'}</div>
@@ -375,7 +375,7 @@ export function SessionTimeoutModal({ open, secondsRemaining, workstation, onLoc
               <span className="font-mono text-[12px] text-[var(--text-tertiary)] uppercase tracking-[0.16em] ml-2.5">remaining</span>
             </div>
             <p className="m-0 font-serif italic text-[14px] text-[var(--text-tertiary)] leading-[1.5] mt-2">
-              {workstation != null ? `Workstation ${workstation}` : 'This workstation'} will lock for HIPAA in {secondsRemaining} seconds. Move the mouse or press a key to extend.
+              {workstation !== null ? `Workstation ${workstation}` : 'This workstation'} will lock for HIPAA in {secondsRemaining} seconds. Move the mouse or press a key to extend.
             </p>
           </div>
           <div className="flex items-center gap-2 px-[22px] py-3.5 border-t border-[var(--border-default)] bg-[var(--surface-sunken)]">
@@ -474,7 +474,7 @@ export function BreakTheGlassModal({ open, onClose, patient, onAcknowledge }: Br
         </span>
         <div>
           <div className="font-serif text-[15px] font-medium text-[var(--text-primary)]">{patient.name}</div>
-          <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">MRN {patient.mrn}{patient.location != null ? ` · ${patient.location}` : ''}</div>
+          <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">MRN {patient.mrn}{patient.location !== null ? ` · ${patient.location}` : ''}</div>
         </div>
         <span className="ml-auto font-mono text-[10px] text-[var(--danger-icon)] uppercase tracking-[0.18em] border border-[var(--danger-icon)] px-2 py-[3px]">
           Contains PHI

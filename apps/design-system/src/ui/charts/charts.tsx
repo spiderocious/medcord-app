@@ -23,13 +23,13 @@ export function ChartCard({ title, meta, subtitle, children, legend }: ChartCard
     <div className="bg-[var(--surface-raised)] border border-[var(--text-primary)] p-[18px_22px]">
       <h2 className="m-0 mb-1 font-serif text-[18px] font-medium tracking-[-0.012em] text-[var(--text-primary)] flex items-baseline gap-2">
         <span className="flex-1">{title}</span>
-        {meta != null && <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em] font-normal">{meta}</span>}
+        {meta !== null && <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em] font-normal">{meta}</span>}
       </h2>
-      {subtitle != null && (
+      {subtitle !== null && (
         <div className="font-ui text-[12px] text-[var(--text-tertiary)] leading-[1.45] mb-3.5">{subtitle}</div>
       )}
       {children}
-      {legend != null && (
+      {legend !== null && (
         <div className="flex gap-3.5 mt-3 font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]">
           {legend.map((l) => (
             <span key={l.label} className="inline-flex items-center gap-1.5">
@@ -227,7 +227,7 @@ export function GanttChart({ rows, startHour = 7, endHour = 19, nowHour, nowLabe
                   <text x={bx + bw / 2} y={rowY + 15} textAnchor="middle"
                     fontFamily="Inter" fontSize={11} fontWeight={block.emergency ? 600 : 500}
                     fill={textFill}>
-                    {block.label}{block.surgeon != null ? ` · ${block.surgeon}` : ''}
+                    {block.label}{block.surgeon !== null ? ` · ${block.surgeon}` : ''}
                   </text>
                 </g>
               );
@@ -236,7 +236,7 @@ export function GanttChart({ rows, startHour = 7, endHour = 19, nowHour, nowLabe
         );
       })}
       {/* now line */}
-      {nowHour != null && (
+      {nowHour !== null && (
         <>
           <line x1={toX(nowHour)} y1={padT} x2={toX(nowHour)} y2={H - padB} stroke="var(--text-primary)" strokeWidth="1.5" />
           <text x={toX(nowHour)} y={H - 2} textAnchor="middle" fontFamily="JetBrains Mono" fontSize={10} fill="var(--text-primary)">
@@ -275,7 +275,7 @@ export function Heatmap({ rows, axisLabels }: HeatmapProps) {
           </div>
         ))}
       </div>
-      {axisLabels != null && (
+      {axisLabels !== null && (
         <div className="mt-1.5 font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]"
           style={{ display: 'grid', gridTemplateColumns: `60px repeat(${cols}, 1fr)`, gap: 1 }}>
           <div />
@@ -332,15 +332,15 @@ export function DonutChart({ segments, centerLabel, centerSubLabel, total }: Don
             />
           );
         })}
-        {centerLabel != null && (
+        {centerLabel !== null && (
           <text x={60} y={62} textAnchor="middle" fontFamily="JetBrains Mono" fontSize={13} fontWeight={600} fill="var(--text-primary)">{centerLabel}</text>
         )}
-        {centerSubLabel != null && (
+        {centerSubLabel !== null && (
           <text x={60} y={76} textAnchor="middle" fontFamily="Inter" fontSize={9} fill="var(--text-tertiary)">{centerSubLabel}</text>
         )}
       </svg>
       <div className="flex flex-col gap-2.5">
-        {total != null && <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mb-1">{total}</div>}
+        {total !== null && <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mb-1">{total}</div>}
         {segments.map((seg) => (
           <div key={seg.label} className="font-mono text-[12px] tracking-[0] border-b border-dashed border-[var(--border-default)] pb-1.5 last:border-b-0"
             style={{ display: 'grid', gridTemplateColumns: '12px 1fr auto auto', gap: 10, alignItems: 'baseline' }}>
@@ -376,7 +376,6 @@ export function FunnelChart({ steps, height = 200 }: FunnelChartProps) {
   const H = height;
   const stepH = Math.floor(H / steps.length) - 4;
   const maxW = W - 40;
-  const minW = maxW * 0.3;
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} style={{ display: 'block' }}>
@@ -398,8 +397,8 @@ export function FunnelChart({ steps, height = 200 }: FunnelChartProps) {
               fontFamily="Inter" fontSize={step.filled ? 11 : i === steps.length - 2 ? 12 : 13}
               fontWeight={step.filled ? 500 : 500}
               fill={textFill}>
-              {step.label}{step.value != null ? ` · ${step.value.toLocaleString()}` : ''}
-              {step.pct != null ? ` — ${step.pct}` : ''}
+              {step.label}{step.value !== null ? ` · ${step.value.toLocaleString()}` : ''}
+              {step.pct !== null ? ` — ${step.pct}` : ''}
             </text>
           </g>
         );

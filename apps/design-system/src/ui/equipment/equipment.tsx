@@ -121,24 +121,24 @@ export function EquipmentRosterRow({
       <div>
         <div className="font-serif text-[16px] font-medium tracking-[-0.005em] text-[var(--text-primary)]">
           {name}
-          {alt != null && <span className="text-[var(--text-tertiary)] italic font-normal text-[14px]"> — {alt}</span>}
+          {alt !== null && <span className="text-[var(--text-tertiary)] italic font-normal text-[14px]"> — {alt}</span>}
         </div>
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-0.5 tracking-[0]">{serialNumber}</div>
       </div>
 
       <div>
         <div className="font-mono text-[12px] text-[var(--text-primary)] tracking-[0]">{lastService}</div>
-        {lastServiceMeta != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{lastServiceMeta}</div>}
+        {lastServiceMeta !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{lastServiceMeta}</div>}
       </div>
 
       <div>
         <div className={nextClass}>{nextService}</div>
-        {nextServiceMeta != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{nextServiceMeta}</div>}
+        {nextServiceMeta !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{nextServiceMeta}</div>}
       </div>
 
       <div>
         <div className="font-mono text-[12px] text-[var(--text-primary)] tracking-[0]">{location}</div>
-        {locationMeta != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{locationMeta}</div>}
+        {locationMeta !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0.04em]">{locationMeta}</div>}
       </div>
 
       <div>
@@ -163,7 +163,7 @@ export function EquipmentRoster({ title, meta, rows }: EquipmentRosterProps) {
     <div className="bg-[var(--surface-raised)] border border-[var(--text-primary)]">
       <div className="px-5 py-[14px] border-b border-[var(--text-primary)] bg-[var(--surface-sunken)] flex items-baseline gap-3.5">
         <h2 className="m-0 font-serif text-[20px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">{title}</h2>
-        {meta != null && <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
+        {meta !== null && <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
       </div>
 
       <div
@@ -209,7 +209,7 @@ export function EquipmentDetail({ name, alt, serialNumber, icon, rows }: Equipme
       <div className="px-5 py-[18px] border-b border-[var(--text-primary)] bg-[var(--surface-sunken)]">
         <div className="font-serif text-[22px] font-medium tracking-[-0.018em] text-[var(--text-primary)]">
           {name}
-          {alt != null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {alt}</span>}
+          {alt !== null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {alt}</span>}
         </div>
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-1 tracking-[0]">{serialNumber}</div>
       </div>
@@ -280,7 +280,7 @@ export function ConsumableRow({ name, meta, qty, par, status, rowVariant }: Cons
     >
       <div>
         <div className="font-sans text-[13px] text-[var(--text-primary)]">{name}</div>
-        {meta != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0]">{meta}</div>}
+        {meta !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0]">{meta}</div>}
       </div>
       <div className={qtyClass}>{qty}</div>
       <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{par}</div>

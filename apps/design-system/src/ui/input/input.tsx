@@ -53,7 +53,7 @@ export function LineField({ label, help, status = 'default', mono = false, disab
         ].join(' ')}
         {...rest}
       />
-      {help != null && (
+      {help !== null && (
         <span className={`text-[12px] ${STATUS_HELP[status]}`}>{help}</span>
       )}
     </div>
@@ -93,7 +93,7 @@ export function LineTextarea({ label, help, status = 'default', disabled, classN
         ].join(' ')}
         {...rest}
       />
-      {help != null && (
+      {help !== null && (
         <span className={`text-[12px] ${STATUS_HELP[status]}`}>{help}</span>
       )}
     </div>
@@ -138,7 +138,7 @@ export function LineSelect({ label, help, status = 'default', options, mono = fa
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
-      {help != null && (
+      {help !== null && (
         <span className={`text-[12px] ${STATUS_HELP[status]}`}>{help}</span>
       )}
     </div>
@@ -168,7 +168,7 @@ const BLOCK_STATUS_RING: Record<InputStatus, string> = {
 export function BlockInput({ label, help, status = 'default', mono = false, prefix, suffix, disabled, className = '', ...rest }: BlockInputProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      {label != null && (
+      {label !== null && (
         <label className="font-mono text-[10px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.18em]">
           {label}
         </label>
@@ -180,7 +180,7 @@ export function BlockInput({ label, help, status = 'default', mono = false, pref
         BLOCK_STATUS_RING[status],
         className,
       ].join(' ')}>
-        {prefix != null && <span className="text-[var(--text-tertiary)] flex-shrink-0 text-[12px]">{prefix}</span>}
+        {prefix !== null && <span className="text-[var(--text-tertiary)] flex-shrink-0 text-[12px]">{prefix}</span>}
         <input
           disabled={disabled}
           className={[
@@ -192,9 +192,9 @@ export function BlockInput({ label, help, status = 'default', mono = false, pref
           ].join(' ')}
           {...rest}
         />
-        {suffix != null && <span className="text-[var(--text-tertiary)] flex-shrink-0 text-[12px]">{suffix}</span>}
+        {suffix !== null && <span className="text-[var(--text-tertiary)] flex-shrink-0 text-[12px]">{suffix}</span>}
       </div>
-      {help != null && (
+      {help !== null && (
         <span className={`text-[12px] ${STATUS_HELP[status]}`}>{help}</span>
       )}
     </div>
@@ -214,7 +214,7 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
 export function SearchInput({ prefix, hint, className = '', ...rest }: SearchInputProps) {
   return (
     <div className={`flex items-baseline gap-3 px-[18px] py-[14px] border border-[var(--text-primary)] bg-[var(--surface-raised)] ${className}`}>
-      {prefix != null && (
+      {prefix !== null && (
         <span className="font-mono text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] flex-shrink-0">
           {prefix}
         </span>
@@ -223,7 +223,7 @@ export function SearchInput({ prefix, hint, className = '', ...rest }: SearchInp
         className="flex-1 bg-transparent border-0 outline-none font-ui text-[16px] text-[var(--text-primary)] placeholder:text-[var(--text-disabled)] min-w-0"
         {...rest}
       />
-      {hint != null && (
+      {hint !== null && (
         <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em] flex-shrink-0 hidden sm:block">
           {hint}
         </span>

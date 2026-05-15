@@ -32,7 +32,7 @@ function VitalsTrace({ points, color = 'var(--text-primary)', dashArray, bandY1P
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" style={{ display: 'block' }}>
-      {bandY1Pct != null && bandY2Pct != null && (
+      {bandY1Pct !== null && bandY2Pct !== null && (
         <rect
           x={0} y={bandY1Pct * H / 100}
           width={W} height={(bandY2Pct - bandY1Pct) * H / 100}
@@ -108,7 +108,7 @@ export function VitalsStrip({ title = 'Vital signs — 24 h', meta, xLabels, leg
       {/* Header */}
       <div className="flex items-baseline gap-[18px] px-5 py-[14px] border-b border-[var(--text-primary)] bg-[var(--surface-sunken)]">
         <h2 className="m-0 font-serif text-[20px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">{title}</h2>
-        {legend != null && (
+        {legend !== null && (
           <div className="flex gap-[14px] items-center font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]">
             {legend.map((l) => (
               <span key={l.label} className="inline-flex items-center gap-1.5">
@@ -118,12 +118,12 @@ export function VitalsStrip({ title = 'Vital signs — 24 h', meta, xLabels, leg
             ))}
           </div>
         )}
-        {meta != null && <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
+        {meta !== null && <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
       </div>
       {/* Rows */}
       {children}
       {/* X-axis */}
-      {xLabels != null && (
+      {xLabels !== null && (
         <div className="flex justify-between px-5 pt-1.5 pb-3 border-t border-[var(--border-default)] font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0]"
           style={{ marginLeft: 140 }}>
           {xLabels.map((l) => <span key={l}>{l}</span>)}
@@ -176,7 +176,7 @@ export function MARGrid({ title = 'Medication administration record', meta, hour
       {/* Header */}
       <div className="flex items-baseline gap-[18px] px-5 py-[14px] border-b border-[var(--text-primary)] bg-[var(--surface-sunken)]">
         <h2 className="m-0 font-serif text-[20px] font-medium tracking-[-0.012em] text-[var(--text-primary)] flex-1">{title}</h2>
-        {meta != null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
+        {meta !== null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{meta}</span>}
       </div>
 
       {/* Grid */}
@@ -200,7 +200,7 @@ export function MARGrid({ title = 'Medication administration record', meta, hour
               style={{ borderBottomStyle: 'dashed' }}>
               <div className="font-serif italic text-[16px] font-medium text-[var(--text-primary)] tracking-[-0.005em]">{drug.name}</div>
               <div className="font-mono text-[11px] text-[var(--text-secondary)] mt-0.5 tracking-[0]">{drug.dose}</div>
-              {drug.indication != null && (
+              {drug.indication !== null && (
                 <div className="font-ui text-[11px] text-[var(--text-tertiary)] mt-0.5">{drug.indication}</div>
               )}
             </div>
@@ -216,12 +216,12 @@ export function MARGrid({ title = 'Medication administration record', meta, hour
                 style={{ borderBottomStyle: 'dashed' }}>
                 {cell.status === 'future' ? (
                   <span>—</span>
-                ) : cell.status === 'given' && cell.initials != null ? (
+                ) : cell.status === 'given' && cell.initials !== null ? (
                   <>
                     <strong className="font-semibold">{cell.initials}</strong>
-                    {cell.time != null && <span>·{cell.time}</span>}
+                    {cell.time !== null && <span>·{cell.time}</span>}
                   </>
-                ) : cell.text != null ? (
+                ) : cell.text !== null ? (
                   <span>{cell.text}</span>
                 ) : null}
               </div>

@@ -44,7 +44,7 @@ export function PatientCardCompact({
         <div className="font-ui text-[13px] font-semibold text-[var(--text-primary)] truncate">{name}</div>
         <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{meta}</div>
       </div>
-      {statLabel != null && (
+      {statLabel !== null && (
         <span className="font-mono text-[10px] text-[var(--danger-icon)] tracking-[0.16em] uppercase flex-shrink-0">{statLabel}</span>
       )}
     </div>
@@ -119,7 +119,7 @@ export function PatientCardDefault({
           )}
         </div>
       </div>
-      {allergy != null && (
+      {allergy !== null && (
         <div className="px-3.5 py-[7px] bg-[var(--danger-icon)] font-serif italic text-[12px] text-[var(--neutral-0)] leading-[1.45]">
           <span className="font-mono not-italic font-semibold tracking-[0.22em] text-[9px] mr-1">ALLERGY ·</span>
           {allergy}
@@ -172,7 +172,7 @@ export function PatientCardExpanded({
         <div>
           <h3 className="m-0 font-serif text-[24px] font-medium tracking-[-0.018em] leading-[1.05] text-[var(--text-primary)]">
             {name}
-            {nickname != null && (
+            {nickname !== null && (
               <span className="text-[var(--text-tertiary)] italic font-normal"> &quot;{nickname}&quot;</span>
             )}
           </h3>
@@ -204,7 +204,7 @@ export function PatientCardExpanded({
           )}
         </div>
       </div>
-      {allergy != null && (
+      {allergy !== null && (
         <div className="px-5 py-[9px] bg-[var(--danger-icon)] font-serif italic text-[13px] text-[var(--neutral-0)] leading-[1.45] flex items-center gap-2.5">
           <span className="font-mono not-italic font-semibold tracking-[0.22em] text-[10px] px-[7px] py-0.5 rounded-[1px] bg-black/30">ALLERGY</span>
           {allergy}
@@ -269,7 +269,7 @@ export function StaffCard({
       <div>
         <h3 className="m-0 font-serif text-[19px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
           {name}
-          {credentials != null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {credentials}</span>}
+          {credentials !== null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {credentials}</span>}
         </h3>
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{department}</div>
         <span className={[
@@ -337,7 +337,7 @@ export function EquipmentCard({
       <div>
         <h3 className="m-0 font-serif text-[18px] font-medium tracking-[-0.012em] text-[var(--text-primary)]">
           {name}
-          {model != null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {model}</span>}
+          {model !== null && <span className="text-[var(--text-tertiary)] italic font-normal"> — {model}</span>}
         </h3>
         <div className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] mt-0.5">{serialNumber}</div>
         <span className={['inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-full text-[11px] font-medium border', EQUIP_STATUS_STYLE[status]].join(' ')}>
@@ -361,7 +361,7 @@ export function EquipmentCard({
           ))}
         </div>
       )}
-      {alarm != null && (
+      {alarm !== null && (
         <div className="col-span-2 mt-2.5 bg-[var(--danger-surface)] border border-[var(--danger-border)] text-[var(--danger-icon)] px-3 py-2 font-serif italic text-[13px] leading-[1.45] flex items-start gap-2">
           <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
           <span>{alarm}</span>
@@ -393,9 +393,9 @@ export function StatTile({ label, value, unit, delta, deltaDirection = 'neutral'
         valueVariant === 'warn' ? 'text-[var(--warning-icon)]' : valueVariant === 'crit' ? 'text-[var(--danger-icon)]' : 'text-[var(--text-primary)]',
       ].join(' ')}>
         {value}
-        {unit != null && <span className="font-ui text-[13px] text-[var(--text-tertiary)] ml-1 font-normal">{unit}</span>}
+        {unit !== null && <span className="font-ui text-[13px] text-[var(--text-tertiary)] ml-1 font-normal">{unit}</span>}
       </div>
-      {delta != null && (
+      {delta !== null && (
         <div className={[
           'font-mono text-[11px] tracking-[0] mt-1.5',
           deltaDirection === 'up' ? 'text-[var(--warning-icon)]' : deltaDirection === 'down' ? 'text-[var(--records-700)]' : 'text-[var(--text-tertiary)]',

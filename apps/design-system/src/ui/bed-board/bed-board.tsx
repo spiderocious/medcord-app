@@ -234,13 +234,13 @@ export function BedCell({
         <span className="absolute top-0 left-0 w-1 h-full bg-[var(--danger-icon)]" />
       )}
 
-      {isolation != null && <IsolationBadge variant={isolation} />}
+      {isolation !== null && <IsolationBadge variant={isolation} />}
 
       <span className="absolute top-2.5 right-3 font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0.16em] uppercase">
         {bedNumber}
       </span>
 
-      {isOccupied && patientName != null && (
+      {isOccupied && patientName !== null && (
         <div className="flex items-center gap-2.5 mt-0.5">
           <Avatar
             initials={patientInitials ?? '??'}
@@ -250,7 +250,7 @@ export function BedCell({
             <p className="text-[13px] font-semibold text-[var(--text-primary)] tracking-[0.005em] leading-[1.15]">
               {patientName}
             </p>
-            {patientDemo != null && (
+            {patientDemo !== null && (
               <p className="font-mono text-[10px] text-[var(--text-tertiary)] mt-px">{patientDemo}</p>
             )}
           </div>
@@ -263,7 +263,7 @@ export function BedCell({
         {acuity}
       </p>
 
-      {nextAction != null && (
+      {nextAction !== null && (
         <div className={`inline-flex items-center gap-1.5 text-[11px] font-medium tracking-[0.005em] ${nextActionColor}`}>
           {isOccupied && <span className={`w-[5px] h-[5px] rounded-full shrink-0 ${dotColor}`} />}
           {nextAction}
@@ -360,12 +360,12 @@ export function QueueItem({ name, age, when, reason, meta, urgent = false, isLas
         <span className="font-mono text-[11px] text-[var(--text-tertiary)]">{age}</span>
         <span className="ml-auto font-mono text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">{when}</span>
       </div>
-      {reason != null && (
+      {reason !== null && (
         <p className="font-serif italic text-[13px] text-[var(--text-secondary)] mt-1 tracking-[-0.005em]">
           &ldquo;{reason}&rdquo;
         </p>
       )}
-      {meta != null && (
+      {meta !== null && (
         <p className="text-[11px] text-[var(--text-tertiary)] mt-1">{meta}</p>
       )}
     </div>
@@ -466,7 +466,7 @@ function CountCell({ value, label, delta, deltaVariant = 'neutral', isLast = fal
         {value}
       </p>
       <p className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em] mt-1.5">{label}</p>
-      {delta != null && (
+      {delta !== null && (
         <p className={`font-mono text-[11px] mt-1 ${deltaColor}`}>{delta}</p>
       )}
     </div>

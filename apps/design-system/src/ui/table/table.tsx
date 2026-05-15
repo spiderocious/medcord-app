@@ -160,7 +160,7 @@ export function Table<T extends TableRow>({
             </button>
           ))}
           <div className="ml-auto flex items-center gap-3.5">
-            {totalCount != null && (
+            {totalCount !== null && (
               <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{totalCount} patients</span>
             )}
             <div className="inline-flex items-center border border-[var(--border-default)] rounded-full overflow-hidden font-mono text-[11px]">
@@ -213,7 +213,7 @@ export function Table<T extends TableRow>({
                   col.align === 'right' ? 'text-right' : '',
                   col.sortable === true ? 'cursor-pointer select-none hover:text-[var(--text-primary)]' : '',
                 ].join(' ')}
-                style={col.width != null ? { width: col.width } : {}}
+                style={col.width !== null ? { width: col.width } : {}}
                 onClick={col.sortable === true ? () => onSort?.(col.key) : undefined}
               >
                 {col.header}
@@ -224,7 +224,7 @@ export function Table<T extends TableRow>({
                 )}
               </th>
             ))}
-            {expandedRow != null && <th className="w-8 bg-[var(--surface-sunken)] border-b border-[var(--text-primary)]" />}
+            {expandedRow !== null && <th className="w-8 bg-[var(--surface-sunken)] border-b border-[var(--text-primary)]" />}
             <th className="w-8 bg-[var(--surface-sunken)] border-b border-[var(--text-primary)]" />
           </tr>
         </thead>
@@ -235,10 +235,10 @@ export function Table<T extends TableRow>({
             const isExpanded = expandedId === row.id;
             return (
               <>
-                {groupLabel != null && groupAfterIndex != null && i === groupAfterIndex && (
+                {groupLabel !== null && groupAfterIndex !== null && i === groupAfterIndex && (
                   <tr key={`group-${i}`}>
                     <td
-                      colSpan={columns.length + (selectable ? 1 : 0) + (expandedRow != null ? 1 : 0) + 1}
+                      colSpan={columns.length + (selectable ? 1 : 0) + (expandedRow !== null ? 1 : 0) + 1}
                       className="px-3.5 py-2 bg-[var(--surface-sunken)] font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-tertiary)] border-t border-[var(--border-default)]"
                     >
                       {groupLabel}
@@ -280,10 +280,10 @@ export function Table<T extends TableRow>({
                         cellPad,
                       ].join(' ')}
                     >
-                      {col.render != null ? col.render(row) : String(row[col.key] ?? '')}
+                      {col.render !== null ? col.render(row) : String(row[col.key] ?? '')}
                     </td>
                   ))}
-                  {expandedRow != null && (
+                  {expandedRow !== null && (
                     <td className={['border-b border-[var(--border-default)/30] text-center', cellPad].join(' ')}>
                       <button
                         type="button"
@@ -298,7 +298,7 @@ export function Table<T extends TableRow>({
                     <MoreHorizontal size={16} className="inline opacity-0 group-hover/row:opacity-100 cursor-pointer transition-opacity" />
                   </td>
                 </tr>
-                {isExpanded && expandedRow != null && (
+                {isExpanded && expandedRow !== null && (
                   <tr key={`${row.id}-exp`} className="bg-[var(--surface-sunken)]">
                     <td
                       colSpan={columns.length + (selectable ? 1 : 0) + 2}
@@ -319,7 +319,7 @@ export function Table<T extends TableRow>({
       {/* Pagination */}
       {pageCount > 1 && (
         <div className="flex items-center gap-4 px-4 py-3 bg-[var(--surface-sunken)] border border-[var(--text-primary)] border-t-0 font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
-          <span>{totalCount != null ? `${totalCount} records` : ''}</span>
+          <span>{totalCount !== null ? `${totalCount} records` : ''}</span>
           <div className="ml-auto flex items-center gap-2">
             {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
               <button

@@ -18,7 +18,7 @@ export function SkLine({ size = 'md', width, className = '' }: SkLineProps) {
   return (
     <div
       className={`${SK_BASE} ${height} rounded-sm ${className}`}
-      style={width != null ? { width } : undefined}
+      style={width !== null ? { width } : undefined}
     />
   );
 }
@@ -139,7 +139,7 @@ export function EmptyState({ variant = 'empty', glyph, title, description, actio
       <div className={`font-serif italic text-[16px] tracking-[-0.005em] leading-[1.45] max-w-[36ch] ${isError ? 'text-[var(--danger-icon)]' : 'text-[var(--text-primary)]'}`}>
         {title}
       </div>
-      {description != null && (
+      {description !== null && (
         <div className={`text-[12px] leading-[1.5] max-w-[38ch] ${isError ? 'text-[var(--danger-icon)] opacity-80' : 'text-[var(--text-tertiary)]'}`}>
           {description}
         </div>
@@ -235,7 +235,7 @@ export function ModuleEmptyCard({ module, glyph, title, description, actionLabel
         {title}
       </div>
       <div className="text-[12px] text-[var(--text-tertiary)] leading-[1.55]">{description}</div>
-      {actionLabel != null && (
+      {actionLabel !== null && (
         <button
           type="button"
           onClick={onAction}

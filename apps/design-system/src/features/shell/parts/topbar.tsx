@@ -5,7 +5,7 @@ export function Topbar() {
   const location = useLocation();
   const current = NAV_ITEMS.find((i) => i.route === location.pathname);
 
-  if (current == null) return null;
+  if (current === null) return null;
 
   return (
     <header className="h-14 flex-shrink-0 flex items-center justify-between px-8 border-b border-[var(--border-default)] bg-[var(--surface-raised)]">

@@ -12,9 +12,7 @@ import {
 } from '@ui/tooltip';
 import { Button } from '@ui/button';
 import { PatientAvatar, StaffAvatar } from '@ui/avatar-pill';
-import { Pill } from '@ui/avatar-pill';
 import { Checkbox } from '@ui/selection';
-import { Pill as PillComp } from '@ui/avatar-pill';
 
 /* ============================================================
    Hovercard specimens

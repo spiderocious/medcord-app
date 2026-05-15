@@ -78,7 +78,7 @@ export function EMRBanner({
             style={{ color: 'var(--text-primary)' }}
           >
             {name}
-            {nickname != null && (
+            {nickname !== null && (
               <span
                 className="italic font-normal"
                 style={{ color: 'var(--text-tertiary)' }}
@@ -120,7 +120,7 @@ export function EMRBanner({
       </div>
 
       {/* Allergy band */}
-      {allergyText != null && (
+      {allergyText !== null && (
         <div
           className="px-6 py-[8px] font-serif italic text-[13px] flex items-center gap-[14px] border-b-2"
           style={{
@@ -275,7 +275,7 @@ export function EMREntry({ title, when, signed = false, children, first = false,
         >
           {title}
         </h3>
-        {when != null && (
+        {when !== null && (
           <span className="font-mono text-[11px] tracking-[0]" style={{ color: 'var(--text-tertiary)' }}>
             {when}
             {signed && (
@@ -507,7 +507,7 @@ export function LabsList({ labs, onAcknowledge, acknowledged = false }: LabsList
         })}
       </div>
 
-      {onAcknowledge != null && !acknowledged && (
+      {onAcknowledge !== null && !acknowledged && (
         <div
           className="mt-3 px-[14px] py-3 flex items-center gap-[10px] font-ui text-[12px] rounded-[4px]"
           style={{ background: 'var(--text-primary)', color: 'var(--neutral-0)' }}
@@ -586,7 +586,7 @@ export function ProgressNote({ blocks, signedBy, signedStamp }: ProgressNoteProp
         <span className="not-italic font-medium" style={{ color: 'var(--text-primary)' }}>
           {signedBy}
         </span>
-        {signedStamp != null && (
+        {signedStamp !== null && (
           <span
             className="ml-auto font-mono not-italic text-[10px] tracking-[0.18em] uppercase px-2 py-[3px] rounded-[1px]"
             style={{

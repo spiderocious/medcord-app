@@ -106,7 +106,7 @@ export function LabSpotlightChart({ points, refLine, width = 240, height = 60 }:
   const xs = points.map((_, i) => padX + (i / (points.length - 1)) * (width - padX * 2));
   const toY = (v: number) => padY + (1 - (v - min) / range) * (height - padY * 2);
   const polyline = xs.map((x, i) => `${x},${toY(points[i]?.value ?? 0)}`).join(' ');
-  const refY = refLine != null ? toY(refLine) : null;
+  const refY = refLine !== null ? toY(refLine) : null;
 
   const DOT_COLOR: Record<LabFlag, string> = {
     normal: 'var(--records-700)',
@@ -118,7 +118,7 @@ export function LabSpotlightChart({ points, refLine, width = 240, height = 60 }:
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height} style={{ display: 'block' }}>
       <line x1={0} y1={height - padY / 2} x2={width} y2={height - padY / 2} stroke="var(--border-default)" />
-      {refY != null && (
+      {refY !== null && (
         <line x1={0} y1={refY} x2={width} y2={refY} stroke="var(--records-300)" strokeDasharray="2 3" />
       )}
       <polyline points={polyline} stroke="var(--danger-icon)" strokeWidth="1.6" fill="none" />
@@ -185,7 +185,7 @@ export function LabSpotlight({
       {/* Left column */}
       <div>
         <div className="font-serif text-[22px] font-medium tracking-[-0.012em] text-[var(--text-primary)] mb-1">{name}</div>
-        {subtitle != null && (
+        {subtitle !== null && (
           <div className="font-serif italic text-[14px] text-[var(--text-tertiary)] mb-[18px]">{subtitle}</div>
         )}
         <div className="flex items-baseline gap-3 font-mono font-medium leading-[0.9] tracking-[-0.04em] text-[var(--danger-icon)]"
@@ -194,9 +194,9 @@ export function LabSpotlight({
           <span className="font-ui text-[18px] text-[var(--text-tertiary)] font-medium">{unit}</span>
         </div>
         <div className="font-mono text-[12px] text-[var(--text-tertiary)] mt-2 tracking-[0]">{refRange}</div>
-        {criticalNote != null && <div className="mt-1 font-mono text-[12px] text-[var(--danger-icon)]">{criticalNote}</div>}
+        {criticalNote !== null && <div className="mt-1 font-mono text-[12px] text-[var(--danger-icon)]">{criticalNote}</div>}
 
-        {onAcknowledge != null && !acknowledged && (
+        {onAcknowledge !== null && !acknowledged && (
           <div className="mt-[18px] bg-[var(--text-primary)] text-[var(--neutral-0)] px-[14px] py-3 flex items-center gap-2.5 font-ui text-[12px]">
             <span className="font-semibold">Awaiting acknowledgement</span>
             <span className="text-[rgba(244,239,230,0.7)] flex-1">auto-page sent at 14:42</span>
@@ -232,7 +232,7 @@ export function LabSpotlight({
             </div>
           </div>
         ))}
-        {chartPoints != null && (
+        {chartPoints !== null && (
           <>
             <div className="font-mono text-[10px] text-[var(--text-tertiary)] tracking-[0.18em] uppercase mb-1.5">Trend</div>
             <LabSpotlightChart points={chartPoints} refLine={refLine} />
@@ -286,13 +286,13 @@ export function LabRow({ name, alt, ordinal, value, unit, flag = 'normal', range
       <div>
         <div className="font-serif text-[17px] font-medium tracking-[-0.005em]">
           <span className="text-[var(--text-primary)]">{name}</span>
-          {alt != null && <span className="text-[var(--text-tertiary)] italic font-normal text-[14px]"> — {alt}</span>}
+          {alt !== null && <span className="text-[var(--text-tertiary)] italic font-normal text-[14px]"> — {alt}</span>}
         </div>
-        {ordinal != null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0]">{ordinal}</div>}
-        {trend != null && (
+        {ordinal !== null && <div className="font-mono text-[10px] text-[var(--text-tertiary)] mt-0.5 tracking-[0]">{ordinal}</div>}
+        {trend !== null && (
           <div className="flex items-center gap-3.5 mt-1">
             <LabSparkline points={trend.points} flag={flag} />
-            {trend.arrow != null && (
+            {trend.arrow !== null && (
               <span className={[
                 'font-mono text-[13px]',
                 trend.arrow === 'up' ? (flag === 'crit' ? 'text-[var(--danger-icon)]' : 'text-[var(--warning-icon)]') :
@@ -301,7 +301,7 @@ export function LabRow({ name, alt, ordinal, value, unit, flag = 'normal', range
                 {trend.arrow === 'up' ? '↑' : trend.arrow === 'down' ? '↓' : '→'}
               </span>
             )}
-            {trend.delta != null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{trend.delta}</span>}
+            {trend.delta !== null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">{trend.delta}</span>}
           </div>
         )}
       </div>
@@ -314,7 +314,7 @@ export function LabRow({ name, alt, ordinal, value, unit, flag = 'normal', range
       </div>
 
       {/* Range bar column */}
-      {rangeBar != null && <RangeBar {...rangeBar} flag={flag} />}
+      {rangeBar !== null && <RangeBar {...rangeBar} flag={flag} />}
     </div>
   );
 }
@@ -370,7 +370,7 @@ export function LabTrendChart({ points, targetLow, targetHigh, targetLabel, yLab
         {/* target band */}
         <rect x={padX} y={bandY1} width={W - padX * 2} height={bandH}
           fill="var(--records-50)" stroke="var(--records-200)" strokeDasharray="2 3" />
-        {targetLabel != null && (
+        {targetLabel !== null && (
           <text x={padX + 8} y={bandY1 + 14} fontFamily="JetBrains Mono" fontSize={10} fill="var(--records-800)">{targetLabel}</text>
         )}
         {/* y labels */}
@@ -416,7 +416,7 @@ export function LabTrendChart({ points, targetLow, targetHigh, targetLabel, yLab
       {/* legend */}
       <div className="flex gap-[18px] mt-[14px] font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0]">
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block w-2 h-2 rounded-full bg-[var(--records-700)]" />within target{unit != null ? ` (${unit})` : ''}
+          <span className="inline-block w-2 h-2 rounded-full bg-[var(--records-700)]" />within target{unit !== null ? ` (${unit})` : ''}
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className="inline-block w-2 h-2 rounded-full bg-[var(--warning-icon)]" />flagged H
@@ -445,8 +445,8 @@ export function LabPanel({ title, lot, meta, children }: LabPanelProps) {
     <div className="bg-[var(--surface-raised)] border border-[var(--text-primary)] mb-9">
       <div className="flex items-baseline gap-4 px-5 py-[14px] border-b border-[var(--text-primary)] bg-[var(--surface-sunken)]">
         <h2 className="m-0 font-serif text-[20px] font-medium tracking-[-0.012em] text-[var(--text-primary)] flex-1">{title}</h2>
-        {lot != null && <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{lot}</span>}
-        {meta != null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] ml-auto">{meta}</span>}
+        {lot !== null && <span className="font-mono text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.16em]">{lot}</span>}
+        {meta !== null && <span className="font-mono text-[11px] text-[var(--text-tertiary)] tracking-[0] ml-auto">{meta}</span>}
       </div>
       {children}
     </div>
