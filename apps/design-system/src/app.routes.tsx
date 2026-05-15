@@ -77,6 +77,14 @@ const ChartsScreen = lazy(() =>
   import('@features/charts/charts-screen').then((m) => ({ default: m.ChartsScreen })),
 );
 
+const BedBoardScreen = lazy(() =>
+  import('@features/bed-board/bed-board-screen').then((m) => ({ default: m.BedBoardScreen })),
+);
+
+const EMRScreen = lazy(() =>
+  import('@features/emr/emr-screen').then((m) => ({ default: m.EMRScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -113,8 +121,8 @@ export const routes: RouteObject[] = [
       { path: ROUTES.LAB, element: <Lazy><LabScreen /></Lazy> },
       { path: ROUTES.VITALS, element: <Lazy><VitalsScreen /></Lazy> },
       { path: ROUTES.CHARTS, element: <Lazy><ChartsScreen /></Lazy> },
-      { path: ROUTES.EMR, element: <PlaceholderScreen name="EMR" /> },
-      { path: ROUTES.BED_BOARD, element: <PlaceholderScreen name="Bed Board" /> },
+      { path: ROUTES.EMR, element: <Lazy><EMRScreen /></Lazy> },
+      { path: ROUTES.BED_BOARD, element: <Lazy><BedBoardScreen /></Lazy> },
       { path: ROUTES.TELEHEALTH, element: <PlaceholderScreen name="Telehealth" /> },
       { path: ROUTES.EQUIPMENT, element: <PlaceholderScreen name="Equipment" /> },
       { path: ROUTES.STAFF, element: <PlaceholderScreen name="Staff" /> },
