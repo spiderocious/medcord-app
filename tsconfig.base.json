@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@solon/ui": ["./packages/ui/src/index.ts"],
+      "@solon/ui/*": ["./packages/ui/src/*"],
+      "@solon/core": ["./packages/core/src/index.ts"],
+      "@solon/core/*": ["./packages/core/src/*"],
+      "@solon/api": ["./packages/api/src/index.ts"],
+      "@solon/api/*": ["./packages/api/src/*"],
+      "@icons": ["./packages/ui/src/icons/index.ts"]
+    }
+  }
+}

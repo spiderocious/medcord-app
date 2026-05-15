@@ -1,0 +1,17 @@
+/* Optional shared base styles. Apps can import this from `@solon/ui/styles.css`
+   on top of their own Tailwind layer. */
+
+:root {
+  --solon-forest: #1b4332;
+  --solon-forest-deep: #2d5a3d;
+  --solon-cream: #f5efe0;
+  --solon-orange: #c7522a;
+  --solon-charcoal: #1f2024;
+}
+
+html,
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--solon-cream);
+  color: var(--solon-charcoal);
+}
