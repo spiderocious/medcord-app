@@ -5,13 +5,36 @@ import helmet from 'helmet';
 
 import { register as registerAuth } from '@features/auth/index.js';
 import { register as registerHealth } from '@features/health/index.js';
+import { register as registerHospitals } from '@features/hospitals/index.js';
+import { register as registerStaff } from '@features/staff/index.js';
+import { register as registerPatients } from '@features/patients/index.js';
+import { register as registerEmr } from '@features/emr/index.js';
+import { register as registerLabs } from '@features/labs/index.js';
+import { register as registerAssets } from '@features/assets/index.js';
+import { register as registerReviewQueue } from '@features/review-queue/index.js';
+import { register as registerAuditLog } from '@features/audit-log/index.js';
+import { register as registerNotifications } from '@features/notifications/index.js';
+import { register as registerSearch } from '@features/search/index.js';
 import { errorHandler } from '@middlewares/errorHandler.middleware.js';
 import { requestIdMiddleware } from '@middlewares/requestId.middleware.js';
 import { requestLogMiddleware } from '@middlewares/requestLog.middleware.js';
 
 import { env } from './env.js';
 
-const features = [registerHealth, registerAuth];
+const features = [
+  registerHealth,
+  registerAuth,
+  registerHospitals,
+  registerStaff,
+  registerPatients,
+  registerEmr,
+  registerLabs,
+  registerAssets,
+  registerReviewQueue,
+  registerAuditLog,
+  registerNotifications,
+  registerSearch,
+];
 
 export const buildApp = (): express.Express => {
   const app = express();

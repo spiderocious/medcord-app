@@ -52,3 +52,24 @@ export class ConflictError extends AppError {
     this.name = 'ConflictError';
   }
 }
+
+export class InvalidCredentialsError extends AppError {
+  constructor() {
+    super('invalid_credentials', 'Invalid email or password', HTTP_STATUS.UNAUTHORIZED);
+    this.name = 'InvalidCredentialsError';
+  }
+}
+
+export class ModuleDisabledError extends AppError {
+  constructor(module: string) {
+    super('module_disabled', `Module '${module}' is not enabled for this hospital`, HTTP_STATUS.FORBIDDEN);
+    this.name = 'ModuleDisabledError';
+  }
+}
+
+export class InvalidStateTransitionError extends AppError {
+  constructor(from: string, to: string) {
+    super('invalid_state_transition', `Cannot transition from '${from}' to '${to}'`, HTTP_STATUS.BAD_REQUEST);
+    this.name = 'InvalidStateTransitionError';
+  }
+}

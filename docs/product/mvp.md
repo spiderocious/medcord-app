@@ -1,4 +1,4 @@
-# Caelum — MVP Product Requirements
+# Medcord — MVP Product Requirements
 
 > Hospital management SaaS. Multi-tenant. Hospitals sign up, set up their workspace, and run patient management, EMR, labs, and asset tracking from a single platform.
 
@@ -16,7 +16,7 @@
 
 ## Module 1 — Workspace & Hospital Management
 
-The entry point. A user signs up to Caelum, then creates one or more hospital workspaces. Each hospital is fully isolated from the others.
+The entry point. A user signs up to Medcord, then creates one or more hospital workspaces. Each hospital is fully isolated from the others.
 
 ### 1.1 Account Signup & Login
 
@@ -41,7 +41,7 @@ The entry point. A user signs up to Caelum, then creates one or more hospital wo
 **As a user creating a hospital, I should be able to:**
 - Enter hospital name, type (general, specialty, clinic, etc.), location, and contact details
 - Become the initial super-admin of that hospital
-- Generate a workspace URL (e.g., `caelum.app/h/stmarys`)
+- Generate a workspace URL (e.g., `Medcord.app/h/stmarys`)
 - Be redirected into the new hospital workspace once created
 
 **As the creator, I should automatically:**
@@ -67,7 +67,7 @@ The entry point. A user signs up to Caelum, then creates one or more hospital wo
 - See which modules are part of the current plan
 
 **Domain**
-- View the auto-assigned subdomain (e.g., `stmarys.caelum.app`)
+- View the auto-assigned subdomain (e.g., `stmarys.Medcord.app`)
 - See instructions for setting up a custom domain via CNAME (instructions only — actual DNS work happens outside the app)
 - Mark a custom domain as configured once DNS is pointed correctly
 
@@ -193,7 +193,7 @@ The entry point. A user signs up to Caelum, then creates one or more hospital wo
 
 **As a patient, I should be able to:**
 - Receive my patient code and ID card digitally
-- Use my card to check in at any participating Caelum hospital
+- Use my card to check in at any participating Medcord hospital
 
 ### 3.3 Patient Search & Lookup
 
@@ -225,7 +225,7 @@ The entry point. A user signs up to Caelum, then creates one or more hospital wo
 **As clinical staff, I should be able to:**
 - Admit a patient (move from outpatient/ED to inpatient)
 - Transfer a patient between units within the hospital
-- Initiate an inter-hospital transfer to another Caelum hospital (see 4.7)
+- Initiate an inter-hospital transfer to another Medcord hospital (see 4.7)
 
 ---
 
@@ -294,7 +294,7 @@ The EMR is structured around the patient chart. Every action below happens in th
 ### 4.7 Inter-Hospital Transfer
 
 **As a clinician, I should be able to:**
-- Initiate a transfer to another hospital on the Caelum platform
+- Initiate a transfer to another hospital on the Medcord platform
 - Search for the receiving hospital
 - Specify reason for transfer and receiving department
 - Attach a records package (vitals, meds, history, recent labs, recent documents)
@@ -478,4 +478,4 @@ A handful of things that came up while writing this and are worth resolving earl
 
 **Pharmacy routing for e-prescribing**. The MVP description says "send to pharmacy" but the actual integration (Surescripts, country-specific equivalents) is non-trivial. Worth confirming whether v1 sends e-prescriptions to a real pharmacy network or just generates a prescription PDF the patient can hand over.
 
-**Continuous monitoring is v2** as decided. Worth flagging that this means Caelum is not suitable for ICU use cases at MVP, and marketing should reflect that.
+**Continuous monitoring is v2** as decided. Worth flagging that this means Medcord is not suitable for ICU use cases at MVP, and marketing should reflect that.

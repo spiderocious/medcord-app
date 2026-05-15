@@ -1,11 +1,13 @@
 import { createServer, type Server } from 'node:http';
 
+import { connectDb, disconnectDb } from '@lib/db.js';
 import { logger } from '@lib/logger.js';
 
 import { buildApp } from './app.js';
 import { env } from './env.js';
 
-const startHttpApp = (): Server => {
+const startHttpApp = async (): Promise<Server> => {
+  await connectDb(env.MONGODB_URI);
   const app = buildApp();
   const server = createServer(app);
   server.listen(env.PORT, () => {
@@ -14,11 +16,12 @@ const startHttpApp = (): Server => {
   return server;
 };
 
-const server = startHttpApp();
+const server = await startHttpApp();
 
 const shutdown = async (signal: string): Promise<void> => {
   logger.info({ signal }, 'shutting down gracefully');
   await new Promise<void>((resolve) => server.close(() => resolve()));
+  await disconnectDb();
   process.exit(0);
 };
 

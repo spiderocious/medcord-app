@@ -2,13 +2,15 @@ import { z } from 'zod';
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z.coerce.number().default(8083),
+  PORT: z.coerce.number().default(8085),
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error']).default('info'),
 
   APP_BASE_URL: z.string().url(),
   WEB_BASE_URL: z.string().url(),
 
   DATA_LAYER_BASE_URL: z.string().url(),
+
+  MONGODB_URI: z.string().min(1),
 
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),

@@ -1,4 +1,4 @@
-# Caelum — Backend Build Plan
+# Medcord — Backend Build Plan
 
 > Express + TypeScript + MongoDB. This document is the single reference for what we're building, in what order, and how each module maps to the MVP spec.
 

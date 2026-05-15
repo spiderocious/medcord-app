@@ -1466,3 +1466,9 @@ const routes: RouteObject[] = [
 - Game feature: 80 KB (loaded on-demand)
 - Multiplayer feature: 140 KB (loaded on-demand)
 - **Total savings**: ~64% smaller initial load
+
+
+Others:
+
+-  All components must be functions and props must be interfaces and should be externalized (it can be same file), no inline interfaces or types for props. This is to ensure better readability and maintainability of the codebase.
+- interfaces for props should be readonly Readony<xxx> to ensure immutability of props and prevent accidental mutations which can lead to bugs and unpredictable behavior in the application.
