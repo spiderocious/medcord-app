@@ -17,6 +17,38 @@ const InputsScreen = lazy(() =>
   import('@features/inputs/inputs-screen').then((m) => ({ default: m.InputsScreen })),
 );
 
+const SelectionScreen = lazy(() =>
+  import('@features/selection/selection-screen').then((m) => ({ default: m.SelectionScreen })),
+);
+
+const DatetimeScreen = lazy(() =>
+  import('@features/datetime/datetime-screen').then((m) => ({ default: m.DatetimeScreen })),
+);
+
+const SpecializedScreen = lazy(() =>
+  import('@features/specialized/specialized-screen').then((m) => ({ default: m.SpecializedScreen })),
+);
+
+const AvatarsPillsScreen = lazy(() =>
+  import('@features/avatars-pills/avatars-pills-screen').then((m) => ({ default: m.AvatarsPillsScreen })),
+);
+
+const SkeletonProgressScreen = lazy(() =>
+  import('@features/skeleton-progress/skeleton-progress-screen').then((m) => ({ default: m.SkeletonProgressScreen })),
+);
+
+const TooltipScreen = lazy(() =>
+  import('@features/tooltip/tooltip-screen').then((m) => ({ default: m.TooltipScreen })),
+);
+
+const CardsScreen = lazy(() =>
+  import('@features/cards/cards-screen').then((m) => ({ default: m.CardsScreen })),
+);
+
+const BannersScreen = lazy(() =>
+  import('@features/banners/banners-screen').then((m) => ({ default: m.BannersScreen })),
+);
+
 function Loading() {
   return (
     <div className="flex items-center justify-center py-24">
@@ -38,16 +70,16 @@ export const routes: RouteObject[] = [
       { path: ROUTES.TOKENS, element: <Lazy><TokensScreen /></Lazy> },
       { path: ROUTES.BUTTONS, element: <Lazy><ButtonsScreen /></Lazy> },
       { path: ROUTES.INPUTS, element: <Lazy><InputsScreen /></Lazy> },
-      { path: ROUTES.SELECTION, element: <PlaceholderScreen name="Selection" /> },
-      { path: ROUTES.DATETIME, element: <PlaceholderScreen name="Date & Time" /> },
-      { path: ROUTES.SPECIALIZED, element: <PlaceholderScreen name="Specialized Inputs" /> },
-      { path: ROUTES.AVATARS_PILLS, element: <PlaceholderScreen name="Avatars & Pills" /> },
-      { path: ROUTES.SKELETON_PROGRESS, element: <PlaceholderScreen name="Skeleton & Progress" /> },
-      { path: ROUTES.TOOLTIP, element: <PlaceholderScreen name="Tooltip" /> },
-      { path: ROUTES.CARDS, element: <PlaceholderScreen name="Cards" /> },
+      { path: ROUTES.SELECTION, element: <Lazy><SelectionScreen /></Lazy> },
+      { path: ROUTES.DATETIME, element: <Lazy><DatetimeScreen /></Lazy> },
+      { path: ROUTES.SPECIALIZED, element: <Lazy><SpecializedScreen /></Lazy> },
+      { path: ROUTES.AVATARS_PILLS, element: <Lazy><AvatarsPillsScreen /></Lazy> },
+      { path: ROUTES.SKELETON_PROGRESS, element: <Lazy><SkeletonProgressScreen /></Lazy> },
+      { path: ROUTES.TOOLTIP, element: <Lazy><TooltipScreen /></Lazy> },
+      { path: ROUTES.CARDS, element: <Lazy><CardsScreen /></Lazy> },
       { path: ROUTES.TABLES, element: <PlaceholderScreen name="Tables" /> },
       { path: ROUTES.MODALS, element: <PlaceholderScreen name="Modals" /> },
-      { path: ROUTES.BANNERS, element: <PlaceholderScreen name="Banners" /> },
+      { path: ROUTES.BANNERS, element: <Lazy><BannersScreen /></Lazy> },
       { path: ROUTES.NAVIGATION, element: <PlaceholderScreen name="Navigation" /> },
       { path: ROUTES.FEEDBACK, element: <PlaceholderScreen name="Feedback" /> },
       { path: ROUTES.LAB, element: <PlaceholderScreen name="Lab" /> },
