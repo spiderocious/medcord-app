@@ -1,4 +1,4 @@
-# Solon — Workspace & code rules
+# medcord — Workspace & code rules
 
 Conventions distilled from how this codebase is organised. Follow them by default; deviations need a comment explaining why.
 
@@ -18,9 +18,9 @@ Conventions distilled from how this codebase is organised. Follow them by defaul
 apps/           # Deployable units. One process per directory.
   main-backend/        Express, public HTTP API
   data-layer/          Express, internal-only data service
-  solon-web/           Vite/React, end-user campaign app
-  solon-admin-web/     Vite/React, platform operations console
-  solon-website/       Next.js, marketing site
+  medcord-web/           Vite/React, end-user campaign app
+  medcord-admin-web/     Vite/React, platform operations console
+  medcord-website/       Next.js, marketing site
 packages/       # Shared, never directly deployed.
   core/                Pure TS — types, routes, helpers, no React, no Node-only APIs
   api/                 Network client (ky), endpoints, react-query hooks
@@ -34,8 +34,8 @@ docs/           # Markdown only. No code.
 
 ## Naming
 
-- Package name: `@solon/<dir-name>`. Project name (used by Nx): `<dir-name>` (no scope).
-- TS path aliases per app: `@app/*`, `@features/*`, `@shared/*`. Backend apps also have `@lib/*` and `@middlewares/*`. The shared package aliases are `@solon/core`, `@solon/api`, `@solon/ui`, `@icons`.
+- Package name: `@medcord/<dir-name>`. Project name (used by Nx): `<dir-name>` (no scope).
+- TS path aliases per app: `@app/*`, `@features/*`, `@shared/*`. Backend apps also have `@lib/*` and `@middlewares/*`. The shared package aliases are `@medcord/core`, `@medcord/api`, `@medcord/ui`, `@icons`.
 - React components: `PascalCase.tsx` filename and named export. One component per file unless they're trivially small siblings.
 - Backend feature files: `feature.routes.ts`, `feature.service.ts`, `feature.repo.ts`, `feature.schema.ts`, `feature.types.ts` — every feature has its own folder + `index.ts` that exposes a single `register(app)` function.
 
@@ -45,7 +45,7 @@ docs/           # Markdown only. No code.
 2. **NodeNext module resolution** in backends → import specifiers spell out `.js` even when the source file is `.ts`. Frontends use `Bundler` resolution. The Next.js webpack config has `extensionAlias` to bridge the two.
 3. **`any` is banned.** ESLint enforces `@typescript-eslint/no-explicit-any: error`. Reach for `unknown` plus a narrowing check.
 4. **`type` imports** must use `import type` (`consistent-type-imports: error`). Mixed default/value+type imports become two lines.
-5. **No barrels in feature code.** Each top-level package (`@solon/core`, `@solon/api`, `@solon/ui`) does export a single `src/index.ts` — but inside apps, import the leaf module directly. Barrels everywhere inflate bundle size and breed circular imports.
+5. **No barrels in feature code.** Each top-level package (`@medcord/core`, `@medcord/api`, `@medcord/ui`) does export a single `src/index.ts` — but inside apps, import the leaf module directly. Barrels everywhere inflate bundle size and breed circular imports.
 6. **Path aliases beat relative paths past two `..`** segments. `import { x } from '@lib/foo.js'` is correct; `import { x } from '../../../lib/foo.js'` is not.
 
 ## Backend conventions (main-backend, data-layer)
@@ -62,28 +62,28 @@ docs/           # Markdown only. No code.
 10. **Secrets live in `.env`.** `.env.example` is committed and lists every variable with stub values. `.env` is gitignored.
 11. **Data-layer is internal.** `INTERNAL_SHARED_SECRET` gates every route except `/health`. Public clients never talk to it. main-backend is the only legitimate consumer.
 
-## Frontend conventions (solon-web, solon-admin-web)
+## Frontend conventions (medcord-web, medcord-admin-web)
 
-1. **One `configureApiClient(baseUrl)` call** at app boot in `main.tsx`. The `@solon/api` client is a Proxy that throws if used before configure — preserves test setup and prevents accidental fallback to `window.location.origin` in production.
+1. **One `configureApiClient(baseUrl)` call** at app boot in `main.tsx`. The `@medcord/api` client is a Proxy that throws if used before configure — preserves test setup and prevents accidental fallback to `window.location.origin` in production.
 2. **Data fetching is `@tanstack/react-query` only.** No bare `useEffect(() => fetch(...))`. Network shape: `apiClient.get(EP.X).json<ApiResponse<T>>()` → unwrap `.data` inside the queryFn.
-3. **`EP` endpoint constants** in `@solon/api/endpoints.ts` are the single source of truth for backend paths. Don't hand-write URLs in components.
-4. **Routes** live in `@solon/core/constants/routes.ts`. Never inline `"/dashboard"` in a `<Link>`; use `ROUTES.DASHBOARD`. Parametric routes are functions: `ROUTES.SIMULATOR_RACE(id)`.
-5. **UI primitives come from `@solon/ui`** (`AppButton`, `AppText`, …). Don't reinvent a button. If you need a missing primitive, add it to `packages/ui/src/primitives/<name>/` and export it from `packages/ui/src/index.ts`.
+3. **`EP` endpoint constants** in `@medcord/api/endpoints.ts` are the single source of truth for backend paths. Don't hand-write URLs in components.
+4. **Routes** live in `@medcord/core/constants/routes.ts`. Never inline `"/dashboard"` in a `<Link>`; use `ROUTES.DASHBOARD`. Parametric routes are functions: `ROUTES.SIMULATOR_RACE(id)`.
+5. **UI primitives come from `@medcord/ui`** (`AppButton`, `AppText`, …). Don't reinvent a button. If you need a missing primitive, add it to `packages/ui/src/primitives/<name>/` and export it from `packages/ui/src/index.ts`.
 6. **Tailwind classes** flow through `cn(...)` (clsx + tailwind-merge) so conflicting classes resolve predictably — last `px-*` wins.
 7. **Icons** come from `@icons`, which proxies a swappable icon set (currently lucide-react). Don't `import { X } from 'lucide-react'` in feature code.
 
-## Next.js (solon-website)
+## Next.js (medcord-website)
 
 1. **App Router only.** `src/app/<route>/page.tsx`. No `pages/` directory.
 2. **`transpilePackages`** is set in `next.config.mjs` for every workspace package the website imports. Add new ones there.
 3. **Webpack `extensionAlias`** converts `.js` source-import specifiers to `.ts`/`.tsx` (matches the workspace convention). Don't remove it.
-4. **Server vs client components.** Default to server. Add `'use client'` only when you need browser APIs, state, or event handlers. The data-fetching client (`@solon/api`) is browser-only — keep it out of server components.
+4. **Server vs client components.** Default to server. Add `'use client'` only when you need browser APIs, state, or event handlers. The data-fetching client (`@medcord/api`) is browser-only — keep it out of server components.
 
 ## Shared packages
 
-1. **`@solon/core` is pure TypeScript.** No React, no Node-only APIs, no DOM-only APIs without a `typeof window` guard. It's consumed by backends, SSR, and browser code alike.
-2. **`@solon/api` is browser-targeting.** Uses ky + react-query. Don't import it from a backend.
-3. **`@solon/ui` is React + Tailwind.** Don't put networking calls in here — UI primitives are pure presentational. Domain widgets that compose data + presentation live inside an app, not in `ui`.
+1. **`@medcord/core` is pure TypeScript.** No React, no Node-only APIs, no DOM-only APIs without a `typeof window` guard. It's consumed by backends, SSR, and browser code alike.
+2. **`@medcord/api` is browser-targeting.** Uses ky + react-query. Don't import it from a backend.
+3. **`@medcord/ui` is React + Tailwind.** Don't put networking calls in here — UI primitives are pure presentational. Domain widgets that compose data + presentation live inside an app, not in `ui`.
 4. **Type-only exports** are normal exports; runtime exports are normal exports too — but consumers should use `import type` for the former so dead-code elimination works.
 
 ## ESLint / Prettier

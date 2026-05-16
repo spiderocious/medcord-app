@@ -1,5 +1,5 @@
 {
-  "name": "@solon/solon-website",
+  "name": "@medcord/medcord-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,8 +10,8 @@
     "lint": "eslint --config ../../eslint.config.mjs 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@solon/core": "workspace:*",
-    "@solon/ui": "workspace:*",
+    "@medcord/core": "workspace:*",
+    "@medcord/ui": "workspace:*",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

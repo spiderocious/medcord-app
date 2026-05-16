@@ -1,13 +1,17 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import { ForbiddenError, NotFoundError, UnauthorizedError } from '@lib/errors.js';
-import { HospitalMemberModel } from '@features/hospitals/hospital.model.js';
+import { HospitalMemberModel, HospitalModel } from '@features/hospitals/hospital.model.js';
 
 export const hospitalScope = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   if (!req.user) return next(new UnauthorizedError());
 
   const hospitalId = req.params['hospitalId'];
   if (!hospitalId) return next(new NotFoundError('Hospital'));
+
+  const hospital = await HospitalModel.findOne({ id: hospitalId }).lean();
+  if (!hospital) return next(new NotFoundError('Hospital'));
+  if (hospital.isArchived) return next(new ForbiddenError('This hospital has been archived'));
 
   const member = await HospitalMemberModel.findOne({
     hospitalId,

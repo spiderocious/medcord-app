@@ -58,8 +58,8 @@ export const authService = {
       }
       const userWithSecret = await authRepo.findByIdWithSecrets(user.id);
       if (!userWithSecret?.twoFactorSecret) throw new UnauthorizedError('2FA not configured');
-      const ok = await totpVerify({ token: body.totpCode, secret: userWithSecret.twoFactorSecret });
-      if (!ok) throw new UnauthorizedError('Invalid two-factor code');
+      const { valid } = await totpVerify({ token: body.totpCode, secret: userWithSecret.twoFactorSecret });
+      if (!valid) throw new UnauthorizedError('Invalid two-factor code');
     }
 
     const tokens = buildTokens(user.id, user.email, user.tokenVersion);
@@ -94,14 +94,23 @@ export const authService = {
 
     const secret = generateSecret();
     const otpauthUrl = generateURI({ issuer: 'Medcord', label: user.email, secret });
-    return { secret, otpauthUrl };
+    await authRepo.updateById(userId, { pendingTwoFactorSecret: secret } as never);
+    return { otpauthUrl };
   },
 
   async verify2fa(userId: string, body: Verify2faBody) {
-    const ok = await totpVerify({ token: body.totpCode, secret: body.secret });
-    if (!ok) throw new UnauthorizedError('Invalid two-factor code');
+    const user = await authRepo.findByIdWithSecrets(userId);
+    if (!user) throw new NotFoundError('User');
+    if (!user.pendingTwoFactorSecret) throw new UnauthorizedError('No 2FA setup in progress — call setup-2fa first');
 
-    await authRepo.updateById(userId, { twoFactorSecret: body.secret, twoFactorEnabled: true });
+    const { valid } = await totpVerify({ token: body.totpCode, secret: user.pendingTwoFactorSecret });
+    if (!valid) throw new UnauthorizedError('Invalid two-factor code');
+
+    await authRepo.updateById(userId, {
+      twoFactorSecret: user.pendingTwoFactorSecret,
+      twoFactorEnabled: true,
+      pendingTwoFactorSecret: undefined,
+    } as never);
   },
 
   async getMe(userId: string) {

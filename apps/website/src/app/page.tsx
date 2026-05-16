@@ -1,18 +1,18 @@
 import Link from 'next/link';
 
-import { AppText } from '@solon/ui';
+import { AppText } from '@medcord/ui';
 
 export default function HomePage() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:5173';
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-20">
-      <AppText variant="caption">solon</AppText>
+      <AppText variant="caption">medcord</AppText>
       <AppText variant="display-1" className="mt-2 text-forest-900">
         Wisdom, reform, neutrality — at the speed of a campaign.
       </AppText>
       <AppText variant="body" className="mt-6 max-w-2xl text-charcoal-700">
-        Named after Solon of Athens, who laid the groundwork for democracy and refused to make himself
+        Named after medcord of Athens, who laid the groundwork for democracy and refused to make himself
         king when given the chance. We build the campaign stack that respects that lineage —
         probabilistic, transparent, and resistant to manipulation.
       </AppText>

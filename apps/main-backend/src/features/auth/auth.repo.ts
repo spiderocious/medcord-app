@@ -8,7 +8,7 @@ export const authRepo = {
     UserModel.findOne({ id }).lean(),
 
   findByIdWithSecrets: (id: string) =>
-    UserModel.findOne({ id }).select('+passwordHash +twoFactorSecret +tokenVersion').lean(),
+    UserModel.findOne({ id }).select('+passwordHash +pendingTwoFactorSecret +twoFactorSecret +tokenVersion').lean(),
 
   create: (data: Omit<IUser, 'createdAt' | 'updatedAt'>) =>
     UserModel.create(data),

@@ -27,7 +27,7 @@ export const assetService = {
       ...(body.purchaseDate !== undefined && { purchaseDate: body.purchaseDate }),
       ...(body.purchasePrice !== undefined && { purchasePrice: body.purchasePrice }),
       ...(body.warrantyExpiresAt !== undefined && { warrantyExpiresAt: body.warrantyExpiresAt }),
-      status: 'available',
+      status: body.status ?? 'available',
       condition: body.condition,
       ...(body.currentLocation !== undefined && { currentLocation: body.currentLocation }),
       locationHistory: [],

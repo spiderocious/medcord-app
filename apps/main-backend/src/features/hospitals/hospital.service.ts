@@ -117,8 +117,13 @@ export const hospitalService = {
     const newOwnerMember = await hospitalRepo.findMember(hospitalId, body.newOwnerId);
     if (!newOwnerMember) throw new NotFoundError('New owner must be an existing hospital member');
 
+    const previousOwnerMember = await hospitalRepo.findMember(hospitalId, requesterId);
+
     await hospitalRepo.updateById(hospitalId, { ownerId: body.newOwnerId });
     await hospitalRepo.updateMember(newOwnerMember.id, { role: 'super_admin' });
+    if (previousOwnerMember) {
+      await hospitalRepo.updateMember(previousOwnerMember.id, { role: 'hospital_admin' });
+    }
 
     return hospitalRepo.findById(hospitalId);
   },

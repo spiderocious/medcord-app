@@ -8,6 +8,7 @@ export interface IUser {
   photoKey?: string | undefined;
   phone?: string | undefined;
   isEmailVerified: boolean;
+  pendingTwoFactorSecret?: string | undefined;
   twoFactorSecret?: string | undefined;
   twoFactorEnabled: boolean;
   tokenVersion: number;
@@ -26,6 +27,7 @@ const userSchema = new Schema<IUserDocument>(
     photoKey: { type: String },
     phone: { type: String, trim: true },
     isEmailVerified: { type: Boolean, default: false },
+    pendingTwoFactorSecret: { type: String, select: false },
     twoFactorSecret: { type: String, select: false },
     twoFactorEnabled: { type: Boolean, default: false },
     tokenVersion: { type: Number, default: 0, select: false },

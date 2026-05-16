@@ -30,7 +30,6 @@ export type Setup2faBody = z.infer<typeof Setup2faBody>;
 
 export const Verify2faBody = z.object({
   totpCode: z.string().length(6),
-  secret: z.string().min(1),
 });
 export type Verify2faBody = z.infer<typeof Verify2faBody>;
 

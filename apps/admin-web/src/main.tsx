@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { configureApiClient } from '@solon/api';
+import { configureApiClient } from '@medcord/api';
 
 import { App } from './app.tsx';
 import './styles.css';

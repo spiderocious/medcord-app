@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
 
-import { useHealth } from '@solon/api';
-import { ROUTES } from '@solon/core';
-import { AppButton, AppText } from '@solon/ui';
+import { useHealth } from '@medcord/api';
+import { ROUTES } from '@medcord/core';
+import { AppButton, AppText } from '@medcord/ui';
 
 export function HomeScreen() {
   const { data, isLoading, isError } = useHealth();
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <AppText variant="caption">solon · political intelligence</AppText>
+      <AppText variant="caption">medcord · political intelligence</AppText>
       <AppText variant="display-1" className="mt-2 text-forest-900">
         The campaign stack for Nigeria.
       </AppText>

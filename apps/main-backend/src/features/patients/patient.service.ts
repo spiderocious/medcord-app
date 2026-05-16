@@ -51,25 +51,12 @@ export const patientService = {
     query: SearchPatientsQuery,
   ): Promise<PaginatedResult<IPatient>> {
     const skip = (query.page - 1) * query.limit;
-    const rows = await patientRepo.findPatientIdsByHospital(hospitalId, skip, query.limit);
-    const total = await patientRepo.countInHospital(hospitalId);
-    const patients = await Promise.all(rows.map((r) => patientRepo.findById(r.patientId as string)));
-    const valid = patients.filter(Boolean) as IPatient[];
-
-    if (query.q) {
-      const q = query.q.toLowerCase();
-      const filtered = valid.filter(
-        (p) =>
-          p.demographics.firstName.toLowerCase().includes(q) ||
-          p.demographics.lastName.toLowerCase().includes(q) ||
-          p.patientCode.toLowerCase().includes(q),
-      );
-      await Promise.all(valid.map((p) => patientRepo.recordAccess(userId, hospitalId, p.id)));
-      return { items: filtered, total, page: query.page, limit: query.limit, totalPages: Math.ceil(total / query.limit) };
-    }
-
-    await Promise.all(valid.map((p) => patientRepo.recordAccess(userId, hospitalId, p.id)));
-    return { items: valid, total, page: query.page, limit: query.limit, totalPages: Math.ceil(total / query.limit) };
+    const [patients, total] = await Promise.all([
+      patientRepo.searchByHospital(hospitalId, query.q, skip, query.limit),
+      patientRepo.countSearchByHospital(hospitalId, query.q),
+    ]);
+    await Promise.all(patients.map((p: IPatient) => patientRepo.recordAccess(userId, hospitalId, p.id)));
+    return { items: patients, total, page: query.page, limit: query.limit, totalPages: Math.ceil(total / query.limit) };
   },
 
   async get(hospitalId: string, patientId: string, userId: string) {
@@ -121,10 +108,13 @@ export const patientService = {
     return patientRepo.updateById(patientId, { 'idCard.isActive': false } as never);
   },
 
-  async checkIn(hospitalId: string, patientId: string, _body: CheckInBody) {
+  async checkIn(hospitalId: string, patientId: string, body: CheckInBody) {
     const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(patientId, { currentHospitalId: hospitalId });
+    const update: Partial<IPatient> = { currentHospitalId: hospitalId, admissionStatus: 'outpatient' };
+    if (body.department !== undefined) (update as Record<string, unknown>)['checkInDepartment'] = body.department;
+    if (body.assignedTo !== undefined) (update as Record<string, unknown>)['assignedTo'] = body.assignedTo;
+    return patientRepo.updateById(patientId, update as never);
   },
 
   async checkOut(hospitalId: string, patientId: string) {
@@ -179,7 +169,9 @@ export const patientService = {
     if (!transfer || transfer.toHospitalId !== hospitalId) throw new NotFoundError('Transfer');
     if (transfer.status !== 'pending') throw new ConflictError('Transfer is no longer pending');
 
-    await patientRepo.linkToHospital(hospitalId, transfer.patientId, '', userId);
+    const patient = await patientRepo.findById(transfer.patientId);
+    if (!patient) throw new NotFoundError('Patient');
+    await patientRepo.linkToHospital(hospitalId, transfer.patientId, patient.patientCode, userId);
 
     return patientRepo.updateTransfer(transferId, {
       status: 'accepted',

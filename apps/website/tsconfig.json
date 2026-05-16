@@ -16,10 +16,10 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
-      "@solon/ui": ["../../packages/ui/src/index.ts"],
-      "@solon/ui/*": ["../../packages/ui/src/*"],
-      "@solon/core": ["../../packages/core/src/index.ts"],
-      "@solon/core/*": ["../../packages/core/src/*"],
+      "@medcord/ui": ["../../packages/ui/src/index.ts"],
+      "@medcord/ui/*": ["../../packages/ui/src/*"],
+      "@medcord/core": ["../../packages/core/src/index.ts"],
+      "@medcord/core/*": ["../../packages/core/src/*"],
       "@icons": ["../../packages/ui/src/icons/index.ts"]
     }
   },

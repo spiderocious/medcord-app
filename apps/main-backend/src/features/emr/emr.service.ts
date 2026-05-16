@@ -1,5 +1,6 @@
 import { NotFoundError } from '@lib/errors.js';
 import { newId } from '@lib/ids.js';
+import { patientRepo } from '@features/patients/patient.repo.js';
 import type { PaginatedResult } from '@shared/types/service.types.js';
 
 import type {
@@ -22,6 +23,13 @@ import type {
   UpdateChartDocumentBody,
   UpdateMedicationBody,
 } from './emr.schema.js';
+
+// ── Guards ────────────────────────────────────────────────────────────────────
+
+async function assertPatientInHospital(hospitalId: string, patientId: string): Promise<void> {
+  const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+  if (!link) throw new NotFoundError('Patient');
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -96,6 +104,7 @@ async function getChartSummary(
   patientId: string,
   userId: string,
 ): Promise<ChartSummary> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({ hospitalId, patientId, userId, action: 'view_chart', section: 'summary' });
 
   const [vitals, medications, history, procedures] = await Promise.all([
@@ -124,6 +133,7 @@ async function listVitals(
   userId: string,
   limit?: number,
 ): Promise<IVitals[]> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({ hospitalId, patientId, userId, action: 'view_vitals', section: 'vitals' });
   return emrRepo.listVitals(patientId, hospitalId, limit) as Promise<IVitals[]>;
 }
@@ -134,6 +144,7 @@ async function recordVitals(
   userId: string,
   body: RecordVitalsBody,
 ): Promise<IVitals> {
+  await assertPatientInHospital(hospitalId, patientId);
   const outOfRangeFields = detectOutOfRange(body);
   const isOutOfRange = outOfRangeFields.length > 0;
 
@@ -163,6 +174,7 @@ async function listMedications(
   patientId: string,
   userId: string,
 ): Promise<IMedication[]> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({
     hospitalId,
     patientId,
@@ -179,6 +191,7 @@ async function addMedication(
   userId: string,
   body: AddMedicationBody,
 ): Promise<IMedication> {
+  await assertPatientInHospital(hospitalId, patientId);
   const medication = await emrRepo.createMedication({
     id: newId.medication(),
     hospitalId,
@@ -234,6 +247,7 @@ async function getHistory(
   patientId: string,
   userId: string,
 ): Promise<IMedicalHistory | null> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({ hospitalId, patientId, userId, action: 'view_history', section: 'history' });
   return emrRepo.getHistory(patientId, hospitalId) as Promise<IMedicalHistory | null>;
 }
@@ -244,6 +258,7 @@ async function updateHistory(
   userId: string,
   body: AddMedicalHistoryBody,
 ): Promise<IMedicalHistory> {
+  await assertPatientInHospital(hospitalId, patientId);
   const updated = await emrRepo.upsertHistory(patientId, hospitalId, {
     recordedBy: userId,
     diagnoses: body.diagnoses as IMedicalHistory['diagnoses'],
@@ -263,6 +278,7 @@ async function listProcedures(
   patientId: string,
   userId: string,
 ): Promise<IProcedure[]> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({
     hospitalId,
     patientId,
@@ -279,6 +295,7 @@ async function addProcedure(
   userId: string,
   body: AddProcedureBody,
 ): Promise<IProcedure> {
+  await assertPatientInHospital(hospitalId, patientId);
   const procedure = await emrRepo.createProcedure({
     id: newId.procedure(),
     hospitalId,
@@ -305,6 +322,7 @@ async function listImmunizations(
   patientId: string,
   userId: string,
 ): Promise<IImmunization[]> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({
     hospitalId,
     patientId,
@@ -321,6 +339,7 @@ async function addImmunization(
   userId: string,
   body: AddImmunizationBody,
 ): Promise<IImmunization> {
+  await assertPatientInHospital(hospitalId, patientId);
   const immunization = await emrRepo.createImmunization({
     id: newId.immunization(),
     hospitalId,
@@ -344,6 +363,7 @@ async function listDocuments(
   patientId: string,
   userId: string,
 ): Promise<IChartDocument[]> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({
     hospitalId,
     patientId,
@@ -360,6 +380,7 @@ async function addDocument(
   userId: string,
   body: AddChartDocumentBody,
 ): Promise<IChartDocument> {
+  await assertPatientInHospital(hospitalId, patientId);
   const doc = await emrRepo.createDocument({
     id: newId.chartDoc(),
     hospitalId,
@@ -402,6 +423,7 @@ async function getAccessLog(
   page: number,
   limit: number,
 ): Promise<PaginatedResult<IChartAccessLog>> {
+  await assertPatientInHospital(hospitalId, patientId);
   return emrRepo.listAccessLogs(patientId, hospitalId, { page, limit });
 }
 
@@ -415,6 +437,7 @@ async function breakGlass(
   ip?: string,
   userAgent?: string,
 ): Promise<void> {
+  await assertPatientInHospital(hospitalId, patientId);
   await logAccess({
     hospitalId,
     patientId,

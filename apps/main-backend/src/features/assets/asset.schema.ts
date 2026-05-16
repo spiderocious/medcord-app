@@ -10,6 +10,7 @@ export const CreateAssetBody = z.object({
   purchaseDate: z.coerce.date().optional(),
   purchasePrice: z.number().min(0).optional(),
   warrantyExpiresAt: z.coerce.date().optional(),
+  status: z.enum(['available', 'in_use', 'maintenance', 'retired']).default('available'),
   condition: z.enum(['excellent', 'good', 'fair', 'poor']).default('good'),
   currentLocation: z.string().max(200).optional(),
   notes: z.string().max(1000).optional(),

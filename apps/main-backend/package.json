@@ -1,5 +1,5 @@
 {
-  "name": "@solon/main-backend",
+  "name": "@medcord/main-backend",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@solon/core": "workspace:*",
+    "@medcord/core": "workspace:*",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.0",
     "cors": "^2.8.5",

@@ -19,7 +19,7 @@ const transport: LoggerOptions['transport'] =
 
 const baseLogger = pino({
   level: env.LOG_LEVEL,
-  base: { service: 'solon-main-backend', env: env.NODE_ENV },
+  base: { service: 'medcord-main-backend', env: env.NODE_ENV },
   ...(transport !== undefined ? { transport } : {}),
   redact: {
     paths: [

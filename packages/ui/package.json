@@ -1,5 +1,5 @@
 {
-  "name": "@solon/ui",
+  "name": "@medcord/ui",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -22,7 +22,7 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
-    "@solon/core": "workspace:*",
+    "@medcord/core": "workspace:*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
     "tailwind-merge": "^2.5.4"

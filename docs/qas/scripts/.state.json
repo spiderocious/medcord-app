@@ -1,0 +1,57 @@
+{
+  "users": {
+    "alice": {
+      "id": "USR-5269a749-d073-4bdf-97ff-a3566c9152b4",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNTI2OWE3NDktZDA3My00YmRmLTk3ZmYtYTM1NjZjOTE1MmI0IiwiZW1haWwiOiJhbGljZUBtZWRjb3JkLnRlc3QiLCJ0b2tlblZlcnNpb24iOjAsImlhdCI6MTc3ODg3NTg1NCwiZXhwIjoxNzc4ODc2NzU0fQ.syjtqdezcrzjMb7MrIK9vRvGIBgEA_xdxihCaHGoxOg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNTI2OWE3NDktZDA3My00YmRmLTk3ZmYtYTM1NjZjOTE1MmI0IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTQsImV4cCI6MTc4MTQ2Nzg1NH0.QUpTEFSLGXGRAxJrPjNpjl4ezTPSP8n9TkeqEnP4CNE"
+    },
+    "bob": {
+      "id": "USR-deed1d18-44cf-47b0-97db-591256b6f02e",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItZGVlZDFkMTgtNDRjZi00N2IwLTk3ZGItNTkxMjU2YjZmMDJlIiwiZW1haWwiOiJib2JAbWVkY29yZC50ZXN0IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTQsImV4cCI6MTc3ODg3Njc1NH0.Zjwm7zJ4OXett-tyiNJpUw_XXIsmVAuJDZueKOOh1YE",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItZGVlZDFkMTgtNDRjZi00N2IwLTk3ZGItNTkxMjU2YjZmMDJlIiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTQsImV4cCI6MTc4MTQ2Nzg1NH0.IaNhUX-AB-RWKlHRg-6I7qSvMVrT-W523JbS72Df6Ws"
+    },
+    "carol": {
+      "id": "USR-6aed6a4c-5a02-4dab-ab97-f15428657155",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNmFlZDZhNGMtNWEwMi00ZGFiLWFiOTctZjE1NDI4NjU3MTU1IiwiZW1haWwiOiJjYXJvbEBtZWRjb3JkLnRlc3QiLCJ0b2tlblZlcnNpb24iOjAsImlhdCI6MTc3ODg3NTg1NSwiZXhwIjoxNzc4ODc2NzU1fQ.JQfq9pFFGFsn0l5w7V8fe4xv2rslnO-fgRNDY18HRQI",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNmFlZDZhNGMtNWEwMi00ZGFiLWFiOTctZjE1NDI4NjU3MTU1IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTUsImV4cCI6MTc4MTQ2Nzg1NX0.Nq-M2YNtDnG_aWK3afS9GvBxz5DamBVTz9KT4ugZKes"
+    },
+    "dave": {
+      "id": "USR-bcb6e392-9b57-4b3b-8346-a01fda123cd5",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItYmNiNmUzOTItOWI1Ny00YjNiLTgzNDYtYTAxZmRhMTIzY2Q1IiwiZW1haWwiOiJkYXZlQG1lZGNvcmQudGVzdCIsInRva2VuVmVyc2lvbiI6MCwiaWF0IjoxNzc4ODc1ODU1LCJleHAiOjE3Nzg4NzY3NTV9.plxbGXI23lsjAPczwDt3T7lJV1_YMwOdZc6buFs_ihs",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItYmNiNmUzOTItOWI1Ny00YjNiLTgzNDYtYTAxZmRhMTIzY2Q1IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTUsImV4cCI6MTc4MTQ2Nzg1NX0.m6pfboDtDD0LlPDcaHtXiAtRU9STitPPUoQ8d_V0bfw"
+    },
+    "eve": {
+      "id": "USR-5c330464-f3f8-44b0-8ac6-4e48efdb4ecf",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNWMzMzA0NjQtZjNmOC00NGIwLThhYzYtNGU0OGVmZGI0ZWNmIiwiZW1haWwiOiJldmVAbWVkY29yZC50ZXN0IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTUsImV4cCI6MTc3ODg3Njc1NX0._PDdICX1fnQzHJe3gvG0kGTUmeKW-mpLrMchLjVj0T0",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNWMzMzA0NjQtZjNmOC00NGIwLThhYzYtNGU0OGVmZGI0ZWNmIiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTUsImV4cCI6MTc4MTQ2Nzg1NX0.YVTQKCsdineyuPk2G_NGjuWObGyp5yIfZ-HtOj6JBtg"
+    },
+    "frank": {
+      "id": "USR-5c882a7b-2f78-4c8b-8e03-c10c1be036f6",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNWM4ODJhN2ItMmY3OC00YzhiLThlMDMtYzEwYzFiZTAzNmY2IiwiZW1haWwiOiJmcmFua0BtZWRjb3JkLnRlc3QiLCJ0b2tlblZlcnNpb24iOjAsImlhdCI6MTc3ODg3NTg1NSwiZXhwIjoxNzc4ODc2NzU1fQ.rwj4Jwlg-ruzfep6S_TG6PQ1Dk3oKnF8kittlUw_mJ4",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItNWM4ODJhN2ItMmY3OC00YzhiLThlMDMtYzEwYzFiZTAzNmY2IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTUsImV4cCI6MTc4MTQ2Nzg1NX0.v4kgU1wM4iDlU04Z6aitWs13hETLIGL8ZOA-LDrONuo"
+    },
+    "grace": {
+      "id": "USR-3eba8251-5559-4822-ab09-7c50162884a4",
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItM2ViYTgyNTEtNTU1OS00ODIyLWFiMDktN2M1MDE2Mjg4NGE0IiwiZW1haWwiOiJncmFjZUBtZWRjb3JkLnRlc3QiLCJ0b2tlblZlcnNpb24iOjAsImlhdCI6MTc3ODg3NTg1NiwiZXhwIjoxNzc4ODc2NzU2fQ.EUz_bVJkNEe7wXBdFjCdlovl8yUe_ljRtI8NwcsFDgA",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVU1ItM2ViYTgyNTEtNTU1OS00ODIyLWFiMDktN2M1MDE2Mjg4NGE0IiwidG9rZW5WZXJzaW9uIjowLCJpYXQiOjE3Nzg4NzU4NTYsImV4cCI6MTc4MTQ2Nzg1Nn0.DfZ0UCgjDptcf-z4woBeelwucRYzM_tmJgJfw_Ykdjg"
+    }
+  },
+  "hospitalA": {
+    "id": "HSP-5bc224ab-6353-4c9d-b748-e27db769b08d"
+  },
+  "hospitalB": {
+    "id": "HSP-60b85d2a-fb6d-45ed-b873-296abb39fd38"
+  },
+  "members": {
+    "bob": "MBR-2a7a45f3-276c-4977-8a13-03f7bfd3762a",
+    "carol": "MBR-7ca67b2a-4f95-40de-8a14-51745fccc617",
+    "dave": "MBR-a8af649c-8170-4ed0-9040-888ca48686ea",
+    "eve": "MBR-aa35dd74-96e8-4d45-a4ff-ae6290d6ca98",
+    "frank": "MBR-09f6fe8b-4bb9-4565-90bc-634f1f1137f4"
+  },
+  "patients": [
+    "PAT-7d99681b-6790-4c4d-abeb-993da9c25af9",
+    "PAT-2899d08a-f014-45b3-8b82-e455992d61e5",
+    "PAT-366db897-b596-4964-bfe9-1d1103ea00d6"
+  ]
+}

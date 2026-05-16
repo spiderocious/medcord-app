@@ -1,9 +1,9 @@
-// Solon palette — see docs/product/mvp.md.
+// medcord palette — see docs/product/mvp.md.
 //   Primary: Deep Forest Green
 //   Accent:  Cream / Soft Ivory
 //   Highlight: Burnt Orange (alerts/CTAs only)
 //   Neutrals: Charcoal, off-white
-export const SOLON_COLORS = {
+export const medcord_COLORS = {
   forest: {
     900: '#1B4332',
     700: '#2D5A3D',
@@ -23,7 +23,7 @@ export const SOLON_COLORS = {
   },
 } as const;
 
-export type SolonColorScale = keyof typeof SOLON_COLORS;
+export type medcordColorScale = keyof typeof medcord_COLORS;
 
 export const FONTS = {
   display: '"Fraunces", Georgia, serif',

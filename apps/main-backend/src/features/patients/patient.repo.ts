@@ -74,6 +74,38 @@ export const patientRepo = {
       .select('patientId patientCode')
       .lean(),
 
+  searchByHospital: async (hospitalId: string, q: string | undefined, skip: number, limit: number): Promise<IPatient[]> => {
+    const linkedIds = await HospitalPatientModel.find({ hospitalId, isActive: true })
+      .select('patientId')
+      .lean();
+    const ids = linkedIds.map((r) => r.patientId);
+    const filter: Record<string, unknown> = { id: { $in: ids } };
+    if (q) {
+      filter['$or'] = [
+        { 'demographics.firstName': new RegExp(q, 'i') },
+        { 'demographics.lastName': new RegExp(q, 'i') },
+        { patientCode: new RegExp(q, 'i') },
+      ];
+    }
+    return PatientModel.find(filter).skip(skip).limit(limit).lean() as Promise<IPatient[]>;
+  },
+
+  countSearchByHospital: async (hospitalId: string, q: string | undefined): Promise<number> => {
+    const linkedIds = await HospitalPatientModel.find({ hospitalId, isActive: true })
+      .select('patientId')
+      .lean();
+    const ids = linkedIds.map((r) => r.patientId);
+    const filter: Record<string, unknown> = { id: { $in: ids } };
+    if (q) {
+      filter['$or'] = [
+        { 'demographics.firstName': new RegExp(q, 'i') },
+        { 'demographics.lastName': new RegExp(q, 'i') },
+        { patientCode: new RegExp(q, 'i') },
+      ];
+    }
+    return PatientModel.countDocuments(filter);
+  },
+
   // ── Recent access ──────────────────────────────────────────────────────────
 
   recordAccess: async (userId: string, hospitalId: string, patientId: string) => {

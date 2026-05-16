@@ -1,5 +1,5 @@
 {
-  "name": "@solon/solon-admin-web",
+  "name": "@medcord/medcord-admin-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "lint": "eslint --config ../../eslint.config.mjs 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@solon/api": "workspace:*",
-    "@solon/core": "workspace:*",
-    "@solon/ui": "workspace:*",
+    "@medcord/api": "workspace:*",
+    "@medcord/core": "workspace:*",
+    "@medcord/ui": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Solon — Political intelligence for Nigeria',
+  title: 'medcord — Political intelligence for Nigeria',
   description:
     'Pre-campaign simulation, voter data, agent coordination, finance compliance and an election-day war room.',
 };

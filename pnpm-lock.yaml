@@ -53,13 +53,13 @@ importers:
 
   apps/admin-web:
     dependencies:
-      '@solon/api':
+      '@medcord/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@solon/ui':
+      '@medcord/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
@@ -145,7 +145,7 @@ importers:
 
   apps/main-backend:
     dependencies:
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
       bcrypt:
@@ -221,13 +221,13 @@ importers:
 
   apps/web:
     dependencies:
-      '@solon/api':
+      '@medcord/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@solon/ui':
+      '@medcord/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
@@ -270,10 +270,10 @@ importers:
 
   apps/website:
     dependencies:
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@solon/ui':
+      '@medcord/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
@@ -310,7 +310,7 @@ importers:
 
   packages/api:
     dependencies:
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../core
       ky:
@@ -338,7 +338,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@solon/core':
+      '@medcord/core':
         specifier: workspace:*
         version: link:../core
       clsx:

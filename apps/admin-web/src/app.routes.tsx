@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 
-import { ROUTES } from '@solon/core';
+import { ROUTES } from '@medcord/core';
 
 import { AdminHome } from '@features/dashboard/admin-home.tsx';
 

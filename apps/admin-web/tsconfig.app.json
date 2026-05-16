@@ -14,12 +14,12 @@
       "@app/*": ["./src/*"],
       "@features/*": ["./src/features/*"],
       "@shared/*": ["./src/shared/*"],
-      "@solon/ui": ["../../packages/ui/src/index.ts"],
-      "@solon/ui/*": ["../../packages/ui/src/*"],
-      "@solon/core": ["../../packages/core/src/index.ts"],
-      "@solon/core/*": ["../../packages/core/src/*"],
-      "@solon/api": ["../../packages/api/src/index.ts"],
-      "@solon/api/*": ["../../packages/api/src/*"],
+      "@medcord/ui": ["../../packages/ui/src/index.ts"],
+      "@medcord/ui/*": ["../../packages/ui/src/*"],
+      "@medcord/core": ["../../packages/core/src/index.ts"],
+      "@medcord/core/*": ["../../packages/core/src/*"],
+      "@medcord/api": ["../../packages/api/src/index.ts"],
+      "@medcord/api/*": ["../../packages/api/src/*"],
       "@icons": ["../../packages/ui/src/icons/index.ts"]
     }
   },

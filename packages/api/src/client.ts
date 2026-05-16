@@ -1,5 +1,5 @@
 import ky, { type KyInstance } from 'ky';
-import { TOKEN_KEYS, createTokenStorage } from '@solon/core';
+import { TOKEN_KEYS, createTokenStorage } from '@medcord/core';
 
 import { EP } from './endpoints.js';
 

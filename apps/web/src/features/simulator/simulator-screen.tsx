@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import { ROUTES } from '@solon/core';
-import { AppText } from '@solon/ui';
+import { ROUTES } from '@medcord/core';
+import { AppText } from '@medcord/ui';
 
 export function SimulatorScreen() {
   return (

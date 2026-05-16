@@ -4,8 +4,8 @@
 // configureApiClient.
 
 export const TOKEN_KEYS = {
-  ACCESS: 'solon.access_token',
-  REFRESH: 'solon.refresh_token',
+  ACCESS: 'medcord.access_token',
+  REFRESH: 'medcord.refresh_token',
 } as const;
 
 export type TokenKey = (typeof TOKEN_KEYS)[keyof typeof TOKEN_KEYS];

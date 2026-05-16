@@ -1,12 +1,12 @@
-import { useHealth } from '@solon/api';
-import { AppText } from '@solon/ui';
+import { useHealth } from '@medcord/api';
+import { AppText } from '@medcord/ui';
 
 export function AdminHome() {
   const { data, isLoading, isError } = useHealth();
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
-      <AppText variant="caption">solon · admin</AppText>
+      <AppText variant="caption">medcord · admin</AppText>
       <AppText variant="heading-1" className="mt-2 text-forest-900">
         Platform operations
       </AppText>

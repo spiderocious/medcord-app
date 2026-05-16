@@ -139,7 +139,10 @@ export const labService = {
       throw new ConflictError('Lab order has reached its final state');
     }
 
-    // result_ready → result_released requires result to be set
+    // result must be recorded before marking result_ready or releasing
+    if (nextStatus === 'result_ready' && !order.result) {
+      throw new ConflictError('Cannot mark as result_ready without recording a result first');
+    }
     if (nextStatus === 'result_released' && !order.result) {
       throw new ConflictError('Cannot release result without recording it first');
     }

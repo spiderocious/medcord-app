@@ -1,5 +1,5 @@
 {
-  "name": "@solon/api",
+  "name": "@medcord/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "react": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
-    "@solon/core": "workspace:*",
+    "@medcord/core": "workspace:*",
     "ky": "^1.7.5"
   },
   "devDependencies": {

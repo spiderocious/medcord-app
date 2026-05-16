@@ -2,6 +2,7 @@ import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { emailService } from '@lib/email.js';
 import { newId, newRawId } from '@lib/ids.js';
 import { hospitalRepo } from '@features/hospitals/hospital.repo.js';
+import { authRepo } from '@features/auth/auth.repo.js';
 import type { PaginatedResult } from '@shared/types/service.types.js';
 
 import { staffRepo } from './staff.repo.js';
@@ -45,9 +46,10 @@ export const staffService = {
       expiresAt: makeInviteExpiry(),
     });
 
+    const inviter = await authRepo.findById(invitedBy);
     await emailService.sendStaffInvitation({
       to: body.email,
-      inviterName: invitedBy,
+      inviterName: inviter?.name ?? 'A team member',
       hospitalName: hospital.name,
       role: body.role,
       inviteUrl: `${process.env['APP_BASE_URL']}/invite/${invitation.token}`,
@@ -84,9 +86,10 @@ export const staffService = {
       expiresAt: makeInviteExpiry(),
     });
 
+    const inviter = await authRepo.findById(inv.invitedBy);
     await emailService.sendStaffInvitation({
       to: inv.email,
-      inviterName: inv.invitedBy,
+      inviterName: inviter?.name ?? 'A team member',
       hospitalName: hospital.name,
       role: inv.role,
       inviteUrl: `${process.env['APP_BASE_URL']}/invite/${updated?.token}`,
@@ -123,6 +126,7 @@ export const staffService = {
     const inv = await staffRepo.findInvitationByToken(token);
     if (!inv) throw new NotFoundError('Invitation');
     if (inv.status !== 'pending') throw new ConflictError('Invitation is no longer valid');
+    if (inv.expiresAt < new Date()) throw new ConflictError('Invitation has expired');
     return staffRepo.updateInvitation(inv.id, { status: 'declined' });
   },
 
