@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Show } from 'meemaw';
 
 import { AppButton } from '@medcord/ui';
 import { IconCheckCircle, IconEye, IconEyeOff } from '@icons';
@@ -88,11 +89,11 @@ export function ResetPasswordScreen() {
           </div>
         </div>
 
-        {error !== null && (
+        <Show when={error !== null}>
           <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {error}
           </p>
-        )}
+        </Show>
 
         <AppButton type="submit" loading={mutation.isPending} className="w-full">
           Reset password

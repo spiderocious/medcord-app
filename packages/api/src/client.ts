@@ -33,6 +33,8 @@ export function createApiClient(baseUrl: string): KyInstance {
         },
       ],
       afterResponse: [
+        // 1. Token refresh — runs first so a retried request comes back 200
+        //    and falls through cleanly to the error hook below.
         async (request, _options, response) => {
           if (response.status !== 401) return response;
           if (request.url.includes('/auth/')) return response;
@@ -65,6 +67,21 @@ export function createApiClient(baseUrl: string): KyInstance {
           const newToken = storage.get(TOKEN_KEYS.ACCESS);
           if (newToken) request.headers.set('Authorization', `Bearer ${newToken}`);
           return ky(request);
+        },
+        // 2. Error extraction — reads the backend { error: { code, message } }
+        //    envelope and re-throws a plain Error so every .catch() in the app
+        //    gets err.message as the real backend message, not a generic string.
+        async (_request, _options, response) => {
+          if (response.ok) return response;
+          try {
+            const body = await response.clone().json() as { error?: { message?: string; code?: string } };
+            const message = body?.error?.message ?? 'Something went wrong';
+            const code = body?.error?.code ?? 'unknown';
+            throw Object.assign(new Error(message), { code });
+          } catch (e) {
+            if (e instanceof SyntaxError) throw new Error('Something went wrong');
+            throw e;
+          }
         },
       ],
     },

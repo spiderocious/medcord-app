@@ -3,10 +3,11 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { ROUTES } from '@shared/constants/routes.ts';
 import { AuthGuard } from '@shared/guards/auth-guard.tsx';
+import { HospitalShell } from '@shared/guards/hospital-shell.tsx';
 import { tokenStorage } from '@shared/helpers/token-storage.ts';
-import { PlaceholderScreen } from '@features/placeholder/placeholder-screen.tsx';
 
-// Auth screens — lazy, public
+// ── Auth screens ──────────────────────────────────────────────────────────────
+
 const LoginScreen = lazy(() =>
   import('@features/auth/features/login/screen/login-screen.tsx').then((m) => ({
     default: m.LoginScreen,
@@ -33,7 +34,8 @@ const Setup2faScreen = lazy(() =>
   })),
 );
 
-// Workspace — lazy (Phase 2 stubs for now)
+// ── Workspace ─────────────────────────────────────────────────────────────────
+
 const HospitalsScreen = lazy(() =>
   import('@features/workspace/features/hospital-list/screen/hospital-list-screen.tsx').then((m) => ({
     default: m.HospitalListScreen,
@@ -44,6 +46,44 @@ const HospitalCreateScreen = lazy(() =>
     default: m.HospitalCreateScreen,
   })),
 );
+
+// ── Hospital-scoped ───────────────────────────────────────────────────────────
+
+const HospitalDashboardScreen = lazy(() =>
+  import('@features/workspace/features/hospital-dashboard/screen/hospital-dashboard-screen.tsx').then((m) => ({
+    default: m.HospitalDashboardScreen,
+  })),
+);
+const HospitalSettingsScreen = lazy(() =>
+  import('@features/workspace/features/hospital-settings/screen/hospital-settings-screen.tsx').then((m) => ({
+    default: m.HospitalSettingsScreen,
+  })),
+);
+
+// ── Staff ─────────────────────────────────────────────────────────────────────
+
+const StaffDirectoryScreen = lazy(() =>
+  import('@features/staff/features/staff-directory/screen/staff-directory-screen.tsx').then((m) => ({
+    default: m.StaffDirectoryScreen,
+  })),
+);
+const StaffProfileScreen = lazy(() =>
+  import('@features/staff/features/staff-profile/screen/staff-profile-screen.tsx').then((m) => ({
+    default: m.StaffProfileScreen,
+  })),
+);
+const StaffInviteScreen = lazy(() =>
+  import('@features/staff/features/staff-invite/screen/staff-invite-screen.tsx').then((m) => ({
+    default: m.StaffInviteScreen,
+  })),
+);
+const OrgChartScreen = lazy(() =>
+  import('@features/staff/features/org-chart/screen/org-chart-screen.tsx').then((m) => ({
+    default: m.OrgChartScreen,
+  })),
+);
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function Lazy({ children }: { readonly children: React.ReactNode }) {
   return (
@@ -84,30 +124,28 @@ export function AppRoutes() {
       {/* Workspace — requires auth */}
       <Route
         path={ROUTES.HOSPITALS}
-        element={
-          <AuthGuard>
-            <Lazy><HospitalsScreen /></Lazy>
-          </AuthGuard>
-        }
+        element={<AuthGuard><Lazy><HospitalsScreen /></Lazy></AuthGuard>}
       />
       <Route
         path={ROUTES.HOSPITAL_CREATE}
-        element={
-          <AuthGuard>
-            <Lazy><HospitalCreateScreen /></Lazy>
-          </AuthGuard>
-        }
+        element={<AuthGuard><Lazy><HospitalCreateScreen /></Lazy></AuthGuard>}
       />
 
-      {/* Hospital-scoped routes — /h/:slug/* (Phase 2+) */}
+      {/* Hospital-scoped — requires auth + valid hospital slug */}
       <Route
-        path="/h/:slug/*"
-        element={
-          <AuthGuard>
-            <PlaceholderScreen label="Hospital workspace" />
-          </AuthGuard>
-        }
-      />
+        path="/h/:slug"
+        element={<AuthGuard><HospitalShell /></AuthGuard>}
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<Lazy><HospitalDashboardScreen /></Lazy>} />
+        <Route path="settings" element={<Lazy><HospitalSettingsScreen /></Lazy>} />
+
+        {/* Staff */}
+        <Route path="staff" element={<Lazy><StaffDirectoryScreen /></Lazy>} />
+        <Route path="staff/invite" element={<Lazy><StaffInviteScreen /></Lazy>} />
+        <Route path="staff/org-chart" element={<Lazy><OrgChartScreen /></Lazy>} />
+        <Route path="staff/:staffId" element={<Lazy><StaffProfileScreen /></Lazy>} />
+      </Route>
 
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -37,6 +37,7 @@ export const authService = {
       name: body.name,
       phone: body.phone,
       isEmailVerified: false,
+      isAdmin: false,
       twoFactorEnabled: false,
       tokenVersion: 0,
     });

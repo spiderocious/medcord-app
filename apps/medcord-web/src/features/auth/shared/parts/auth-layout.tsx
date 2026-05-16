@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { Show } from 'meemaw';
 
 import { AppText } from '@medcord/ui';
 import { ROUTES } from '@shared/constants/routes.ts';
@@ -26,28 +27,28 @@ export function AuthLayout({ title, subtitle, children, footerLink }: AuthLayout
           <AppText variant="heading-2" className="mt-4 text-charcoal-900">
             {title}
           </AppText>
-          {subtitle !== undefined && (
+          <Show when={subtitle !== undefined}>
             <AppText variant="body-sm" className="mt-1 text-charcoal-700">
               {subtitle}
             </AppText>
-          )}
+          </Show>
         </div>
 
         <div className="rounded-xl border border-forest-900/10 bg-white p-8 shadow-sm">
           {children}
         </div>
 
-        {footerLink !== undefined && (
+        <Show when={footerLink !== undefined}>
           <p className="mt-6 text-center text-sm text-charcoal-700">
-            {footerLink.label}{' '}
+            {footerLink!.label}{' '}
             <Link
-              to={footerLink.to}
+              to={footerLink!.to}
               className="font-medium text-forest-900 hover:underline"
             >
-              {footerLink.text}
+              {footerLink!.text}
             </Link>
           </p>
-        )}
+        </Show>
       </div>
     </div>
   );

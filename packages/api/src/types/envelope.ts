@@ -22,5 +22,12 @@ export const parseApiError = (raw: unknown): ApiError => {
     const err = (raw as ApiErrorResponse).error;
     if (err && typeof err.code === 'string') return err;
   }
+  // ky client re-throws backend errors as plain Error with .message already set
+  if (raw instanceof Error && raw.message !== '') {
+    return {
+      code: (raw as Error & { code?: string }).code ?? 'unknown',
+      message: raw.message,
+    };
+  }
   return { code: 'unknown', message: 'Something went wrong' };
 };

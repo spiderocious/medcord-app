@@ -12,13 +12,13 @@ export function AppShell({ hospital }: AppShellProps) {
   return (
     <div className="flex h-full overflow-hidden bg-cream-50">
       <Sidebar
-        slug={hospital.slug}
+        slug={hospital.subdomain}
         hospitalName={hospital.name}
-        enabledModules={hospital.modules}
+        modules={hospital.modules}
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar slug={hospital.slug} />
+        <Topbar slug={hospital.subdomain} />
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>

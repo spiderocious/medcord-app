@@ -11,12 +11,12 @@ import {
   IconSettings,
 } from '@icons';
 import { ROUTES } from '@shared/constants/routes.ts';
-import type { HospitalModule } from '@shared/types';
+import type { HospitalModules } from '@shared/types/hospital.ts';
 
 interface SidebarProps {
   readonly slug: string;
   readonly hospitalName: string;
-  readonly enabledModules: HospitalModule[];
+  readonly modules: HospitalModules;
 }
 
 interface NavEntry {
@@ -24,58 +24,24 @@ interface NavEntry {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly Icon: React.ComponentType<any>;
   readonly to: string;
-  readonly module?: HospitalModule;
+  readonly moduleKey?: keyof HospitalModules;
 }
 
-function buildNavEntries(slug: string, enabledModules: HospitalModule[]): NavEntry[] {
+function buildNavEntries(slug: string, modules: HospitalModules): NavEntry[] {
   const all: NavEntry[] = [
-    {
-      label: 'Dashboard',
-      Icon: IconHome,
-      to: ROUTES.HOSPITAL_DASHBOARD(slug),
-    },
-    {
-      label: 'Staff',
-      Icon: IconUsers,
-      to: ROUTES.HOSPITAL_STAFF(slug),
-    },
-    {
-      label: 'Patients',
-      Icon: IconHeartPulse,
-      to: ROUTES.HOSPITAL_PATIENTS(slug),
-    },
-    {
-      label: 'Labs',
-      Icon: IconFlask,
-      to: ROUTES.HOSPITAL_LABS(slug),
-      module: 'labs' as HospitalModule,
-    },
-    {
-      label: 'Assets',
-      Icon: IconPackage,
-      to: ROUTES.HOSPITAL_ASSETS(slug),
-      module: 'assets' as HospitalModule,
-    },
-    {
-      label: 'Review Queue',
-      Icon: IconClipboard,
-      to: ROUTES.HOSPITAL_REVIEW_QUEUE(slug),
-    },
-    {
-      label: 'Search',
-      Icon: IconSearch,
-      to: ROUTES.HOSPITAL_SEARCH(slug),
-    },
-    {
-      label: 'Settings',
-      Icon: IconSettings,
-      to: ROUTES.HOSPITAL_SETTINGS(slug),
-    },
+    { label: 'Dashboard', Icon: IconHome, to: ROUTES.HOSPITAL_DASHBOARD(slug) },
+    { label: 'Staff', Icon: IconUsers, to: ROUTES.HOSPITAL_STAFF(slug) },
+    { label: 'Patients', Icon: IconHeartPulse, to: ROUTES.HOSPITAL_PATIENTS(slug) },
+    { label: 'Labs', Icon: IconFlask, to: ROUTES.HOSPITAL_LABS(slug), moduleKey: 'labs' },
+    { label: 'Assets', Icon: IconPackage, to: ROUTES.HOSPITAL_ASSETS(slug), moduleKey: 'assets' },
+    { label: 'Review Queue', Icon: IconClipboard, to: ROUTES.HOSPITAL_REVIEW_QUEUE(slug) },
+    { label: 'Search', Icon: IconSearch, to: ROUTES.HOSPITAL_SEARCH(slug) },
+    { label: 'Settings', Icon: IconSettings, to: ROUTES.HOSPITAL_SETTINGS(slug) },
   ];
 
   return all.filter((entry) => {
-    if (entry.module === undefined) return true;
-    return enabledModules.includes(entry.module);
+    if (entry.moduleKey === undefined) return true;
+    return modules[entry.moduleKey] === true;
   });
 }
 
@@ -83,8 +49,8 @@ const LINK_BASE =
   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-charcoal-700 hover:bg-forest-900/5 hover:text-forest-900';
 const LINK_ACTIVE = '!bg-forest-900/10 !text-forest-900';
 
-export function Sidebar({ slug, hospitalName, enabledModules }: SidebarProps) {
-  const entries = buildNavEntries(slug, enabledModules);
+export function Sidebar({ slug, hospitalName, modules }: SidebarProps) {
+  const entries = buildNavEntries(slug, modules);
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-forest-900/10 bg-white">

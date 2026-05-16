@@ -4,6 +4,7 @@ import type { ICustomRole, IInvitation } from './staff.model.js';
 import { CustomRoleModel, InvitationModel } from './staff.model.js';
 import { HospitalMemberModel } from '@features/hospitals/hospital.model.js';
 import type { IHospitalMember } from '@features/hospitals/hospital.model.js';
+import { UserModel } from '@features/auth/auth.model.js';
 
 export const staffRepo = {
   // ── Invitations ───────────────────────────────────────────────────────────
@@ -31,7 +32,7 @@ export const staffRepo = {
 
   findMemberById: (id: string) => HospitalMemberModel.findOne({ id }).lean(),
 
-  listMembers: (
+  listMembers: async (
     hospitalId: string,
     filters: { role?: StaffRole | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
     skip: number,
@@ -40,16 +41,30 @@ export const staffRepo = {
     const query: Record<string, unknown> = { hospitalId };
     if (filters.role) query['role'] = filters.role;
     if (filters.status) query['status'] = filters.status;
+    if (filters.q) {
+      const regex = new RegExp(filters.q, 'i');
+      const matchingUsers = await UserModel.find({ $or: [{ name: regex }, { email: regex }] })
+        .select('id')
+        .lean();
+      query['userId'] = { $in: matchingUsers.map((u) => u.id) };
+    }
     return HospitalMemberModel.find(query).skip(skip).limit(limit).lean();
   },
 
-  countMembers: (
+  countMembers: async (
     hospitalId: string,
-    filters: { role?: StaffRole | undefined; status?: 'active' | 'suspended' | undefined },
+    filters: { role?: StaffRole | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
   ) => {
     const query: Record<string, unknown> = { hospitalId };
     if (filters.role) query['role'] = filters.role;
     if (filters.status) query['status'] = filters.status;
+    if (filters.q) {
+      const regex = new RegExp(filters.q, 'i');
+      const matchingUsers = await UserModel.find({ $or: [{ name: regex }, { email: regex }] })
+        .select('id')
+        .lean();
+      query['userId'] = { $in: matchingUsers.map((u) => u.id) };
+    }
     return HospitalMemberModel.countDocuments(query);
   },
 

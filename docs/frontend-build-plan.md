@@ -42,6 +42,38 @@
 - Helpers = pure functions (`helpers/`). Utils = custom hooks (`utils/`).
 - One API hook file per resource (`api/use-<resource>.ts`).
 
+---
+
+## Meemaw — Mandatory Usage Rules
+
+`meemaw` is installed in `apps/medcord-web/`. **Every component must use meemaw primitives** — raw ternaries, `&&` short-circuits, and `.map()` in JSX are banned. No exceptions.
+
+### Component Map (strict)
+
+| Banned pattern | Required replacement | Import |
+|---|---|---|
+| `{cond && <X />}` | `<Show when={cond}><X /></Show>` | `meemaw` |
+| `{cond ? <X /> : <Y />}` | `<Show when={cond} fallback={<Y />}><X /></Show>` | `meemaw` |
+| Multi-branch ternary / role switches | `<Switch><Case when={...}> ... </Case><Default> ... </Default></Switch>` | `meemaw` |
+| `{isLoading ? <Spinner /> : error ? <Err /> : <Content />}` | `<Loadable loading={...} error={error ?? undefined} loadingComponent={<Spinner />} errorComponent={<Err />}> ... </Loadable>` | `meemaw` |
+| `{items.map(item => <Card key={item.id} />)}` | `<Repeat each={items}>{(item) => <Card key={item.id} />}</Repeat>` | `meemaw` |
+| `{show ? null : <X />}` (hide/show) | `<Hidden when={!show}><X /></Hidden>` | `meemaw` |
+| Long text truncation | `<Clamp lines={2}>{text}</Clamp>` | `meemaw` |
+| Clipboard copy (IDs, codes, slugs) | `<CopyToClipboard text={value}>{({ copy }) => <button onClick={copy}>...</button>}</CopyToClipboard>` | `meemaw` |
+| First-time / onboarding banners | `<ShowOnce id="unique-key">...</ShowOnce>` | `meemaw` |
+| Deferred render after delay | `<Delayed ms={300}>...</Delayed>` | `meemaw` |
+
+### Specific Enforcement
+
+- **Screens**: always wrap the data fetch with `<Loadable>`. No manual `if (isLoading) return ...` at the top of render.
+- **Lists**: every list rendered from an array uses `<Repeat>`. Never `.map()` in JSX.
+- **Role/status branching**: `<Switch>` with `<Case>` blocks. No chained ternaries.
+- **Optional UI sections** (badges, tags, empty states, error banners): `<Show>`.
+- **Patient codes, hospital slugs, any copyable identifier**: `<CopyToClipboard>`.
+- **Text cells in cards/tables that might overflow**: `<Clamp>`.
+
+---
+
 ### Quality Gate — after every feature
 
 ```bash

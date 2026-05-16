@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { UnauthorizedError } from '@lib/errors.js';
 import { verifyAccessToken } from '@lib/jwt.js';
+import { authRepo } from '@features/auth/auth.repo.js';
 
 export interface AuthUser {
   id: string;
@@ -18,7 +19,7 @@ declare global {
   }
 }
 
-export const authenticate = (req: Request, _res: Response, next: NextFunction): void => {
+export const authenticate = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
     return next(new UnauthorizedError('Missing bearer token'));
@@ -27,6 +28,10 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction): 
   const token = header.slice(7);
   try {
     const payload = verifyAccessToken(token);
+    const dbUser = await authRepo.findByIdTokenVersion(payload.sub);
+    if (!dbUser || dbUser.tokenVersion !== payload.tokenVersion) {
+      return next(new UnauthorizedError('Token has been revoked'));
+    }
     req.user = { id: payload.sub, email: payload.email, tokenVersion: payload.tokenVersion };
     next();
   } catch {

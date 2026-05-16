@@ -15,11 +15,10 @@ import { register as registerReviewQueue } from '@features/review-queue/index.js
 import { register as registerAuditLog } from '@features/audit-log/index.js';
 import { register as registerNotifications } from '@features/notifications/index.js';
 import { register as registerSearch } from '@features/search/index.js';
+import { register as registerAdmin } from '@features/admin/index.js';
 import { errorHandler } from '@middlewares/errorHandler.middleware.js';
 import { requestIdMiddleware } from '@middlewares/requestId.middleware.js';
 import { requestLogMiddleware } from '@middlewares/requestLog.middleware.js';
-
-import { env } from './env.js';
 
 const features = [
   registerHealth,
@@ -34,6 +33,7 @@ const features = [
   registerAuditLog,
   registerNotifications,
   registerSearch,
+  registerAdmin,
 ];
 
 export const buildApp = (): express.Express => {
@@ -44,7 +44,7 @@ export const buildApp = (): express.Express => {
   app.use(helmet());
   app.use(
     cors({
-      origin: "*",
+      origin: '*',
     }),
   );
 

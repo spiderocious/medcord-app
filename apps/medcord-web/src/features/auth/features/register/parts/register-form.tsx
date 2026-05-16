@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Show } from 'meemaw';
 
 import { AppButton } from '@medcord/ui';
 import { IconEye, IconEyeOff } from '@icons';
@@ -43,9 +44,9 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
           className="mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
           placeholder="Dr. Ada Okoye"
         />
-        {fieldErrors?.['name'] !== undefined && (
-          <p className="mt-1 text-xs text-red-600">{fieldErrors['name']}</p>
-        )}
+        <Show when={fieldErrors?.['name'] !== undefined}>
+          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['name']}</p>
+        </Show>
       </div>
 
       <div>
@@ -62,9 +63,9 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
           className="mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
           placeholder="you@hospital.com"
         />
-        {fieldErrors?.['email'] !== undefined && (
-          <p className="mt-1 text-xs text-red-600">{fieldErrors['email']}</p>
-        )}
+        <Show when={fieldErrors?.['email'] !== undefined}>
+          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['email']}</p>
+        </Show>
       </div>
 
       <div>
@@ -109,16 +110,16 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
             {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
           </button>
         </div>
-        {fieldErrors?.['password'] !== undefined && (
-          <p className="mt-1 text-xs text-red-600">{fieldErrors['password']}</p>
-        )}
+        <Show when={fieldErrors?.['password'] !== undefined}>
+          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['password']}</p>
+        </Show>
       </div>
 
-      {error !== null && (
+      <Show when={error !== null}>
         <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </p>
-      )}
+      </Show>
 
       <AppButton type="submit" loading={isLoading} className="w-full">
         Create account

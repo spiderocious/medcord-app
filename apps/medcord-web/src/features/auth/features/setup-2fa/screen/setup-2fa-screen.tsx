@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Show } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
 import { IconCheckCircle, IconLoader, IconShield } from '@icons';
@@ -74,13 +75,16 @@ export function Setup2faScreen() {
           </p>
 
           <div className="flex justify-center">
-            {qrImageUrl !== '' ? (
+            <Show
+              when={qrImageUrl !== ''}
+              fallback={
+                <div className="flex h-48 w-48 items-center justify-center rounded-lg border border-forest-900/10 bg-cream-50">
+                  <IconLoader size={24} className="animate-spin text-charcoal-700" />
+                </div>
+              }
+            >
               <img src={qrImageUrl} alt="2FA QR code" className="h-48 w-48 rounded-lg border border-forest-900/10" />
-            ) : (
-              <div className="flex h-48 w-48 items-center justify-center rounded-lg border border-forest-900/10 bg-cream-50">
-                <IconLoader size={24} className="animate-spin text-charcoal-700" />
-              </div>
-            )}
+            </Show>
           </div>
 
           <p className="text-xs text-charcoal-700 text-center">
@@ -121,11 +125,11 @@ export function Setup2faScreen() {
             />
           </div>
 
-          {error !== null && (
+          <Show when={error !== null}>
             <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
               {error}
             </p>
-          )}
+          </Show>
 
           <AppButton type="submit" loading={verifyMutation.isPending} className="w-full">
             Verify and activate
@@ -159,11 +163,11 @@ export function Setup2faScreen() {
           </AppText>
         </div>
 
-        {error !== null && (
+        <Show when={error !== null}>
           <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {error}
           </p>
-        )}
+        </Show>
 
         <AppButton onClick={handleStart} loading={setupMutation.isPending} className="w-full">
           Set up two-factor authentication

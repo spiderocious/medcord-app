@@ -16,103 +16,121 @@ export const EP = {
   AUTH_CHANGE_PASSWORD: 'api/v1/auth/me/password',
   AUTH_UPDATE_ME: 'api/v1/auth/me',
 
-  // Hospitals
+  // Hospitals — mounted at /api/v1/hospitals
   HOSPITALS: 'api/v1/hospitals',
   HOSPITAL: (id: string) => `api/v1/hospitals/${id}`,
-  HOSPITAL_STATS: (id: string) => `api/v1/hospitals/${id}/stats`,
+  HOSPITAL_BRANDING: (id: string) => `api/v1/hospitals/${id}/branding`,
+  HOSPITAL_MODULES: (id: string) => `api/v1/hospitals/${id}/modules`,
+  HOSPITAL_DOMAIN: (id: string) => `api/v1/hospitals/${id}/domain`,
+  HOSPITAL_USAGE: (id: string) => `api/v1/hospitals/${id}/usage`,
+  HOSPITAL_TRANSFER_OWNERSHIP: (id: string) => `api/v1/hospitals/${id}/transfer-ownership`,
 
-  // Staff
+  // Staff — mounted at /api/v1/hospitals/:hospitalId
   HOSPITAL_STAFF: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/staff`,
-  HOSPITAL_STAFF_MEMBER: (hospitalId: string, staffId: string) =>
-    `api/v1/hospitals/${hospitalId}/staff/${staffId}`,
-  HOSPITAL_STAFF_SUSPEND: (hospitalId: string, staffId: string) =>
-    `api/v1/hospitals/${hospitalId}/staff/${staffId}/suspend`,
-  HOSPITAL_STAFF_REACTIVATE: (hospitalId: string, staffId: string) =>
-    `api/v1/hospitals/${hospitalId}/staff/${staffId}/reactivate`,
+  HOSPITAL_STAFF_MEMBER: (hospitalId: string, memberId: string) =>
+    `api/v1/hospitals/${hospitalId}/staff/${memberId}`,
+  HOSPITAL_STAFF_SUSPEND: (hospitalId: string, memberId: string) =>
+    `api/v1/hospitals/${hospitalId}/staff/${memberId}/suspend`,
+  HOSPITAL_STAFF_ACTIVATE: (hospitalId: string, memberId: string) =>
+    `api/v1/hospitals/${hospitalId}/staff/${memberId}/activate`,
 
-  // Invitations
+  // Invitations — mounted at /api/v1/hospitals/:hospitalId
   HOSPITAL_INVITATIONS: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/invitations`,
+  HOSPITAL_INVITATIONS_BULK: (hospitalId: string) =>
+    `api/v1/hospitals/${hospitalId}/invitations/bulk`,
+  HOSPITAL_INVITATION: (hospitalId: string, invId: string) =>
+    `api/v1/hospitals/${hospitalId}/invitations/${invId}`,
   HOSPITAL_INVITATION_RESEND: (hospitalId: string, invId: string) =>
     `api/v1/hospitals/${hospitalId}/invitations/${invId}/resend`,
-  HOSPITAL_INVITATION_REVOKE: (hospitalId: string, invId: string) =>
-    `api/v1/hospitals/${hospitalId}/invitations/${invId}`,
+  INVITATION_ACCEPT: (token: string) => `api/v1/invitations/${token}/accept`,
+  INVITATION_DECLINE: (token: string) => `api/v1/invitations/${token}/decline`,
 
-  // Org chart & roles
-  HOSPITAL_ORG_CHART: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/org-chart`,
+  // Roles — mounted at /api/v1/hospitals/:hospitalId
   HOSPITAL_ROLES: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/roles`,
+  HOSPITAL_ROLE: (hospitalId: string, roleId: string) =>
+    `api/v1/hospitals/${hospitalId}/roles/${roleId}`,
 
-  // Patients
+  // Org chart & share — mounted at /api/v1/hospitals/:hospitalId
+  HOSPITAL_ORG_CHART: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/org-chart`,
+  HOSPITAL_SHARE: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/share`,
+
+  // Patients — mounted at /api/v1/hospitals/:hospitalId/patients
   HOSPITAL_PATIENTS: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/patients`,
-  HOSPITAL_PATIENTS_RECENTS: (hospitalId: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/recents`,
-  PATIENT: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}`,
-  PATIENT_FAVORITE: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/favorite`,
-  PATIENT_CHECK_IN: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/check-in`,
-  PATIENT_CHECK_OUT: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/check-out`,
-  PATIENT_ADMIT: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/admit`,
-  PATIENT_DISCHARGE: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/discharge`,
-  PATIENT_TRANSFER: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/transfer`,
-  PATIENT_ID_CARD: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/id-card`,
-  PATIENT_ID_CARD_ISSUE: (hospitalId: string, code: string) =>
-    `api/v1/hospitals/${hospitalId}/patients/${code}/id-card/issue`,
+  HOSPITAL_PATIENTS_RECENT: (hospitalId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/recent`,
+  HOSPITAL_PATIENTS_FAVORITES: (hospitalId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients-favorites`,
+  PATIENT: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}`,
+  PATIENT_FAVORITE: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/favorite`,
+  PATIENT_CHECKIN: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/checkin`,
+  PATIENT_CHECKOUT: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/checkout`,
+  PATIENT_ADMIT: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/admit`,
+  PATIENT_DISCHARGE: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/discharge`,
+  PATIENT_TRANSFER: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/transfer`,
+  PATIENT_ID_CARD: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/id-card`,
+  PATIENT_LOOKUP: (patientCode: string) => `api/v1/patients/lookup/${patientCode}`,
+  HOSPITAL_TRANSFERS_INCOMING: (hospitalId: string) =>
+    `api/v1/hospitals/${hospitalId}/transfers/incoming`,
+  HOSPITAL_TRANSFER_ACCEPT: (hospitalId: string, transferId: string) =>
+    `api/v1/hospitals/${hospitalId}/transfers/${transferId}/accept`,
+  HOSPITAL_TRANSFER_DECLINE: (hospitalId: string, transferId: string) =>
+    `api/v1/hospitals/${hospitalId}/transfers/${transferId}/decline`,
 
-  // EMR
-  CHART: (code: string) => `api/v1/emr/patients/${code}/chart`,
-  VITALS: (code: string) => `api/v1/emr/patients/${code}/vitals`,
-  MEDICATIONS: (code: string) => `api/v1/emr/patients/${code}/medications`,
-  MEDICATION: (code: string, medId: string) =>
-    `api/v1/emr/patients/${code}/medications/${medId}`,
-  DRUG_INTERACTIONS: 'api/v1/emr/drug-interactions',
-  HISTORY: (code: string) => `api/v1/emr/patients/${code}/history`,
-  HISTORY_DIAGNOSES: (code: string) => `api/v1/emr/patients/${code}/history/diagnoses`,
-  PROCEDURES: (code: string) => `api/v1/emr/patients/${code}/procedures`,
-  IMMUNIZATIONS: (code: string) => `api/v1/emr/patients/${code}/immunizations`,
-  DOCUMENTS: (code: string) => `api/v1/emr/patients/${code}/documents`,
-  CHART_ACCESS: (code: string) => `api/v1/emr/patients/${code}/access`,
-  CHART_AUDIT_LOG: (code: string) => `api/v1/emr/patients/${code}/access-log`,
+  // EMR — mounted at /api/v1/hospitals/:hospitalId/patients/:patientId
+  CHART: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart`,
+  CHART_VITALS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/vitals`,
+  CHART_MEDICATIONS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/medications`,
+  CHART_MEDICATION: (hospitalId: string, patientId: string, medId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/medications/${medId}`,
+  CHART_HISTORY: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/history`,
+  CHART_PROCEDURES: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/procedures`,
+  CHART_IMMUNIZATIONS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/immunizations`,
+  CHART_DOCUMENTS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/documents`,
+  CHART_DOCUMENT: (hospitalId: string, patientId: string, docId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/documents/${docId}`,
+  CHART_ACCESS_LOG: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/access-log`,
+  CHART_BREAK_GLASS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/chart/break-glass`,
 
-  // Labs
-  HOSPITAL_LAB_ORDERS: (hospitalId: string) =>
-    `api/v1/hospitals/${hospitalId}/labs/orders`,
-  LAB_ORDER: (orderId: string) => `api/v1/labs/orders/${orderId}`,
-  LAB_ORDER_STATE_ADVANCE: (orderId: string) =>
-    `api/v1/labs/orders/${orderId}/state/advance`,
-  LAB_ORDER_RESULT: (orderId: string) => `api/v1/labs/orders/${orderId}/result`,
-  LAB_ORDER_RESULT_ACKNOWLEDGE: (orderId: string) =>
-    `api/v1/labs/orders/${orderId}/result/acknowledge`,
-  LAB_ORDER_RESULT_SIGN_OFF: (orderId: string) =>
-    `api/v1/labs/orders/${orderId}/result/sign-off`,
-  HOSPITAL_LAB_PENDING_RESULTS: (hospitalId: string) =>
-    `api/v1/hospitals/${hospitalId}/labs/results/pending`,
+  // Labs — mounted at /api/v1/hospitals/:hospitalId/patients/:patientId/labs
+  PATIENT_LABS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/labs`,
+  PATIENT_LAB_ORDER: (hospitalId: string, patientId: string, orderId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/labs/${orderId}`,
+  PATIENT_LAB_ORDER_ADVANCE: (hospitalId: string, patientId: string, orderId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/labs/${orderId}/advance`,
+  PATIENT_LAB_ORDER_RESULT: (hospitalId: string, patientId: string, orderId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/labs/${orderId}/result`,
+  HOSPITAL_LABS: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/labs`,
 
-  // Assets
+  // Assets — mounted at /api/v1/hospitals/:hospitalId/assets
   HOSPITAL_ASSETS: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/assets`,
-  HOSPITAL_ASSETS_BULK: (hospitalId: string) =>
-    `api/v1/hospitals/${hospitalId}/assets/bulk`,
-  ASSET: (assetId: string) => `api/v1/assets/${assetId}`,
-  ASSET_ARCHIVE: (assetId: string) => `api/v1/assets/${assetId}/archive`,
-  ASSET_LOCATION: (assetId: string) => `api/v1/assets/${assetId}/location`,
-  ASSET_LOCATION_HISTORY: (assetId: string) =>
-    `api/v1/assets/${assetId}/location/history`,
-  ASSET_LABEL: (assetId: string) => `api/v1/assets/${assetId}/label`,
-
-  // Review queue
-  HOSPITAL_REVIEW_QUEUE: (hospitalId: string) =>
-    `api/v1/hospitals/${hospitalId}/review-queue`,
-  REVIEW_ITEM: (itemId: string) => `api/v1/review-queue/${itemId}`,
-  REVIEW_ITEM_APPROVE: (itemId: string) => `api/v1/review-queue/${itemId}/approve`,
-  REVIEW_ITEM_REJECT: (itemId: string) => `api/v1/review-queue/${itemId}/reject`,
-  REVIEW_ITEM_REQUEST_CHANGES: (itemId: string) =>
-    `api/v1/review-queue/${itemId}/request-changes`,
-  REVIEW_ITEM_CO_SIGN: (itemId: string) => `api/v1/review-queue/${itemId}/co-sign`,
+  HOSPITAL_ASSET: (hospitalId: string, assetId: string) =>
+    `api/v1/hospitals/${hospitalId}/assets/${assetId}`,
+  HOSPITAL_ASSET_STATUS: (hospitalId: string, assetId: string) =>
+    `api/v1/hospitals/${hospitalId}/assets/${assetId}/status`,
+  HOSPITAL_ASSET_MOVE: (hospitalId: string, assetId: string) =>
+    `api/v1/hospitals/${hospitalId}/assets/${assetId}/move`,
+  HOSPITAL_ASSET_PHOTOS: (hospitalId: string, assetId: string) =>
+    `api/v1/hospitals/${hospitalId}/assets/${assetId}/photos`,
+  HOSPITAL_ASSET_PHOTO: (hospitalId: string, assetId: string, fileKey: string) =>
+    `api/v1/hospitals/${hospitalId}/assets/${assetId}/photos/${fileKey}`,
 
   // Notifications
   HOSPITAL_NOTIFICATIONS: (hospitalId: string) =>
@@ -123,7 +141,4 @@ export const EP = {
 
   // Search
   HOSPITAL_SEARCH: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/search`,
-
-  // File upload (shared)
-  FILE_UPLOAD: 'api/v1/assets/upload',
 } as const;

@@ -13,3 +13,20 @@ export type { AppTextVariant, AppTextProps } from './primitives/app-text/index.j
 // Icons are NOT re-exported here. Import them via the dedicated proxy:
 //   import { IconHome } from '@icons';
 // This keeps the icon source swappable in one file.
+
+// Drawer system (DrawerService, ModalHost, ToastHost)
+export { DrawerService } from './drawer/drawer-service.js';
+export { ModalHost } from './drawer/modal-host.js';
+export { ToastHost } from './drawer/toast-host.js';
+export { drawerStore } from './drawer/drawer-store.js';
+export type {
+  ToastType,
+  ModalKind,
+  ModalPosition,
+  ToastEntry,
+  ModalEntry,
+  FeedbackModalEntry,
+  ConfirmationModalEntry,
+  InputModalEntry,
+  CustomModalEntry,
+} from './drawer/drawer-store.js';

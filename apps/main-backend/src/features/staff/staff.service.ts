@@ -3,6 +3,7 @@ import { emailService } from '@lib/email.js';
 import { newId, newRawId } from '@lib/ids.js';
 import { hospitalRepo } from '@features/hospitals/hospital.repo.js';
 import { authRepo } from '@features/auth/auth.repo.js';
+import { UserModel } from '@features/auth/auth.model.js';
 import type { PaginatedResult } from '@shared/types/service.types.js';
 
 import { staffRepo } from './staff.repo.js';
@@ -16,6 +17,19 @@ import type {
 } from './staff.schema.js';
 import type { IHospitalMember } from '@features/hospitals/hospital.model.js';
 import type { ICustomRole } from './staff.model.js';
+
+type MemberWithUser = IHospitalMember & { name: string; email: string; photoKey?: string | undefined };
+
+async function enrichMembers(members: IHospitalMember[]): Promise<MemberWithUser[]> {
+  if (members.length === 0) return [];
+  const userIds = members.map((m) => m.userId);
+  const users = await UserModel.find({ id: { $in: userIds } }).select('id name email photoKey').lean();
+  const userMap = new Map(users.map((u) => [u.id, u]));
+  return members.map((m) => {
+    const u = userMap.get(m.userId);
+    return { ...m, name: u?.name ?? '', email: u?.email ?? '', photoKey: u?.photoKey ?? undefined };
+  });
+}
 
 const INVITE_TTL_DAYS = 7;
 
@@ -130,13 +144,14 @@ export const staffService = {
     return staffRepo.updateInvitation(inv.id, { status: 'declined' });
   },
 
-  async listStaff(hospitalId: string, query: ListStaffQuery): Promise<PaginatedResult<IHospitalMember>> {
+  async listStaff(hospitalId: string, query: ListStaffQuery): Promise<PaginatedResult<MemberWithUser>> {
     const skip = (query.page - 1) * query.limit;
-    const filters = { role: query.role, status: query.status };
-    const [items, total] = await Promise.all([
+    const filters = { role: query.role, status: query.status, q: query.q };
+    const [members, total] = await Promise.all([
       staffRepo.listMembers(hospitalId, filters, skip, query.limit),
       staffRepo.countMembers(hospitalId, filters),
     ]);
+    const items = await enrichMembers(members as IHospitalMember[]);
     return {
       items,
       total,
@@ -149,7 +164,8 @@ export const staffService = {
   async getMember(hospitalId: string, memberId: string) {
     const member = await staffRepo.findMemberById(memberId);
     if (!member || member.hospitalId !== hospitalId) throw new NotFoundError('Staff member');
-    return member;
+    const [enriched] = await enrichMembers([member as IHospitalMember]);
+    return enriched;
   },
 
   async updateMember(hospitalId: string, memberId: string, body: UpdateMemberBody) {

@@ -1,16 +1,4 @@
-export type HospitalType =
-  | 'general'
-  | 'specialty'
-  | 'clinic'
-  | 'teaching'
-  | 'private'
-  | 'other';
-
-export type HospitalModule =
-  | 'emr'
-  | 'labs'
-  | 'assets'
-  | 'online_consultation';
+export type HospitalType = 'general' | 'specialty' | 'clinic' | 'teaching' | 'other';
 
 export type StaffRole =
   | 'super_admin'
@@ -25,37 +13,50 @@ export type StaffRole =
   | 'tech'
   | 'custom';
 
-export interface Hospital {
-  id: string;
-  name: string;
-  slug: string;
-  type: HospitalType;
-  logoKey?: string;
-  primaryColor?: string;
-  accentColor?: string;
-  timezone: string;
-  locale: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  modules: HospitalModule[];
-  plan: 'pro';
-  isArchived: boolean;
-  createdAt: string;
-  updatedAt: string;
+export interface HospitalModules {
+  readonly emr: boolean;
+  readonly labs: boolean;
+  readonly assets: boolean;
+  readonly onlineConsultation: boolean;
 }
 
-export interface HospitalMembership {
-  hospitalId: string;
-  hospital: Hospital;
-  role: StaffRole;
-  department?: string;
-  unit?: string;
+export interface HospitalBranding {
+  readonly primaryColor?: string;
+  readonly accentColor?: string;
+  readonly idCardLogoPosition?: 'left' | 'center' | 'right';
+  readonly idCardColorScheme?: string;
+}
+
+export interface HospitalContact {
+  readonly phone?: string;
+  readonly email?: string;
+  readonly address?: string;
+}
+
+export interface Hospital {
+  readonly id: string;
+  readonly name: string;
+  readonly subdomain: string;
+  readonly type: HospitalType;
+  readonly location: string;
+  readonly contact: HospitalContact;
+  readonly logoKey?: string;
+  readonly branding: HospitalBranding;
+  readonly customDomain?: string;
+  readonly customDomainVerified: boolean;
+  readonly modules: HospitalModules;
+  readonly plan: 'pro';
+  readonly ownerId: string;
+  readonly timezone: string;
+  readonly locale: string;
+  readonly businessHours?: string;
+  readonly isArchived: boolean;
+  readonly createdAt: string;
+  readonly updatedAt: string;
 }
 
 export interface HospitalStats {
-  staffCount: number;
-  patientCount: number;
-  storageUsedBytes: number;
+  readonly staffCount: number;
+  readonly patientCount: number;
+  readonly storageUsedBytes: number;
 }

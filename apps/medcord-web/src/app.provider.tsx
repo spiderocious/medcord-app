@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactNode, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
+import { ModalHost, ToastHost } from '@medcord/ui';
 import { AuthProvider } from '@shared/providers/auth-provider.tsx';
 
 interface AppProvidersProps {
@@ -22,6 +23,8 @@ export function AppProviders({ children }: AppProvidersProps) {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>{children}</AuthProvider>
+        <ModalHost />
+        <ToastHost />
       </BrowserRouter>
     </QueryClientProvider>
   );

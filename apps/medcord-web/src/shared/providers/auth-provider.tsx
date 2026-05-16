@@ -43,6 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     sessionStorage.removeItem('medcord.active_hospital');
     setUserState(null);
     setActiveHospitalIdState(null);
+    window.location.href = '/login';
   }, []);
 
   const value = useMemo<AuthContextValue>(

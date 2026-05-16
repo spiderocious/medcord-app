@@ -7,6 +7,9 @@ export const authRepo = {
   findById: (id: string) =>
     UserModel.findOne({ id }).lean(),
 
+  findByIdTokenVersion: (id: string) =>
+    UserModel.findOne({ id }).select('+tokenVersion').lean<{ tokenVersion: number } | null>(),
+
   findByIdWithSecrets: (id: string) =>
     UserModel.findOne({ id }).select('+passwordHash +pendingTwoFactorSecret +twoFactorSecret +tokenVersion').lean(),
 

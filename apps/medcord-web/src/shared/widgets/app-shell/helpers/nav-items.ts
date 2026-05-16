@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react';
-import type { HospitalModule } from '@shared/types';
+import type { HospitalModules } from '@shared/types/hospital.ts';
 
 export interface NavItem {
   readonly label: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly icon: ComponentType<any>;
   readonly href: string;
-  readonly module?: HospitalModule;
+  readonly moduleKey?: keyof HospitalModules;
 }
 
 export interface NavGroup {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Show } from 'meemaw';
 
 import { AppButton } from '@medcord/ui';
 import { IconCheckCircle } from '@icons';
@@ -65,11 +66,11 @@ export function ForgotPasswordScreen() {
           />
         </div>
 
-        {error !== null && (
+        <Show when={error !== null}>
           <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {error}
           </p>
-        )}
+        </Show>
 
         <AppButton type="submit" loading={mutation.isPending} className="w-full">
           Send reset link
