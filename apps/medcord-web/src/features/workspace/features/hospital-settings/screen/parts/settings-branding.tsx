@@ -22,10 +22,10 @@ interface SettingsBrandingProps {
 export function SettingsBranding({ hospital }: SettingsBrandingProps) {
   const mutation = useUpdateBranding(hospital.id);
 
-  const [primaryColor, setPrimaryColor] = useState(hospital.branding.primaryColor ?? '#1a2e1a');
-  const [accentColor, setAccentColor] = useState(hospital.branding.accentColor ?? '#f5f0e8');
+  const [primaryColor, setPrimaryColor] = useState(hospital.branding?.primaryColor ?? '#1a2e1a');
+  const [accentColor, setAccentColor] = useState(hospital.branding?.accentColor ?? '#f5f0e8');
   const [logoPosition, setLogoPosition] = useState<'left' | 'center' | 'right'>(
-    hospital.branding.idCardLogoPosition ?? 'left',
+    hospital.branding?.idCardLogoPosition ?? 'left',
   );
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);

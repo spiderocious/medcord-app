@@ -7,7 +7,7 @@ import { ROUTES } from '@shared/constants/routes.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import type { Hospital } from '@shared/types/hospital.ts';
 import { useMyHospitals } from '../api/use-my-hospitals.ts';
-import { HospitalCard } from '../parts/hospital-card.tsx';
+import { HospitalCard } from './parts/hospital-card.tsx';
 
 export function HospitalListScreen() {
   const { user, logout } = useAuth();
@@ -52,9 +52,9 @@ export function HospitalListScreen() {
           error={error ?? undefined}
           loadingComponent={
             <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-24 animate-pulse rounded-xl bg-forest-900/5" />
-              ))}
+              <Repeat times={3}>
+                <div className="h-24 animate-pulse rounded-xl bg-forest-900/5" />
+              </Repeat>
             </div>
           }
           errorComponent={

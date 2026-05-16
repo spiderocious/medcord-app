@@ -195,6 +195,12 @@
   --danger-bg:  #2D0505; --danger-border:  #991B1B; --danger-fg:  #FCA5A5;
   --info-bg:    #041830; --info-border:    #1E40AF; --info-fg:    #93C5FD;
 
+  --clinical-critical-bg: #2D0505; --clinical-critical-fg: #FCA5A5; --clinical-critical-border: #991B1B;
+  --clinical-abnormal-high-bg: #2D1600; --clinical-abnormal-high-fg: #FCD34D; --clinical-abnormal-high-border: #92400E;
+  --clinical-abnormal-low-bg: #1E0530; --clinical-abnormal-low-fg: #C4B5FD; --clinical-abnormal-low-border: #5B21B6;
+  --clinical-normal-bg: #052E16; --clinical-normal-fg: #86EFAC; --clinical-normal-border: #166534;
+  --clinical-pending-bg: #141E2B; --clinical-pending-fg: #64748B; --clinical-pending-border: #263040;
+
   --shadow-1: 0 1px 2px rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.04);
   --shadow-2: 0 2px 8px rgba(0,0,0,0.40), 0 1px 2px rgba(0,0,0,0.20);
   --shadow-3: 0 8px 24px rgba(0,0,0,0.50), 0 2px 4px rgba(0,0,0,0.20);

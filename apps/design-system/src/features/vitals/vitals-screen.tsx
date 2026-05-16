@@ -1,5 +1,5 @@
 import { Section } from '@features/shell/parts/preview-canvas';
-import { VitalsStrip, VitalsStripRow, VitalsTrace, MARGrid } from '@ui/vitals';
+import { VitalsStrip, VitalsStripRow, VitalsTrace, MARGrid } from '@medcord/ui';
 
 const HR_POINTS = [46, 44, 42, 38, 40, 36, 38, 32, 28, 34, 36, 42, 46];
 const BP_SYS_POINTS = [128, 130, 126, 124, 128, 122, 126, 118, 114, 120, 128, 132, 130];

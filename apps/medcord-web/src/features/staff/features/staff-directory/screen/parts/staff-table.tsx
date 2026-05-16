@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Repeat } from 'meemaw';
-
-import { AppButton, AppText } from '@medcord/ui';
-import { IconChevronRight } from '@icons';
+import { Table, StaffAvatar, StatusPill } from '@medcord/ui';
+import type { StaffRole as AvatarRole } from '@medcord/ui';
+import type { TableColumn } from '@medcord/ui';
 import { ROUTES } from '@shared/constants/routes.ts';
 import type { StaffMember } from '../../../../shared/types/staff.ts';
 
@@ -11,13 +10,27 @@ const ROLE_LABELS: Record<string, string> = {
   hospital_admin: 'Admin',
   doctor: 'Doctor',
   nurse: 'Nurse',
-  nurse_practitioner: 'Nurse Practitioner',
-  physician_assistant: 'Physician Assistant',
+  nurse_practitioner: 'NP',
+  physician_assistant: 'PA',
   lab_tech: 'Lab Tech',
   pharmacist: 'Pharmacist',
   reception: 'Reception',
   tech: 'Tech',
   custom: 'Custom',
+};
+
+const ROLE_TO_AVATAR: Record<string, AvatarRole> = {
+  doctor: 'md',
+  nurse: 'rn',
+  nurse_practitioner: 'rn',
+  physician_assistant: 'rn',
+  lab_tech: 'tech',
+  tech: 'tech',
+  pharmacist: 'pharm',
+  hospital_admin: 'admin',
+  super_admin: 'admin',
+  reception: 'other',
+  custom: 'other',
 };
 
 function getInitials(name: string): string {
@@ -29,72 +42,91 @@ function getInitials(name: string): string {
   return ((first[0] ?? '') + (last[0] ?? '')).toUpperCase();
 }
 
+type StaffRow = StaffMember & { readonly id: string; readonly [key: string]: unknown };
+
 interface StaffTableProps {
   readonly slug: string;
   readonly hospitalId: string;
   readonly members: readonly StaffMember[];
+  readonly page: number;
+  readonly pageCount: number;
+  readonly onPageChange: (page: number) => void;
 }
 
-export function StaffTable({ slug, members }: StaffTableProps) {
-  return (
-    <div className="overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-sm">
-      <div className="hidden grid-cols-[1fr_160px_120px_100px] gap-4 border-b border-forest-900/10 px-5 py-3 sm:grid">
-        <AppText variant="caption" className="font-semibold uppercase text-charcoal-700/60">Staff member</AppText>
-        <AppText variant="caption" className="font-semibold uppercase text-charcoal-700/60">Role</AppText>
-        <AppText variant="caption" className="font-semibold uppercase text-charcoal-700/60">Status</AppText>
-        <span />
-      </div>
-
-      <div className="divide-y divide-forest-900/10">
-        <Repeat each={members as StaffMember[]}>
-          {(member: StaffMember) => (
-            <div
-              key={member.id}
-              className="flex flex-col gap-3 px-4 py-4 sm:grid sm:grid-cols-[1fr_160px_120px_80px] sm:items-center sm:gap-4 sm:px-5"
-            >
-              {/* Identity */}
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-forest-900 text-xs font-semibold text-white">
-                  {member.name != null && member.name !== ''
-                    ? getInitials(member.name)
-                    : member.role.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="min-w-0">
-                  <AppText variant="body-sm" as="p" className="truncate font-medium text-charcoal-900">
-                    {member.name ?? '—'}
-                  </AppText>
-                  <AppText variant="caption" as="p" className="normal-case tracking-normal text-charcoal-700/60 truncate">
-                    {member.email ?? member.userId}
-                  </AppText>
-                </div>
-              </div>
-
-              <AppText variant="caption" as="p" className="normal-case tracking-normal text-charcoal-700 sm:truncate">
-                {ROLE_LABELS[member.role] ?? member.role}
-              </AppText>
-
-              <span
-                className={[
-                  'inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                  member.status === 'active'
-                    ? 'bg-forest-900/10 text-forest-900'
-                    : 'bg-red-50 text-red-600',
-                ].join(' ')}
-              >
-                {member.status === 'active' ? 'Active' : 'Suspended'}
-              </span>
-
-              <div className="flex items-center sm:justify-end">
-                <Link to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, member.id)}>
-                  <AppButton variant="ghost" trailingIcon={<IconChevronRight size={13} />}>
-                    <span className="hidden sm:inline">View</span>
-                  </AppButton>
-                </Link>
-              </div>
+export function StaffTable({ slug, members, page, pageCount, onPageChange }: StaffTableProps) {
+  const columns: Array<TableColumn<StaffRow>> = [
+    {
+      key: 'name',
+      header: 'Staff member',
+      render: (row) => (
+        <div className="flex items-center gap-3">
+          <StaffAvatar
+            initials={row.name != null && row.name !== '' ? getInitials(row.name) : row.role.slice(0, 2).toUpperCase()}
+            role={ROLE_TO_AVATAR[row.role] ?? 'other'}
+            size="md"
+          />
+          <div className="min-w-0">
+            <div className="font-ui text-[13px] font-medium text-[var(--text-primary)] truncate">
+              {row.name ?? '—'}
             </div>
-          )}
-        </Repeat>
-      </div>
-    </div>
+            <div className="font-mono text-[11px] text-[var(--text-tertiary)] truncate tracking-[0]">
+              {row.email ?? row.userId}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'role',
+      header: 'Role',
+      render: (row) => (
+        <span className="font-ui text-[13px] text-[var(--text-secondary)]">
+          {ROLE_LABELS[row.role] ?? row.role}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (row) => (
+        <StatusPill
+          label={row.status === 'active' ? 'Active' : 'Suspended'}
+          variant={row.status === 'active' ? 'ok' : 'crit'}
+        />
+      ),
+    },
+    {
+      key: 'department',
+      header: 'Department',
+      render: (row) => (
+        <span className="font-mono text-[12px] text-[var(--text-tertiary)] tracking-[0]">
+          {row.department ?? '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      align: 'right',
+      render: (row) => (
+        <Link
+          to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, row.id)}
+          className="font-ui text-[12px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+        >
+          View →
+        </Link>
+      ),
+    },
+  ];
+
+  return (
+    <Table<StaffRow>
+      columns={columns}
+      rows={members as StaffRow[]}
+      page={page}
+      pageCount={pageCount}
+      onPageChange={onPageChange}
+      totalCount={members.length}
+    />
   );
 }

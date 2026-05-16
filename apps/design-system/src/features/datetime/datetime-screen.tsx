@@ -8,8 +8,8 @@ import {
   DOBInput,
   RecurrenceBuilder,
   DurationField,
-} from '@ui/datetime';
-import type { DateRange, TimeValue } from '@ui/datetime';
+} from '@medcord/ui';
+import type { DateRange, TimeValue } from '@medcord/ui';
 
 export function DatetimeScreen() {
   const [admissionDate, setAdmissionDate] = useState<Date>(new Date(2026, 4, 5));

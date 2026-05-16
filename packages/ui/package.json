@@ -25,6 +25,7 @@
     "@medcord/core": "workspace:*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
+    "react-markdown": "^10.1.0",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {

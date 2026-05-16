@@ -112,6 +112,8 @@ function clearTokensAndRedirect() {
   storage.remove(TOKEN_KEYS.ACCESS);
   storage.remove(TOKEN_KEYS.REFRESH);
   if (typeof window !== 'undefined') {
-    window.location.href = '/login';
+    const current = window.location.pathname + window.location.search;
+    const next = current !== '/login' ? `?next=${encodeURIComponent(current)}` : '';
+    window.location.href = `/login${next}`;
   }
 }

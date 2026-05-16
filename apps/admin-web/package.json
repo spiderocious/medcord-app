@@ -1,5 +1,5 @@
 {
-  "name": "@medcord/medcord-admin-web",
+  "name": "admin-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,6 +16,7 @@
     "@medcord/core": "workspace:*",
     "@medcord/ui": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
+    "meemaw": "^1.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.28.0"

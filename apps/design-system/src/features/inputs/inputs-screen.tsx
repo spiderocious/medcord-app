@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LineField, LineSelect, LineTextarea, BlockInput, SearchInput, UnitToggle } from '@ui/input';
+import { LineField, LineSelect, LineTextarea, BlockInput, SearchInput, UnitToggle } from '@medcord/ui';
 import { Section } from '@features/shell/parts/preview-canvas';
 
 const SEX_OPTIONS = [

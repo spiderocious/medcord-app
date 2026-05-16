@@ -58,13 +58,9 @@ export function TwoFaStep({ onSubmit, onBack, isLoading, error }: TwoFaStepProps
         Verify
       </AppButton>
 
-      <button
-        type="button"
-        onClick={onBack}
-        className="w-full text-center text-sm text-charcoal-700 hover:text-forest-900"
-      >
+      <AppButton type="button" variant="ghost" onClick={onBack} className="w-full">
         Back to sign in
-      </button>
+      </AppButton>
     </form>
   );
 }

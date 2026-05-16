@@ -39,9 +39,9 @@ export interface Hospital {
   readonly subdomain: string;
   readonly type: HospitalType;
   readonly location: string;
-  readonly contact: HospitalContact;
+  readonly contact?: HospitalContact;
   readonly logoKey?: string;
-  readonly branding: HospitalBranding;
+  readonly branding?: HospitalBranding;
   readonly customDomain?: string;
   readonly customDomainVerified: boolean;
   readonly modules: HospitalModules;

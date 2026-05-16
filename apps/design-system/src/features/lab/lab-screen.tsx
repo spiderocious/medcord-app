@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section } from '@features/shell/parts/preview-canvas';
-import { LabSpotlight, LabPanel, LabRow, LabTrendChart } from '@ui/lab';
+import { LabSpotlight, LabPanel, LabRow, LabTrendChart } from '@medcord/ui';
 
 export function LabScreen() {
   const [acknowledged, setAcknowledged] = useState(false);

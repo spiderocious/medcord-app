@@ -22,11 +22,34 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [localErrors, setLocalErrors] = useState<Record<string, string>>({});
 
-  function handleSubmit(e: React.FormEvent) {
+  function validate(): boolean {
+    const errs: Record<string, string> = {};
+    if (name.trim() === '') {
+      errs['name'] = 'Full name is required.';
+    }
+    if (email.trim() === '') {
+      errs['email'] = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs['email'] = 'Enter a valid email address.';
+    }
+    if (password === '') {
+      errs['password'] = 'Password is required.';
+    } else if (password.length < 8) {
+      errs['password'] = 'Password must be at least 8 characters.';
+    }
+    setLocalErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validate()) return;
     onSubmit({ name, email, password, phone: phone.trim() !== '' ? phone : undefined });
   }
+
+  const errors = Object.keys(localErrors).length > 0 ? localErrors : (fieldErrors ?? {});
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -38,14 +61,13 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
           id="name"
           type="text"
           autoComplete="name"
-          required
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
           placeholder="Dr. Ada Okoye"
         />
-        <Show when={fieldErrors?.['name'] !== undefined}>
-          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['name']}</p>
+        <Show when={errors['name'] !== undefined}>
+          <p role="alert" className="mt-1 text-xs text-red-600">{errors['name']}</p>
         </Show>
       </div>
 
@@ -57,21 +79,20 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
           id="reg-email"
           type="email"
           autoComplete="email"
-          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
           placeholder="you@hospital.com"
         />
-        <Show when={fieldErrors?.['email'] !== undefined}>
-          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['email']}</p>
+        <Show when={errors['email'] !== undefined}>
+          <p role="alert" className="mt-1 text-xs text-red-600">{errors['email']}</p>
         </Show>
       </div>
 
       <div>
         <label htmlFor="reg-phone" className="block text-sm font-medium text-charcoal-900">
           Phone{' '}
-          <span className="text-charcoal-700 font-normal">(optional)</span>
+          <span className="font-normal text-charcoal-700">(optional)</span>
         </label>
         <input
           id="reg-phone"
@@ -93,8 +114,6 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
             id="reg-password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
-            required
-            minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 pr-10 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
@@ -110,8 +129,8 @@ export function RegisterForm({ onSubmit, isLoading, fieldErrors, error }: Regist
             {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
           </button>
         </div>
-        <Show when={fieldErrors?.['password'] !== undefined}>
-          <p className="mt-1 text-xs text-red-600">{fieldErrors?.['password']}</p>
+        <Show when={errors['password'] !== undefined}>
+          <p role="alert" className="mt-1 text-xs text-red-600">{errors['password']}</p>
         </Show>
       </div>
 

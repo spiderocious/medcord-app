@@ -3,7 +3,7 @@ import {
   TelehealthRoom,
   PatientQueueRow,
   DictationNote,
-} from '@ui/telehealth';
+} from '@medcord/ui';
 
 export function TelehealthScreen() {
   return (

@@ -10,8 +10,8 @@ import {
   AllergyInput,
   ProviderPicker,
   BedPicker,
-} from '@ui/selection';
-import type { AllergyChip, Provider, Bed } from '@ui/selection';
+} from '@medcord/ui';
+import type { AllergyChip, Provider, Bed } from '@medcord/ui';
 
 /* ============================================================
    Discharge Checklist Scene

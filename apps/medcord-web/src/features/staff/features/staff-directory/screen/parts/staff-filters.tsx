@@ -3,7 +3,7 @@ import { Repeat, Show } from 'meemaw';
 import { AppButton } from '@medcord/ui';
 import { IconSearch, IconClose } from '@icons';
 import type { StaffRole } from '@shared/types/hospital.ts';
-import type { StaffFilter } from '../../utils/use-staff-filter.ts';
+import type { StaffFilter } from '../../helpers/use-staff-filter.ts';
 
 const INPUT_CLS =
   'block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900';

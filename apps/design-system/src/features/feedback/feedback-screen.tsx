@@ -4,8 +4,8 @@ import {
   Toast, UndoStrip, OptimisticIndicator,
   ToastManager, useToast,
   PageBanner, Alert, ContextMenu,
-} from '@ui/feedback';
-import { Button } from '@ui/button';
+} from '@medcord/ui';
+import { Button } from '@medcord/ui';
 
 export function FeedbackScreen() {
   const { toasts, toast, dismiss } = useToast();

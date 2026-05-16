@@ -1,5 +1,5 @@
 import { Section } from '@features/shell/parts/preview-canvas';
-import { PatientBanner } from '@ui/banner';
+import { PatientBanner } from '@medcord/ui';
 import { Plus, ClipboardCheck, ArrowLeftRight, LogOut } from '@icons';
 
 export function BannersScreen() {

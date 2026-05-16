@@ -9,10 +9,10 @@ import {
   MenuDivider,
   MenuLabel,
   Hovercard,
-} from '@ui/tooltip';
-import { Button } from '@ui/button';
-import { PatientAvatar, StaffAvatar } from '@ui/avatar-pill';
-import { Checkbox } from '@ui/selection';
+} from '@medcord/ui';
+import { Button } from '@medcord/ui';
+import { PatientAvatar, StaffAvatar } from '@medcord/ui';
+import { Checkbox } from '@medcord/ui';
 
 /* ============================================================
    Hovercard specimens

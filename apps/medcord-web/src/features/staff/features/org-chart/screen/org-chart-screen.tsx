@@ -85,9 +85,9 @@ export function OrgChartScreen() {
         error={error ?? undefined}
         loadingComponent={
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-xl bg-forest-900/5" />
-            ))}
+            <Repeat times={3}>
+              <div className="h-16 animate-pulse rounded-xl bg-forest-900/5" />
+            </Repeat>
           </div>
         }
         errorComponent={

@@ -16,9 +16,25 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
 
-  function handleSubmit(e: React.FormEvent) {
+  function validate(): boolean {
+    const errs: { email?: string; password?: string } = {};
+    if (email.trim() === '') {
+      errs.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Enter a valid email address.';
+    }
+    if (password === '') {
+      errs.password = 'Password is required.';
+    }
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validate()) return;
     onSubmit(email, password);
   }
 
@@ -32,12 +48,14 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
           id="email"
           type="email"
           autoComplete="email"
-          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
           placeholder="you@hospital.com"
         />
+        <Show when={fieldErrors.email !== undefined}>
+          <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
+        </Show>
       </div>
 
       <div>
@@ -57,7 +75,6 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
-            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 pr-10 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900"
@@ -73,6 +90,9 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
             {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
           </button>
         </div>
+        <Show when={fieldErrors.password !== undefined}>
+          <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>
+        </Show>
       </div>
 
       <Show when={error !== null}>

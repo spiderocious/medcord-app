@@ -6,7 +6,7 @@ import {
   EmptyState,
   TriadCard,
   ModuleEmptyCard,
-} from '@ui/skeleton-progress';
+} from '@medcord/ui';
 
 const MODULE_EMPTIES = [
   { module: 'Patients', glyph: '∅', title: '"No patients on this worklist."', description: 'Adjust filters or add patients from the floor map.', actionLabel: 'Open floor map →' },

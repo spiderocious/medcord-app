@@ -1,38 +1,38 @@
 {
-  "name": "medcord-admin-web",
+  "name": "admin-web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/medcord-admin-web/src",
+  "sourceRoot": "apps/admin-web/src",
   "targets": {
     "serve": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm dev", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm dev", "cwd": "apps/admin-web" }
     },
     "dev": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm dev", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm dev", "cwd": "apps/admin-web" }
     },
     "build": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm build", "cwd": "apps/medcord-admin-web" },
+      "options": { "command": "pnpm build", "cwd": "apps/admin-web" },
       "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/dist"]
     },
     "start": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm start", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm start", "cwd": "apps/admin-web" }
     },
     "preview": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm preview", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm preview", "cwd": "apps/admin-web" }
     },
     "typecheck": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm typecheck", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm typecheck", "cwd": "apps/admin-web" }
     },
     "lint": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm lint", "cwd": "apps/medcord-admin-web" }
+      "options": { "command": "pnpm lint", "cwd": "apps/admin-web" }
     }
   },
   "tags": ["scope:medcord-admin-web", "type:app"],

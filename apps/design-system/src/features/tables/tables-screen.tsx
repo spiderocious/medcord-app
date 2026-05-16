@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section } from '@features/shell/parts/preview-canvas';
-import { Table, StatusPill, type TableDensity, type TableSortDir } from '@ui/table';
+import { Table, StatusPill, type TableDensity, type TableSortDir } from '@medcord/ui';
 
 type PatientRow = {
   readonly id: string;

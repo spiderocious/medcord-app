@@ -2,7 +2,7 @@ import { Section } from '@features/shell/parts/preview-canvas';
 import {
   ChartCard, StackedBarChart, SparklineStrip,
   GanttChart, Heatmap, DonutChart, FunnelChart,
-} from '@ui/charts';
+} from '@medcord/ui';
 
 /* heatmap cell shades from HTML reference */
 const HEATMAP_SHADES = ['#F4EFE6', '#ECE5D6', '#D9D0BB', '#A39A8A', '#6E665B', '#3C3833', '#181613'];

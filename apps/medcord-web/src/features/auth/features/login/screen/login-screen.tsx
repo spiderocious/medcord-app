@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { parseApiError } from '@medcord/api';
 import { ROUTES } from '@shared/constants/routes.ts';
@@ -13,7 +13,10 @@ type Step = 'credentials' | 'totp';
 
 export function LoginScreen() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { setUser, setTokens } = useAuth();
+
+  const nextUrl = searchParams.get('next') ?? ROUTES.HOSPITALS;
   const loginMutation = useLogin();
 
   const [step, setStep] = useState<Step>('credentials');
@@ -30,7 +33,7 @@ export function LoginScreen() {
       const result = await loginMutation.mutateAsync({ email, password });
       setTokens(result.tokens);
       setUser({ ...result.user, isEmailVerified: true, twoFactorEnabled: false, createdAt: '', updatedAt: '' });
-      navigate(ROUTES.HOSPITALS, { replace: true });
+      navigate(nextUrl, { replace: true });
     } catch (err: unknown) {
       const parsed = parseApiError(err);
       if (parsed.code === 'two_factor_required') {
@@ -51,7 +54,7 @@ export function LoginScreen() {
       });
       setTokens(result.tokens);
       setUser({ ...result.user, isEmailVerified: true, twoFactorEnabled: true, createdAt: '', updatedAt: '' });
-      navigate(ROUTES.HOSPITALS, { replace: true });
+      navigate(nextUrl, { replace: true });
     } catch (err: unknown) {
       setError(parseApiError(err).message);
     }

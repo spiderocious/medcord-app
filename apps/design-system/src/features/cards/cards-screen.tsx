@@ -6,7 +6,7 @@ import {
   StaffCard,
   EquipmentCard,
   StatTile,
-} from '@ui/card';
+} from '@medcord/ui';
 import { Clock, TriangleAlert } from '@icons';
 
 export function CardsScreen() {

@@ -39,7 +39,7 @@ export function AuthLayout({ title, subtitle, children, footerLink }: AuthLayout
         </div>
 
         <Show when={footerLink !== undefined}>
-          <p className="mt-6 text-center text-sm text-charcoal-700">
+          <AppText variant="body-sm" className="mt-6 text-center text-charcoal-700">
             {footerLink!.label}{' '}
             <Link
               to={footerLink!.to}
@@ -47,7 +47,7 @@ export function AuthLayout({ title, subtitle, children, footerLink }: AuthLayout
             >
               {footerLink!.text}
             </Link>
-          </p>
+          </AppText>
         </Show>
       </div>
     </div>

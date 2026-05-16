@@ -6,7 +6,7 @@ import {
   CredentialRow,
   ShiftSwapCard,
   StaffPanel,
-} from '@ui/staff';
+} from '@medcord/ui';
 
 export function StaffScreen() {
   return (

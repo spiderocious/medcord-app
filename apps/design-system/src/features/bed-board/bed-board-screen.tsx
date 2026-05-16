@@ -1,6 +1,6 @@
 import { Section } from '@features/shell/parts/preview-canvas';
-import { BedBoard } from '@ui/bed-board';
-import type { BedBoardProps } from '@ui/bed-board';
+import { BedBoard } from '@medcord/ui';
+import type { BedBoardProps } from '@medcord/ui';
 
 const BED_BOARD_DATA: BedBoardProps = {
   strip: {

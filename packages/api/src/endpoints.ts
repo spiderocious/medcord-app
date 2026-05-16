@@ -42,6 +42,7 @@ export const EP = {
     `api/v1/hospitals/${hospitalId}/invitations/${invId}`,
   HOSPITAL_INVITATION_RESEND: (hospitalId: string, invId: string) =>
     `api/v1/hospitals/${hospitalId}/invitations/${invId}/resend`,
+  INVITATION_GET: (token: string) => `api/v1/invitations/${token}`,
   INVITATION_ACCEPT: (token: string) => `api/v1/invitations/${token}/accept`,
   INVITATION_DECLINE: (token: string) => `api/v1/invitations/${token}/decline`,
 
@@ -141,4 +142,15 @@ export const EP = {
 
   // Search
   HOSPITAL_SEARCH: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/search`,
+
+  // Admin — mounted at /admin (NOT /api/v1/)
+  ADMIN_STATS: 'admin/stats',
+  ADMIN_HOSPITALS: 'admin/hospitals',
+  ADMIN_HOSPITAL: (hospitalId: string) => `admin/hospitals/${hospitalId}`,
+  ADMIN_HOSPITAL_UPDATE: (hospitalId: string) => `admin/hospitals/${hospitalId}`,
+  ADMIN_HOSPITAL_DELETE: (hospitalId: string) => `admin/hospitals/${hospitalId}`,
+  ADMIN_USERS: 'admin/users',
+  ADMIN_USER: (userId: string) => `admin/users/${userId}`,
+  ADMIN_USER_UPDATE: (userId: string) => `admin/users/${userId}`,
+  ADMIN_USER_DISABLE: (userId: string) => `admin/users/${userId}/disable`,
 } as const;

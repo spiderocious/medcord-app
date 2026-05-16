@@ -15,7 +15,23 @@ import type {
   UpdatePatientBody,
 } from './patient.schema.js';
 
+async function resolvePatientId(param: string): Promise<string> {
+  if (param.startsWith('CAE-')) {
+    const patient = await patientRepo.findByCode(param);
+    if (!patient) throw new NotFoundError('Patient');
+    return patient.id;
+  }
+  return param;
+}
+
 export const patientService = {
+  async resolvePatient(hospitalId: string, patientId: string): Promise<string> {
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
+    if (!link) throw new NotFoundError('Patient');
+    return id;
+  },
+
   async register(
     hospitalId: string,
     userId: string,
@@ -60,11 +76,12 @@ export const patientService = {
   },
 
   async get(hospitalId: string, patientId: string, userId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    const patient = await patientRepo.findById(patientId);
+    const patient = await patientRepo.findById(id);
     if (!patient) throw new NotFoundError('Patient');
-    await patientRepo.recordAccess(userId, hospitalId, patientId);
+    await patientRepo.recordAccess(userId, hospitalId, id);
     return patient;
   },
 
@@ -75,71 +92,80 @@ export const patientService = {
   },
 
   async update(hospitalId: string, patientId: string, body: UpdatePatientBody) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    const updated = await patientRepo.updateById(patientId, body as Partial<IPatient>);
+    const updated = await patientRepo.updateById(id, body as Partial<IPatient>);
     if (!updated) throw new NotFoundError('Patient');
     return updated;
   },
 
   async getIdCard(hospitalId: string, patientId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    const patient = await patientRepo.findById(patientId);
+    const patient = await patientRepo.findById(id);
     if (!patient) throw new NotFoundError('Patient');
     return { patient, idCard: patient.idCard };
   },
 
   async issueIdCard(hospitalId: string, patientId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
     const now = new Date();
-    const patient = await patientRepo.findById(patientId);
+    const patient = await patientRepo.findById(id);
     const update = patient?.idCard.isActive
       ? { 'idCard.reissuedAt': now }
       : { 'idCard.isActive': true, 'idCard.issuedAt': now };
-    const updated = await patientRepo.updateById(patientId, update as never);
+    const updated = await patientRepo.updateById(id, update as never);
     return updated;
   },
 
   async deactivateIdCard(hospitalId: string, patientId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(patientId, { 'idCard.isActive': false } as never);
+    return patientRepo.updateById(id, { 'idCard.isActive': false } as never);
   },
 
   async checkIn(hospitalId: string, patientId: string, body: CheckInBody) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
     const update: Partial<IPatient> = { currentHospitalId: hospitalId, admissionStatus: 'outpatient' };
     if (body.department !== undefined) (update as Record<string, unknown>)['checkInDepartment'] = body.department;
     if (body.assignedTo !== undefined) (update as Record<string, unknown>)['assignedTo'] = body.assignedTo;
-    return patientRepo.updateById(patientId, update as never);
+    return patientRepo.updateById(id, update as never);
   },
 
   async checkOut(hospitalId: string, patientId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(patientId, { admissionStatus: 'outpatient' });
+    return patientRepo.updateById(id, { admissionStatus: 'outpatient' });
   },
 
   async admit(hospitalId: string, patientId: string, _body: AdmitBody) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(patientId, {
+    return patientRepo.updateById(id, {
       admissionStatus: 'admitted',
       currentHospitalId: hospitalId,
     });
   },
 
   async discharge(hospitalId: string, patientId: string, _body: DischargeBody) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(patientId, { admissionStatus: 'discharged' });
+    return patientRepo.updateById(id, { admissionStatus: 'discharged' });
   },
 
   async requestTransfer(hospitalId: string, patientId: string, userId: string, body: TransferBody) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
 
     const toHospital = await hospitalRepo.findById(body.toHospitalId);
@@ -147,7 +173,7 @@ export const patientService = {
 
     const transfer = await patientRepo.createTransfer({
       id: newId.transfer(),
-      patientId,
+      patientId: id,
       fromHospitalId: hospitalId,
       toHospitalId: body.toHospitalId,
       reason: body.reason,
@@ -201,13 +227,15 @@ export const patientService = {
   },
 
   async addFavorite(userId: string, hospitalId: string, patientId: string) {
-    const link = await patientRepo.findHospitalPatient(hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    await patientRepo.addFavorite(userId, hospitalId, patientId);
+    await patientRepo.addFavorite(userId, hospitalId, id);
   },
 
   async removeFavorite(userId: string, hospitalId: string, patientId: string) {
-    await patientRepo.removeFavorite(userId, hospitalId, patientId);
+    const id = await resolvePatientId(patientId);
+    await patientRepo.removeFavorite(userId, hospitalId, id);
   },
 
   async getFavorites(userId: string, hospitalId: string) {

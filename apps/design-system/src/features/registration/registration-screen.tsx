@@ -8,7 +8,7 @@ import {
   EligibilityBox,
   RegistrationSheet,
   RegistrationFooter,
-} from '@ui/registration';
+} from '@medcord/ui';
 
 export function RegistrationScreen() {
   const [_currentStep, setCurrentStep] = useState(3);

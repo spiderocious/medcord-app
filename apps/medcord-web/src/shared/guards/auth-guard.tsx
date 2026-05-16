@@ -13,7 +13,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const hasToken = tokenStorage.getAccess() !== null;
 
   if (!hasToken) {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
+    const next = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`${ROUTES.LOGIN}?next=${next}`} replace />;
   }
 
   return <>{children}</>;

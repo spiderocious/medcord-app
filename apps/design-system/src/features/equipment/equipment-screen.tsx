@@ -5,7 +5,7 @@ import {
   EquipmentDetail,
   ConsumableRow,
   SterilizationCard,
-} from '@ui/equipment';
+} from '@medcord/ui';
 
 function IconDefibrillator() {
   return (

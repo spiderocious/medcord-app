@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Switch, Case, Default, Loadable } from 'meemaw';
+import { Switch, Case, Default, Loadable, Repeat } from 'meemaw';
 
 import { AppText } from '@medcord/ui';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
@@ -45,26 +45,28 @@ export function HospitalSettingsScreen() {
       {/* Tab nav — scrollable on mobile */}
       <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex gap-0.5 overflow-x-auto border-b border-forest-900/10 pb-0 scrollbar-hide">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={[
-                'relative shrink-0 px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none',
-                'border-b-2 -mb-px',
-                activeTab === tab.id
-                  ? tab.danger === true
-                    ? 'border-red-500 text-red-600'
-                    : 'border-forest-900 text-forest-900'
-                  : tab.danger === true
-                    ? 'border-transparent text-red-400 hover:text-red-600'
-                    : 'border-transparent text-charcoal-700 hover:text-charcoal-900',
-              ].join(' ')}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <Repeat each={TABS as TabDef[]}>
+            {(tab: TabDef) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={[
+                  'relative shrink-0 px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none',
+                  'border-b-2 -mb-px',
+                  activeTab === tab.id
+                    ? tab.danger === true
+                      ? 'border-red-500 text-red-600'
+                      : 'border-forest-900 text-forest-900'
+                    : tab.danger === true
+                      ? 'border-transparent text-red-400 hover:text-red-600'
+                      : 'border-transparent text-charcoal-700 hover:text-charcoal-900',
+                ].join(' ')}
+              >
+                {tab.label}
+              </button>
+            )}
+          </Repeat>
         </div>
       </div>
 

@@ -66,6 +66,9 @@ export const ROUTES = {
   HOSPITAL_REVIEW_ITEM: (slug: string, itemId: string) =>
     `/h/${slug}/review/${itemId}`,
 
+  // Invitations (public)
+  INVITATION_ACCEPT: (token: string) => `/invitations/${token}`,
+
   // Notifications & search
   HOSPITAL_NOTIFICATIONS: (slug: string) => `/h/${slug}/notifications`,
   HOSPITAL_SEARCH: (slug: string) => `/h/${slug}/search`,

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Loadable, Show } from 'meemaw';
+import { Loadable, Show, Repeat } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
-import { IconUserPlus, IconNetwork, IconUsers, IconChevronLeft, IconChevronRight } from '@icons';
+import { IconUserPlus, IconNetwork, IconUsers, IconSearch } from '@icons';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
 import { useStaff } from '../api/use-staff.ts';
@@ -12,7 +12,7 @@ import {
   useResendInvitation,
   useRevokeInvitation,
 } from '../api/use-staff-invitations.ts';
-import { useStaffFilter } from '../utils/use-staff-filter.ts';
+import { useStaffFilter } from '../helpers/use-staff-filter.ts';
 import { StaffFilters } from './parts/staff-filters.tsx';
 import { StaffTable } from './parts/staff-table.tsx';
 import { InvitationList } from './parts/invitation-row.tsx';
@@ -48,9 +48,6 @@ export function StaffDirectoryScreen() {
   const total = staffData?.total ?? 0;
   const totalPages = staffData?.totalPages ?? 1;
   const currentPage = staffData?.page ?? page;
-  const from = total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
-  const to = Math.min(currentPage * PAGE_SIZE, total);
-
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       {/* Page header */}
@@ -106,9 +103,9 @@ export function StaffDirectoryScreen() {
           error={error ?? undefined}
           loadingComponent={
             <div className="space-y-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-16 animate-pulse rounded-xl bg-forest-900/5" />
-              ))}
+              <Repeat times={4}>
+                <div className="h-16 animate-pulse rounded-xl bg-forest-900/5" />
+              </Repeat>
             </div>
           }
           errorComponent={
@@ -120,56 +117,45 @@ export function StaffDirectoryScreen() {
           <Show
             when={members.length > 0}
             fallback={
-              <div className="rounded-xl border border-forest-900/10 bg-white py-16 text-center shadow-sm">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-forest-900/10 bg-cream-50">
-                  <IconUsers size={22} className="text-charcoal-700/40" />
-                </div>
-                <AppText variant="heading-3" className="text-charcoal-900">No staff yet</AppText>
-                <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
-                  Invite your first team member to get started.
-                </AppText>
-                <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
-                  <AppButton leadingIcon={<IconUserPlus size={14} />}>
-                    Invite staff
+              filter.q !== '' || filter.role !== '' || filter.status !== '' ? (
+                <div className="rounded-xl border border-forest-900/10 bg-white py-16 text-center shadow-sm">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-forest-900/10 bg-cream-50">
+                    <IconSearch size={22} className="text-charcoal-700/40" />
+                  </div>
+                  <AppText variant="heading-3" className="text-charcoal-900">No results</AppText>
+                  <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
+                    No staff match the current filters. Try adjusting your search.
+                  </AppText>
+                  <AppButton variant="secondary" onClick={handleReset}>
+                    Clear filters
                   </AppButton>
-                </Link>
-              </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-forest-900/10 bg-white py-16 text-center shadow-sm">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-forest-900/10 bg-cream-50">
+                    <IconUsers size={22} className="text-charcoal-700/40" />
+                  </div>
+                  <AppText variant="heading-3" className="text-charcoal-900">No staff yet</AppText>
+                  <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
+                    Invite your first team member to get started.
+                  </AppText>
+                  <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
+                    <AppButton leadingIcon={<IconUserPlus size={14} />}>
+                      Invite staff
+                    </AppButton>
+                  </Link>
+                </div>
+              )
             }
           >
             <StaffTable
               slug={slug}
               hospitalId={hospitalId}
               members={members}
+              page={currentPage}
+              pageCount={totalPages}
+              onPageChange={setPage}
             />
-
-            <Show when={totalPages > 1}>
-              <div className="flex items-center justify-between border-t border-forest-900/10 bg-white px-5 py-3 rounded-b-xl -mt-px">
-                <AppText variant="caption" className="normal-case tracking-normal text-charcoal-700/60">
-                  {from}–{to} of {total} members
-                </AppText>
-                <div className="flex items-center gap-1">
-                  <AppButton
-                    variant="ghost"
-                    leadingIcon={<IconChevronLeft size={14} />}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage <= 1}
-                  >
-                    <span className="hidden sm:inline">Previous</span>
-                  </AppButton>
-                  <AppText variant="caption" className="px-2 normal-case tracking-normal text-charcoal-700">
-                    {currentPage} / {totalPages}
-                  </AppText>
-                  <AppButton
-                    variant="ghost"
-                    trailingIcon={<IconChevronRight size={14} />}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage >= totalPages}
-                  >
-                    <span className="hidden sm:inline">Next</span>
-                  </AppButton>
-                </div>
-              </div>
-            </Show>
           </Show>
         </Loadable>
       </div>

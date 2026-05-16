@@ -3,8 +3,8 @@ import { Section } from '@features/shell/parts/preview-canvas';
 import {
   Modal, ModalGap, ModalField, CritCallout, AuditNote,
   TypedConfirmModal, TwoPersonModal, SessionTimeoutModal, BreakTheGlassModal,
-} from '@ui/modal';
-import { Button } from '@ui/button';
+} from '@medcord/ui';
+import { Button } from '@medcord/ui';
 
 export function ModalsScreen() {
   /* individual open states */

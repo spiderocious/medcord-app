@@ -11,8 +11,8 @@ import {
   MarkdownEditor,
   MarkdownViewer,
   BodyDiagram,
-} from '@ui/specialized';
-import type { BodyMarking, SoapSection } from '@ui/specialized';
+} from '@medcord/ui';
+import type { BodyMarking, SoapSection } from '@medcord/ui';
 
 const INITIAL_SOAP: SoapSection[] = [
   {

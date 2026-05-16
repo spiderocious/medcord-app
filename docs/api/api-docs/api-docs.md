@@ -256,18 +256,73 @@ Resets TTL and sends a new email. **Response 200**
 
 ---
 
-### POST /invitations/:token/accept `🔒` (authenticated, public route)
-Accept an invitation. The token is the URL path parameter (from the invitation email link).
+### GET /invitations/:token
+Validate an invitation token and return all data needed to render the accept page. No `Authorization` header required.
 
-**Body**: none required  
-**Response 200** `{ "data": { "hospitalId": "string" } }`
+**Response 200**
+```json
+{
+  "data": {
+    "invitation": {
+      "email": "newstaff@test.com",
+      "role": "doctor",
+      "department": "Neurology",
+      "expiresAt": "2026-05-23T21:37:57.393Z"
+    },
+    "hospital": {
+      "name": "City General Hospital",
+      "slug": "city-general",
+      "logoKey": "logos/city-general.png",
+      "location": "Lagos, Nigeria"
+    },
+    "invitedBy": {
+      "name": "Alice Mensah"
+    }
+  }
+}
+```
+
+`logoKey` and `department` are omitted when not set.
+
+**Errors**
+- `404` — token not found
+- `409` — invitation already accepted, declined, or revoked
+- `409` — invitation has expired
 
 ---
 
-### POST /invitations/:token/decline `🔒` (authenticated, public route)
-Decline an invitation. The token is the URL path parameter.
+### POST /invitations/:token/accept
+Accept an invitation and create a new Medcord account. No `Authorization` header required — the token in the URL is the authentication mechanism.
 
-**Body**: none required  
+**Body**
+```json
+{ "name": "string", "password": "string (min 8 chars)" }
+```
+
+**Response 200**
+```json
+{
+  "data": {
+    "hospitalId": "HSP-xxx",
+    "hospitalSlug": "subdomain-string",
+    "accessToken": "string",
+    "refreshToken": "string"
+  }
+}
+```
+
+The user is registered and logged in immediately. Redirect to the hospital dashboard using `hospitalSlug`.
+
+**Errors**
+- `409` — invitation already accepted/declined/revoked, or expired
+- `409` — an account with this email already exists (user should log in instead)
+
+---
+
+### POST /invitations/:token/decline
+Decline an invitation. No `Authorization` header required.
+
+**Body**: none  
 **Response 204**
 
 ---

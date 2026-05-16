@@ -1,5 +1,5 @@
 import { ChevronRight, MoreHorizontal, ArrowLeft, ArrowRight, Search, Pencil, Download, Plus, ClipboardCheck } from '@icons';
-import { Button, IrreversibleButton, SplitButton } from '@ui/button';
+import { Button, IrreversibleButton, SplitButton } from '@medcord/ui';
 import { Section, ComponentRow } from '@features/shell/parts/preview-canvas';
 
 function ModalFooterScene() {

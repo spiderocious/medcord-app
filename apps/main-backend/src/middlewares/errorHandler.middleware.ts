@@ -42,9 +42,7 @@ export const errorHandler = (
 
   if (err instanceof ZodError) {
     const first = err.issues[0];
-    const field = first?.path.join('.') ?? '';
-    const firstMessage = first?.message ?? 'Validation failed';
-    const message = field ? `${field.charAt(0).toUpperCase()}${field.slice(1)}: ${firstMessage}` : firstMessage;
+    const message = first?.message ?? 'Validation failed';
     ResponseUtil.error(res, HTTP_STATUS.BAD_REQUEST, {
       code: 'validation_error',
       message,

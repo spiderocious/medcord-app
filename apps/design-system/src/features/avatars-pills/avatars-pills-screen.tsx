@@ -9,8 +9,8 @@ import {
   IsoTape,
   EsiPill,
   AllergyBand,
-} from '@ui/avatar-pill';
-import type { StaffRole } from '@ui/avatar-pill';
+} from '@medcord/ui';
+import type { StaffRole } from '@medcord/ui';
 import { Bell, Menu } from '@icons';
 
 const STAFF: Array<{ initials: string; role: StaffRole; label: string; onShift?: boolean }> = [

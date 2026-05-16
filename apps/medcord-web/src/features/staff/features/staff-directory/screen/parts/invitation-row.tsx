@@ -1,7 +1,8 @@
-import { Repeat, Show } from 'meemaw';
+import { Repeat, Show, CopyToClipboard } from 'meemaw';
 
 import { AppButton, AppText, DrawerService } from '@medcord/ui';
-import { IconSend, IconRefresh, IconClose } from '@icons';
+import { IconSend, IconRefresh, IconClose, IconCopy, IconCheck } from '@icons';
+import { ROUTES } from '@shared/constants/routes.ts';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { Invitation } from '../../../../shared/types/staff.ts';
 
@@ -101,6 +102,20 @@ export function InvitationList({ invitations, resendMutation, revokeMutation }: 
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 sm:shrink-0">
+                  <CopyToClipboard
+                    text={`${window.location.origin}${ROUTES.INVITATION_ACCEPT(inv.token)}`}
+                    onSuccess={() => DrawerService.toast('Invite link copied.', { type: 'success' })}
+                  >
+                    {(copy: () => void, copied: boolean) => (
+                      <AppButton
+                        variant="ghost"
+                        leadingIcon={copied ? <IconCheck size={13} /> : <IconCopy size={13} />}
+                        onClick={copy}
+                      >
+                        {copied ? 'Copied' : 'Copy link'}
+                      </AppButton>
+                    )}
+                  </CopyToClipboard>
                   <AppButton
                     variant="ghost"
                     leadingIcon={<IconRefresh size={13} />}

@@ -18,7 +18,7 @@ export function AppShell({ hospital }: AppShellProps) {
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar slug={hospital.subdomain} />
+        <Topbar slug={hospital.subdomain} hospitalId={hospital.id} />
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>

@@ -20,8 +20,9 @@
       "@app/*": ["src/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"],
-      "@ui/*": ["src/ui/*"],
-      "@icons": ["src/shared/icons/index.ts"]
+      "@medcord/ui": ["../../packages/ui/src/index.ts"],
+      "@medcord/ui/*": ["../../packages/ui/src/*"],
+      "@icons": ["../../packages/ui/src/icons/index.ts"]
     }
   },
   "include": ["src"]

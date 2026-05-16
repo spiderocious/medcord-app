@@ -23,6 +23,7 @@ export interface Invitation {
   readonly department?: string;
   readonly unit?: string;
   readonly invitedBy: string;
+  readonly token: string;
   readonly status: 'pending' | 'accepted' | 'declined' | 'revoked';
   readonly expiresAt: string;
   readonly createdAt: string;

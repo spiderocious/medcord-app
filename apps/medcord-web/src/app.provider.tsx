@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { ModalHost, ToastHost } from '@medcord/ui';
 import { AuthProvider } from '@shared/providers/auth-provider.tsx';
+import { UserBootstrap } from '@shared/providers/user-bootstrap.tsx';
 
 interface AppProvidersProps {
   readonly children: ReactNode;
@@ -22,7 +23,9 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <UserBootstrap>{children}</UserBootstrap>
+        </AuthProvider>
         <ModalHost />
         <ToastHost />
       </BrowserRouter>

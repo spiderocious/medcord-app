@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Switch, Case } from 'meemaw';
+import { Switch, Case, Repeat } from 'meemaw';
 
 import { parseApiError } from '@medcord/api';
 import { AppText } from '@medcord/ui';
@@ -17,19 +17,21 @@ import { StepReview } from './parts/step-review.tsx';
 function StepIndicator({ current, total }: { readonly current: number; readonly total: number }) {
   return (
     <div className="flex items-center gap-1.5">
-      {Array.from({ length: total }, (_, i) => (
-        <div
-          key={i}
-          className={[
-            'h-1.5 rounded-full transition-all',
-            i + 1 === current
-              ? 'w-6 bg-forest-900'
-              : i + 1 < current
-                ? 'w-3 bg-forest-900/40'
-                : 'w-3 bg-forest-900/15',
-          ].join(' ')}
-        />
-      ))}
+      <Repeat times={total}>
+        {(_item: unknown, i: number) => (
+          <div
+            key={i}
+            className={[
+              'h-1.5 rounded-full transition-all',
+              i + 1 === current
+                ? 'w-6 bg-forest-900'
+                : i + 1 < current
+                  ? 'w-3 bg-forest-900/40'
+                  : 'w-3 bg-forest-900/15',
+            ].join(' ')}
+          />
+        )}
+      </Repeat>
     </div>
   );
 }

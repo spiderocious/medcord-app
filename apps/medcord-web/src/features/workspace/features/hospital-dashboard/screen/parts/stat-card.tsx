@@ -1,4 +1,5 @@
 import { type ComponentType } from 'react';
+import { Show } from 'meemaw';
 
 import { AppText } from '@medcord/ui';
 
@@ -16,13 +17,16 @@ export function StatCard({ label, value, Icon, loading = false }: StatCardProps)
         <Icon size={18} className="text-forest-900/70" />
       </div>
       <div>
-        {loading ? (
+        <Show
+          when={loading}
+          fallback={
+            <AppText variant="heading-1" className="text-charcoal-900">
+              {value}
+            </AppText>
+          }
+        >
           <div className="mb-1 h-7 w-16 animate-pulse rounded-md bg-forest-900/5" />
-        ) : (
-          <AppText variant="heading-1" className="text-charcoal-900">
-            {value}
-          </AppText>
-        )}
+        </Show>
         <AppText variant="caption" className="mt-0.5 normal-case tracking-normal text-charcoal-700">
           {label}
         </AppText>

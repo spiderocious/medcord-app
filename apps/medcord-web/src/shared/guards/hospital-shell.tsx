@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { Loadable } from 'meemaw';
 
 import { ROUTES } from '@shared/constants/routes.ts';
 import { AppShell } from '@shared/widgets/app-shell/app-shell.tsx';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
+import { useAuth } from '@shared/hooks/use-auth.ts';
 
 export function HospitalShell() {
   const { slug } = useParams<{ slug: string }>();
@@ -21,6 +23,13 @@ interface HospitalShellContentProps {
 
 function HospitalShellContent({ slug }: HospitalShellContentProps) {
   const { data: hospital, isLoading, error } = useHospitalBySlug(slug);
+  const { setActiveHospitalId } = useAuth();
+
+  useEffect(() => {
+    if (hospital !== undefined) {
+      setActiveHospitalId(hospital.id);
+    }
+  }, [hospital, setActiveHospitalId]);
 
   return (
     <Loadable

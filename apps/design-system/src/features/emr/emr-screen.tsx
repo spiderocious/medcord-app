@@ -10,7 +10,7 @@ import {
   ProgressNote,
   AuditMargin,
   EMRChart,
-} from '@ui/emr';
+} from '@medcord/ui';
 
 const SIDEBAR_SECTIONS = [
   {

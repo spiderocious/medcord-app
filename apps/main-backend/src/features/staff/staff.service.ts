@@ -1,6 +1,9 @@
+import bcrypt from 'bcrypt';
+
 import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { emailService } from '@lib/email.js';
 import { newId, newRawId } from '@lib/ids.js';
+import { signAccessToken, signRefreshToken } from '@lib/jwt.js';
 import { hospitalRepo } from '@features/hospitals/hospital.repo.js';
 import { authRepo } from '@features/auth/auth.repo.js';
 import { UserModel } from '@features/auth/auth.model.js';
@@ -8,6 +11,7 @@ import type { PaginatedResult } from '@shared/types/service.types.js';
 
 import { staffRepo } from './staff.repo.js';
 import type {
+  AcceptInvitationBody,
   BulkInviteBody,
   CreateRoleBody,
   InviteBody,
@@ -112,14 +116,27 @@ export const staffService = {
     return updated;
   },
 
-  async acceptInvitation(token: string, userId: string) {
+  async acceptInvitation(token: string, body: AcceptInvitationBody) {
     const inv = await staffRepo.findInvitationByToken(token);
     if (!inv) throw new NotFoundError('Invitation');
     if (inv.status !== 'pending') throw new ConflictError('Invitation is no longer valid');
     if (inv.expiresAt < new Date()) throw new ConflictError('Invitation has expired');
 
-    const existingMember = await staffRepo.findMember(inv.hospitalId, userId);
-    if (existingMember) throw new ConflictError('Already a member of this hospital');
+    const existingUser = await authRepo.findByEmail(inv.email);
+    if (existingUser) throw new ConflictError('An account with this email already exists. Please log in to accept your invitation.');
+
+    const passwordHash = await bcrypt.hash(body.password, 10);
+    const userId = newId.user();
+    await authRepo.create({
+      id: userId,
+      email: inv.email,
+      name: body.name,
+      passwordHash,
+      isEmailVerified: true,
+      isAdmin: false,
+      twoFactorEnabled: false,
+      tokenVersion: 0,
+    });
 
     await hospitalRepo.createMember({
       id: newId.member(),
@@ -133,7 +150,47 @@ export const staffService = {
     });
 
     await staffRepo.updateInvitation(inv.id, { status: 'accepted' });
-    return { hospitalId: inv.hospitalId };
+
+    const hospital = await hospitalRepo.findById(inv.hospitalId);
+    const accessToken = signAccessToken({ sub: userId, email: inv.email, tokenVersion: 0 });
+    const refreshToken = signRefreshToken({ sub: userId, tokenVersion: 0 });
+
+    return {
+      hospitalId: inv.hospitalId,
+      hospitalSlug: hospital?.subdomain ?? '',
+      accessToken,
+      refreshToken,
+    };
+  },
+
+  async getInvitationByToken(token: string) {
+    const inv = await staffRepo.findInvitationByToken(token);
+    if (!inv) throw new NotFoundError('Invitation');
+    if (inv.status !== 'pending') throw new ConflictError('Invitation is no longer valid');
+    if (inv.expiresAt < new Date()) throw new ConflictError('Invitation has expired');
+
+    const [hospital, inviter] = await Promise.all([
+      hospitalRepo.findById(inv.hospitalId),
+      authRepo.findById(inv.invitedBy),
+    ]);
+
+    return {
+      invitation: {
+        email: inv.email,
+        role: inv.role,
+        department: inv.department ?? undefined,
+        expiresAt: inv.expiresAt,
+      },
+      hospital: {
+        name: hospital?.name ?? '',
+        slug: hospital?.subdomain ?? '',
+        logoKey: hospital?.logoKey ?? undefined,
+        location: hospital?.location ?? '',
+      },
+      invitedBy: {
+        name: inviter?.name ?? 'A team member',
+      },
+    };
   },
 
   async declineInvitation(token: string) {

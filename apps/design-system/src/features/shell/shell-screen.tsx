@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './parts/sidebar';
 import { Topbar } from './parts/topbar';
 import { PreviewCanvas } from './parts/preview-canvas';
-import { ModalHost, ToastHost } from '@ui/drawer';
+import { ModalHost, ToastHost } from '@medcord/ui';
 
 export function ShellScreen() {
   const [isDark, setIsDark] = useState(() => {

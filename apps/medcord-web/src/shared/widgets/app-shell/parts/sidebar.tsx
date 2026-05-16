@@ -31,7 +31,7 @@ function buildNavEntries(slug: string, modules: HospitalModules): NavEntry[] {
   const all: NavEntry[] = [
     { label: 'Dashboard', Icon: IconHome, to: ROUTES.HOSPITAL_DASHBOARD(slug) },
     { label: 'Staff', Icon: IconUsers, to: ROUTES.HOSPITAL_STAFF(slug) },
-    { label: 'Patients', Icon: IconHeartPulse, to: ROUTES.HOSPITAL_PATIENTS(slug) },
+    { label: 'Patients', Icon: IconHeartPulse, to: ROUTES.HOSPITAL_PATIENTS(slug), moduleKey: 'emr' },
     { label: 'Labs', Icon: IconFlask, to: ROUTES.HOSPITAL_LABS(slug), moduleKey: 'labs' },
     { label: 'Assets', Icon: IconPackage, to: ROUTES.HOSPITAL_ASSETS(slug), moduleKey: 'assets' },
     { label: 'Review Queue', Icon: IconClipboard, to: ROUTES.HOSPITAL_REVIEW_QUEUE(slug) },

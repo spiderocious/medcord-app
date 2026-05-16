@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Section } from '@features/shell/parts/preview-canvas';
 import {
   Topbar, Sidebar, Breadcrumb, CommandPalette, Drawer, ModuleLauncher,
-} from '@ui/navigation';
-import { Button } from '@ui/button';
+} from '@medcord/ui';
+import { Button } from '@medcord/ui';
 import {
   Users, CalendarDays, Grid2x2, FlaskConical, Pill, Inbox,
   BookUser, Clock, Settings, FileSearch,

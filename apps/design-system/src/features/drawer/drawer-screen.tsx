@@ -1,6 +1,6 @@
-import { DrawerService } from '@ui/drawer';
+import { DrawerService } from '@medcord/ui';
 import { Section, ComponentRow } from '@features/shell/parts/preview-canvas';
-import { Button } from '@ui/button';
+import { Button } from '@medcord/ui';
 
 export function DrawerScreen() {
   return (

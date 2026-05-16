@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(__dirname, '../..');
 
 export default defineConfig({
   plugins: [react()],
@@ -13,8 +14,8 @@ export default defineConfig({
       { find: '@app', replacement: path.resolve(__dirname, 'src') },
       { find: '@features', replacement: path.resolve(__dirname, 'src/features') },
       { find: '@shared', replacement: path.resolve(__dirname, 'src/shared') },
-      { find: '@ui', replacement: path.resolve(__dirname, 'src/ui') },
-      { find: '@icons', replacement: path.resolve(__dirname, 'src/shared/icons/index.ts') },
+      { find: '@medcord/ui', replacement: path.resolve(workspaceRoot, 'packages/ui/src/index.ts') },
+      { find: '@icons', replacement: path.resolve(workspaceRoot, 'packages/ui/src/icons/index.ts') },
     ],
   },
   server: {

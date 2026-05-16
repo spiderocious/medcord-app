@@ -1,3 +1,5 @@
+import { Show } from 'meemaw';
+
 import { AppText } from '@medcord/ui';
 import type { StaffRole } from '@shared/types/hospital.ts';
 
@@ -38,12 +40,9 @@ export function StaffBadge({ name, role, email, size = 'md' }: StaffBadgeProps) 
     <div className="flex items-center gap-2.5">
       <div
         className={[
-          'shrink-0 flex items-center justify-center rounded-full font-semibold',
-          isSmall
-            ? 'h-7 w-7 text-xs'
-            : 'h-9 w-9 text-sm',
+          'shrink-0 flex items-center justify-center rounded-full font-semibold bg-forest-900/10 text-forest-900 border border-forest-900/15',
+          isSmall ? 'h-7 w-7 text-xs' : 'h-9 w-9 text-sm',
         ].join(' ')}
-        style={{ background: '#DEE6D6', color: '#2F4226', border: '1px solid #C4D2BC' }}
       >
         {initials}
       </div>
@@ -55,11 +54,11 @@ export function StaffBadge({ name, role, email, size = 'md' }: StaffBadgeProps) 
         >
           {name}
         </AppText>
-        {email !== undefined && (
+        <Show when={email !== undefined}>
           <AppText variant="caption" as="p" className="truncate normal-case tracking-normal text-charcoal-700">
             {email}
           </AppText>
-        )}
+        </Show>
         <span className="inline-flex items-center rounded-full border border-forest-900/10 bg-cream-50 px-1.5 py-px text-xs text-charcoal-700">
           {ROLE_LABELS[role]}
         </span>
