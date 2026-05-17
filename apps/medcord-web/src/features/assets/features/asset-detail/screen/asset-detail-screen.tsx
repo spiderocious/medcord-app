@@ -36,8 +36,6 @@ export function AssetDetailScreen() {
     win.document.close();
   }
 
-  console.log('Asset data:', data);
-
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">

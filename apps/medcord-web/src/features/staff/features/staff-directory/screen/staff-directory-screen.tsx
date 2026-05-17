@@ -27,12 +27,28 @@ export function StaffDirectoryScreen() {
   const { filter, setSearch, setRole, setStatus, reset: resetFilter } = useStaffFilter();
   const [page, setPage] = useState(1);
 
-  function handleSearch(q: string) { setSearch(q); setPage(1); }
-  function handleRole(role: Parameters<typeof setRole>[0]) { setRole(role); setPage(1); }
-  function handleStatus(status: Parameters<typeof setStatus>[0]) { setStatus(status); setPage(1); }
-  function handleReset() { resetFilter(); setPage(1); }
+  function handleSearch(q: string) {
+    setSearch(q);
+    setPage(1);
+  }
+  function handleRole(role: Parameters<typeof setRole>[0]) {
+    setRole(role);
+    setPage(1);
+  }
+  function handleStatus(status: Parameters<typeof setStatus>[0]) {
+    setStatus(status);
+    setPage(1);
+  }
+  function handleReset() {
+    resetFilter();
+    setPage(1);
+  }
 
-  const { data: staffData, isLoading, error } = useStaff(hospitalId, {
+  const {
+    data: staffData,
+    isLoading,
+    error,
+  } = useStaff(hospitalId, {
     q: filter.q !== '' ? filter.q : undefined,
     role: filter.role !== '' ? filter.role : undefined,
     status: filter.status !== '' ? filter.status : undefined,
@@ -53,7 +69,9 @@ export function StaffDirectoryScreen() {
       {/* Page header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
-          <AppText variant="heading-2" className="text-charcoal-900">Staff</AppText>
+          <AppText variant="heading-2" className="text-charcoal-900">
+            Staff
+          </AppText>
           <AppText variant="body-sm" className="mt-1 text-charcoal-700">
             Manage your team members, roles, and invitations.
           </AppText>
@@ -65,9 +83,7 @@ export function StaffDirectoryScreen() {
             </AppButton>
           </Link>
           <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
-            <AppButton leadingIcon={<IconUserPlus size={14} />}>
-              Invite
-            </AppButton>
+            <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite</AppButton>
           </Link>
         </div>
       </div>
@@ -80,15 +96,6 @@ export function StaffDirectoryScreen() {
         onStatus={handleStatus}
         onReset={handleReset}
       />
-
-      {/* Pending invitations */}
-      <Show when={(invitations?.length ?? 0) > 0}>
-        <InvitationList
-          invitations={invitations ?? []}
-          resendMutation={resendMutation}
-          revokeMutation={revokeMutation}
-        />
-      </Show>
 
       {/* Staff list */}
       <div className="space-y-2">
@@ -122,7 +129,9 @@ export function StaffDirectoryScreen() {
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-forest-900/10 bg-cream-50">
                     <IconSearch size={22} className="text-charcoal-700/40" />
                   </div>
-                  <AppText variant="heading-3" className="text-charcoal-900">No results</AppText>
+                  <AppText variant="heading-3" className="text-charcoal-900">
+                    No results
+                  </AppText>
                   <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
                     No staff match the current filters. Try adjusting your search.
                   </AppText>
@@ -135,14 +144,14 @@ export function StaffDirectoryScreen() {
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-forest-900/10 bg-cream-50">
                     <IconUsers size={22} className="text-charcoal-700/40" />
                   </div>
-                  <AppText variant="heading-3" className="text-charcoal-900">No staff yet</AppText>
+                  <AppText variant="heading-3" className="text-charcoal-900">
+                    No staff yet
+                  </AppText>
                   <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
                     Invite your first team member to get started.
                   </AppText>
                   <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
-                    <AppButton leadingIcon={<IconUserPlus size={14} />}>
-                      Invite staff
-                    </AppButton>
+                    <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite staff</AppButton>
                   </Link>
                 </div>
               )
@@ -159,6 +168,15 @@ export function StaffDirectoryScreen() {
           </Show>
         </Loadable>
       </div>
+
+      {/* Pending invitations */}
+      <Show when={(invitations?.length ?? 0) > 0}>
+        <InvitationList
+          invitations={invitations ?? []}
+          resendMutation={resendMutation}
+          revokeMutation={revokeMutation}
+        />
+      </Show>
     </div>
   );
 }

@@ -101,6 +101,7 @@ export function useAdvanceLabStatus(hospitalId: string, patientId: string, order
       return r.data.order;
     },
     onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['lab-order', hospitalId, patientId, orderId] });
       void qc.invalidateQueries({ queryKey: ['lab-orders', 'patient', hospitalId, patientId] });
       void qc.invalidateQueries({ queryKey: ['lab-orders', 'hospital', hospitalId] });
       DrawerService.toast('Lab status advanced.', { type: 'success' });
@@ -128,6 +129,7 @@ export function useRecordLabResult(hospitalId: string, patientId: string, orderI
       return r.data.order;
     },
     onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['lab-order', hospitalId, patientId, orderId] });
       void qc.invalidateQueries({ queryKey: ['lab-orders', 'patient', hospitalId, patientId] });
       void qc.invalidateQueries({ queryKey: ['lab-orders', 'hospital', hospitalId] });
       DrawerService.toast('Lab result recorded.', { type: 'success' });

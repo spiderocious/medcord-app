@@ -6,7 +6,8 @@ import { ROUTES } from '@shared/constants/routes.ts';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { usePatient, useIdCard } from '../api/use-patient.ts';
-import { useFavoritePatients } from '../../../patient-list/api/use-patients.ts';
+import { useFavoritePatients } from '../../patient-list/api/use-patients.ts';
+import type { Patient } from '../../../shared/types/patient.ts';
 import { ProfileHeader } from './parts/profile-header.tsx';
 import { ProfileDemographics } from './parts/profile-demographics.tsx';
 import { ProfileActions } from './parts/profile-actions.tsx';
@@ -53,7 +54,7 @@ export function PatientProfileScreen() {
             <ProfileHeader
               patient={patient!}
               hospitalId={activeHospitalId ?? ''}
-              isFavorited={(favorites ?? []).some((f) => f.id === patient?.id)}
+              isFavorited={(favorites ?? []).some((f: Patient) => f.id === patient?.id)}
             />
 
             <div className="flex gap-2">

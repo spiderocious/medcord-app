@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
@@ -6,92 +5,9 @@ import { IconPlus } from '@icons';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
-import { useProcedures, useAddProcedure, type AddProcedurePayload } from '../api/use-procedures.ts';
+import { useProcedures } from '../api/use-procedures.ts';
 import type { Procedure } from '../../../shared/types/emr.ts';
-
-const INPUT_CLS = 'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none';
-
-function AddProcedureForm({ hospitalId, patientId }: { hospitalId: string; patientId: string }) {
-  const mutation = useAddProcedure(hospitalId, patientId);
-  const [name, setName] = useState('');
-  const [performedBy, setPerformedBy] = useState('');
-  const [performedAt, setPerformedAt] = useState('');
-  const [cptCode, setCptCode] = useState('');
-  const [location, setLocation] = useState('');
-  const [notes, setNotes] = useState('');
-  const [checklist, setChecklist] = useState({
-    consentObtained: false, npoStatus: false, allergiesConfirmed: false, siteMarked: false,
-  });
-
-  function toggle(key: keyof typeof checklist) {
-    setChecklist((prev) => ({ ...prev, [key]: !prev[key] }));
-  }
-
-  function handleSubmit() {
-    if (!name.trim() || !performedBy.trim() || !performedAt) return;
-    const payload: AddProcedurePayload = {
-      name: name.trim(),
-      performedBy: performedBy.trim(),
-      performedAt,
-      cptCode: cptCode.trim() || undefined,
-      location: location.trim() || undefined,
-      notes: notes.trim() || undefined,
-      preOpChecklist: checklist,
-    };
-    mutation.mutate(payload, { onSuccess: () => { DrawerService.dismissAllModals(); } });
-  }
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-charcoal-900">Procedure name <span className="text-red-500">*</span></label>
-        <input value={name} onChange={(e) => setName(e.target.value)} required className={INPUT_CLS} />
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-charcoal-900">Performed by <span className="text-red-500">*</span></label>
-          <input value={performedBy} onChange={(e) => setPerformedBy(e.target.value)} required className={INPUT_CLS} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal-900">Date <span className="text-red-500">*</span></label>
-          <input type="date" value={performedAt} onChange={(e) => setPerformedAt(e.target.value)} required className={INPUT_CLS} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal-900">CPT code</label>
-          <input value={cptCode} onChange={(e) => setCptCode(e.target.value)} className={INPUT_CLS} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal-900">Location</label>
-          <input value={location} onChange={(e) => setLocation(e.target.value)} className={INPUT_CLS} />
-        </div>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-charcoal-900">Notes</label>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className={INPUT_CLS} />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-charcoal-900 mb-2">Pre-op checklist</p>
-        <div className="space-y-2">
-          {([
-            ['consentObtained', 'Consent obtained'],
-            ['npoStatus', 'NPO status confirmed'],
-            ['allergiesConfirmed', 'Allergies confirmed'],
-            ['siteMarked', 'Site marked'],
-          ] as const).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={checklist[key]} onChange={() => toggle(key)} className="rounded border-forest-900/20" />
-              <span className="text-sm text-charcoal-900">{label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-end gap-2 pt-2">
-        <AppButton variant="ghost" onClick={() => DrawerService.dismissAllModals()}>Cancel</AppButton>
-        <AppButton onClick={handleSubmit} loading={mutation.isPending}>Record procedure</AppButton>
-      </div>
-    </div>
-  );
-}
+import { AddProcedureForm } from './parts/add-procedure-form.tsx';
 
 export function ProceduresScreen() {
   const slug = useHospitalSlug();
