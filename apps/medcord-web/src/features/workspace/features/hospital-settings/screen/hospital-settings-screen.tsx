@@ -3,7 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Switch, Case, Default, Loadable, Repeat } from 'meemaw';
 
 import { AppText } from '@medcord/ui';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { SettingsGeneral } from './parts/settings-general.tsx';
 import { SettingsBranding } from './parts/settings-branding.tsx';
 import { SettingsModules } from './parts/settings-modules.tsx';
@@ -11,8 +13,9 @@ import { SettingsDomain } from './parts/settings-domain.tsx';
 import { SettingsUsage } from './parts/settings-usage.tsx';
 import { SettingsDangerZone } from './parts/settings-danger-zone.tsx';
 import { SettingsAuditLog } from './parts/settings-audit-log.tsx';
+import { SettingsUnits } from './parts/settings-units.tsx';
 
-type SettingsTab = 'general' | 'branding' | 'modules' | 'domain' | 'usage' | 'audit' | 'danger';
+type SettingsTab = 'general' | 'branding' | 'modules' | 'domain' | 'usage' | 'units' | 'audit' | 'danger';
 
 interface TabDef {
   readonly id: SettingsTab;
@@ -20,20 +23,22 @@ interface TabDef {
   readonly danger?: boolean;
 }
 
-const TABS: ReadonlyArray<TabDef> = [
-  { id: 'general', label: 'General' },
-  { id: 'branding', label: 'Branding' },
-  { id: 'modules', label: 'Modules' },
-  { id: 'domain', label: 'Domain' },
-  { id: 'usage', label: 'Usage' },
-  { id: 'audit', label: 'Audit Log' },
-  { id: 'danger', label: 'Danger Zone', danger: true },
-];
-
 export function HospitalSettingsScreen() {
   const { slug = '' } = useParams<{ slug: string }>();
   const { data: hospital, isLoading, error } = useHospitalBySlug(slug);
+  const { can } = usePermissions();
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
+
+  const TABS: ReadonlyArray<TabDef> = [
+    { id: 'general', label: 'General' },
+    { id: 'branding', label: 'Branding' },
+    { id: 'modules', label: 'Modules' },
+    { id: 'domain', label: 'Domain' },
+    { id: 'usage', label: 'Usage' },
+    ...(can(PERMISSIONS.UNITS_MANAGE) ? [{ id: 'units' as const, label: 'Units & Depts' }] : []),
+    { id: 'audit', label: 'Audit Log' },
+    { id: 'danger', label: 'Danger Zone', danger: true },
+  ];
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
@@ -103,6 +108,9 @@ export function HospitalSettingsScreen() {
           </Case>
           <Case when={activeTab === 'usage'}>
             <SettingsUsage hospital={hospital!} />
+          </Case>
+          <Case when={activeTab === 'units'}>
+            <SettingsUnits hospital={hospital!} />
           </Case>
           <Case when={activeTab === 'audit'}>
             <SettingsAuditLog hospitalId={hospital!.id} />

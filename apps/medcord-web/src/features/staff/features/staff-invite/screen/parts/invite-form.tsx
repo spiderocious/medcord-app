@@ -8,7 +8,9 @@ import { IconCheckCircle } from '@icons';
 import type { InvitePayload } from '../../api/use-invite-staff.ts';
 import { useInviteStaff } from '../../api/use-invite-staff.ts';
 import { useRoles } from '../../../roles/api/use-roles.ts';
+import { useHospitalUnits } from '@features/workspace/features/hospital-settings/api/use-hospital-units.ts';
 import type { CustomRole } from '@shared/types/staff.ts';
+import type { HospitalUnit } from '@shared/types/hospital.ts';
 
 const INPUT_CLS =
   'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900 disabled:cursor-not-allowed disabled:opacity-50';
@@ -20,6 +22,11 @@ interface InviteFormProps {
 export function InviteForm({ hospitalId }: InviteFormProps) {
   const mutation = useInviteStaff(hospitalId);
   const { data: rolesData } = useRoles(hospitalId);
+  const { data: units } = useHospitalUnits(hospitalId);
+
+  const departments = (units ?? []).filter((u: HospitalUnit) => u.type === 'department' && u.isActive);
+  const subUnits = (units ?? []).filter((u: HospitalUnit) => u.type !== 'department' && u.isActive);
+  const hasUnits = (units ?? []).length > 0;
 
   const invitableRoles: CustomRole[] = (rolesData?.roles ?? []).filter(
     (r) => r.slug !== ROLES.SUPER_ADMIN,
@@ -108,27 +115,59 @@ export function InviteForm({ hospitalId }: InviteFormProps) {
             <label htmlFor="if-dept" className="block text-sm font-medium text-charcoal-900">
               Department <span className="font-normal text-charcoal-700">(optional)</span>
             </label>
-            <input
-              id="if-dept"
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              disabled={mutation.isPending}
-              className={INPUT_CLS}
-              placeholder="Cardiology"
-            />
+            <Show when={hasUnits && departments.length > 0}>
+              <select
+                id="if-dept"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                disabled={mutation.isPending}
+                className={INPUT_CLS}
+              >
+                <option value="">— none —</option>
+                <Repeat each={departments as HospitalUnit[]}>
+                  {(d: HospitalUnit) => <option key={d.id} value={d.name}>{d.name}</option>}
+                </Repeat>
+              </select>
+            </Show>
+            <Show when={!hasUnits || departments.length === 0}>
+              <input
+                id="if-dept"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                disabled={mutation.isPending}
+                className={INPUT_CLS}
+                placeholder="Cardiology"
+              />
+            </Show>
           </div>
           <div>
             <label htmlFor="if-unit" className="block text-sm font-medium text-charcoal-900">
               Unit <span className="font-normal text-charcoal-700">(optional)</span>
             </label>
-            <input
-              id="if-unit"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              disabled={mutation.isPending}
-              className={INPUT_CLS}
-              placeholder="ICU"
-            />
+            <Show when={hasUnits && subUnits.length > 0}>
+              <select
+                id="if-unit"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                disabled={mutation.isPending}
+                className={INPUT_CLS}
+              >
+                <option value="">— none —</option>
+                <Repeat each={subUnits as HospitalUnit[]}>
+                  {(u: HospitalUnit) => <option key={u.id} value={u.name}>{u.name}</option>}
+                </Repeat>
+              </select>
+            </Show>
+            <Show when={!hasUnits || subUnits.length === 0}>
+              <input
+                id="if-unit"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                disabled={mutation.isPending}
+                className={INPUT_CLS}
+                placeholder="ICU"
+              />
+            </Show>
           </div>
         </div>
 

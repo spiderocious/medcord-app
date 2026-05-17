@@ -14,7 +14,9 @@ import {
   RegisterPatientBody,
   SearchPatientsQuery,
   TransferBody,
+  UpdateAdmissionBody,
   UpdatePatientBody,
+  UpdateVisitBody,
 } from './patient.schema.js';
 import { patientService } from './patient.service.js';
 
@@ -144,6 +146,23 @@ router.post(
   asyncHandler(async (req, res) => {
     const body = CheckInBody.parse(req.body);
     const patient = await patientService.checkIn(
+      req.params['hospitalId'] as string,
+      req.params['patientId'] as string,
+      req.user!.id,
+      body,
+    );
+    return ResponseUtil.ok(res, { patient });
+  }),
+);
+
+router.patch(
+  '/:patientId/admission',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_ADMIT),
+  asyncHandler(async (req, res) => {
+    const body = UpdateAdmissionBody.parse(req.body);
+    const patient = await patientService.updateAdmission(
       req.params['hospitalId'] as string,
       req.params['patientId'] as string,
       body,

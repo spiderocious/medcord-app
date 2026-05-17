@@ -5,6 +5,7 @@ export interface CustomRole {
   readonly slug: string;
   readonly permissions: readonly string[];
   readonly isSystem: boolean;
+  readonly memberCount: number;
   readonly createdAt: string;
   readonly updatedAt: string;
 }

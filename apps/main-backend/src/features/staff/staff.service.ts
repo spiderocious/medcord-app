@@ -284,8 +284,15 @@ export const staffService = {
 
   async listRoles(hospitalId: string) {
     const roles = await staffRepo.listRoles(hospitalId);
+    const memberCounts = await Promise.all(
+      roles.map((r) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        HospitalMemberModel.countDocuments({ hospitalId, role: r.slug, status: 'active' } as any),
+      ),
+    );
+    const rolesWithCount = roles.map((r, i) => ({ ...r, memberCount: memberCounts[i] ?? 0 }));
     return {
-      roles,
+      roles: rolesWithCount,
       permissionDescriptions: PERMISSION_DESCRIPTIONS,
       permissionGroups: PERMISSION_GROUPS,
     };
@@ -312,8 +319,12 @@ export const staffService = {
   async updateRole(hospitalId: string, roleId: string, body: UpdateRoleBody) {
     const role = await staffRepo.findRoleById(roleId);
     if (!role || role.hospitalId !== hospitalId) throw new NotFoundError('Role');
-    if (role.isSystem) throw new ForbiddenError('System roles cannot be modified');
-    const updated = await staffRepo.updateRole(roleId, body as Partial<ICustomRole>);
+    if (role.slug === 'super_admin') throw new ForbiddenError('super_admin permissions cannot be modified');
+    // System roles: only permissions can be changed, name is immutable
+    const patch: Partial<ICustomRole> = role.isSystem
+      ? (body.permissions !== undefined ? { permissions: body.permissions } : {})
+      : (body as Partial<ICustomRole>);
+    const updated = await staffRepo.updateRole(roleId, patch);
     // If permissions changed, revoke sessions of all members assigned this custom role
     if (body.permissions !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

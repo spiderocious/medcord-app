@@ -43,7 +43,7 @@ export function useUpdatePatient(hospitalId: string, patientId: string) {
 export function useCheckin(hospitalId: string, patientId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { department?: string; assignedTo?: string }) => {
+    mutationFn: async (payload: { department?: string; assignedNurseId?: string; assignedDoctorId?: string; notes?: string }) => {
       const r = await apiClient
         .post(`api/v1/hospitals/${hospitalId}/patients/${patientId}/checkin`, { json: payload })
         .json<PatientResponse>();

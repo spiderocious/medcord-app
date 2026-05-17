@@ -15,7 +15,9 @@ import {
   UpdateHospitalBody,
   UpdateModulesBody,
 } from './hospital.schema.js';
+import { CreateUnitBody, UpdateUnitBody } from './hospital-unit.schema.js';
 import { hospitalService } from './hospital.service.js';
+import { hospitalUnitService } from './hospital-unit.service.js';
 
 const router: IRouter = Router();
 
@@ -141,6 +143,60 @@ router.delete(
   requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     await hospitalService.archive(req.params['hospitalId'] as string, req.user!.id);
+    return ResponseUtil.noContent(res);
+  }),
+);
+
+// ── Hospital Units ────────────────────────────────────────────────────────────
+
+router.get(
+  '/:hospitalId/units',
+  authenticate,
+  hospitalScope,
+  asyncHandler(async (req, res) => {
+    const units = await hospitalUnitService.list(req.params['hospitalId'] as string);
+    return ResponseUtil.ok(res, { units });
+  }),
+);
+
+router.post(
+  '/:hospitalId/units',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.UNITS_MANAGE),
+  asyncHandler(async (req, res) => {
+    const body = CreateUnitBody.parse(req.body);
+    const unit = await hospitalUnitService.create(req.params['hospitalId'] as string, body);
+    return ResponseUtil.created(res, { unit });
+  }),
+);
+
+router.patch(
+  '/:hospitalId/units/:unitId',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.UNITS_MANAGE),
+  asyncHandler(async (req, res) => {
+    const body = UpdateUnitBody.parse(req.body);
+    const unit = await hospitalUnitService.update(
+      req.params['hospitalId'] as string,
+      req.params['unitId'] as string,
+      body,
+    );
+    return ResponseUtil.ok(res, { unit });
+  }),
+);
+
+router.delete(
+  '/:hospitalId/units/:unitId',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.UNITS_MANAGE),
+  asyncHandler(async (req, res) => {
+    await hospitalUnitService.remove(
+      req.params['hospitalId'] as string,
+      req.params['unitId'] as string,
+    );
     return ResponseUtil.noContent(res);
   }),
 );

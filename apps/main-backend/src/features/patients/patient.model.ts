@@ -48,6 +48,7 @@ export interface IPatient {
   idCard: IIdCard;
   admissionStatus: 'outpatient' | 'admitted' | 'discharged';
   currentHospitalId?: string | undefined;
+  assignedDoctorId?: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -97,6 +98,7 @@ const patientSchema = new Schema<IPatientDocument>(
       default: 'outpatient',
     },
     currentHospitalId: String,
+    assignedDoctorId: String,
   },
   { timestamps: true, collection: 'patients' },
 );
@@ -221,3 +223,85 @@ const transferSchema = new Schema<ITransferDocument>(
 );
 
 export const TransferModel = mongoose.model<ITransferDocument>('Transfer', transferSchema);
+
+// ── CheckInVisit ──────────────────────────────────────────────────────────────
+
+export type VisitStage = 'waiting_nurse' | 'with_nurse' | 'waiting_doctor' | 'with_doctor' | 'done';
+
+export interface ICheckInVisit {
+  id: string;
+  hospitalId: string;
+  patientId: string;
+  patientCode: string;
+  queueNumber: number;
+  checkedInAt: Date;
+  checkedInBy: string;
+  checkedOutAt?: Date | undefined;
+  checkedOutBy?: string | undefined;
+  assignedNurseId?: string | undefined;
+  nurseAssignedAt?: Date | undefined;
+  nurseSeenAt?: Date | undefined;
+  assignedDoctorId?: string | undefined;
+  doctorAssignedAt?: Date | undefined;
+  stage: VisitStage;
+  department?: string | undefined;
+  notes?: string | undefined;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICheckInVisitDocument extends ICheckInVisit, Document {}
+
+const checkInVisitSchema = new Schema<ICheckInVisitDocument>(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    hospitalId: { type: String, required: true, index: true },
+    patientId: { type: String, required: true, index: true },
+    patientCode: { type: String, required: true },
+    queueNumber: { type: Number, required: true },
+    checkedInAt: { type: Date, required: true, default: Date.now },
+    checkedInBy: { type: String, required: true },
+    checkedOutAt: Date,
+    checkedOutBy: String,
+    assignedNurseId: String,
+    nurseAssignedAt: Date,
+    nurseSeenAt: Date,
+    assignedDoctorId: String,
+    doctorAssignedAt: Date,
+    stage: {
+      type: String,
+      enum: ['waiting_nurse', 'with_nurse', 'waiting_doctor', 'with_doctor', 'done'],
+      required: true,
+      default: 'waiting_nurse',
+    },
+    department: String,
+    notes: String,
+  },
+  { timestamps: true, collection: 'checkin_visits' },
+);
+
+checkInVisitSchema.index({ hospitalId: 1, checkedOutAt: 1 });
+checkInVisitSchema.index({ hospitalId: 1, queueNumber: 1 });
+
+export const CheckInVisitModel = mongoose.model<ICheckInVisitDocument>('CheckInVisit', checkInVisitSchema);
+
+// ── DailyQueueCounter ─────────────────────────────────────────────────────────
+
+export interface IDailyQueueCounter {
+  hospitalId: string;
+  date: string;
+  lastNumber: number;
+}
+
+const dailyQueueCounterSchema = new Schema<IDailyQueueCounter>(
+  {
+    hospitalId: { type: String, required: true },
+    date: { type: String, required: true },
+    lastNumber: { type: Number, required: true, default: 0 },
+  },
+  { timestamps: false, collection: 'daily_queue_counters' },
+);
+
+dailyQueueCounterSchema.index({ hospitalId: 1, date: 1 }, { unique: true });
+
+export const DailyQueueCounterModel = mongoose.model<IDailyQueueCounter>('DailyQueueCounter', dailyQueueCounterSchema);

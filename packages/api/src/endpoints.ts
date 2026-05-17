@@ -25,6 +25,8 @@ export const EP = {
   HOSPITAL_DOMAIN: (id: string) => `api/v1/hospitals/${id}/domain`,
   HOSPITAL_USAGE: (id: string) => `api/v1/hospitals/${id}/usage`,
   HOSPITAL_TRANSFER_OWNERSHIP: (id: string) => `api/v1/hospitals/${id}/transfer-ownership`,
+  HOSPITAL_UNITS: (id: string) => `api/v1/hospitals/${id}/units`,
+  HOSPITAL_UNIT: (hospitalId: string, unitId: string) => `api/v1/hospitals/${hospitalId}/units/${unitId}`,
 
   // Staff — mounted at /api/v1/hospitals/:hospitalId
   HOSPITAL_STAFF: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/staff`,
@@ -82,6 +84,8 @@ export const EP = {
   PATIENT_LOOKUP: (patientCode: string) => `api/v1/patients/lookup/${patientCode}`,
   HOSPITAL_TRANSFERS_INCOMING: (hospitalId: string) =>
     `api/v1/hospitals/${hospitalId}/transfers/incoming`,
+  HOSPITAL_TRANSFERS_OUTGOING: (hospitalId: string) =>
+    `api/v1/hospitals/${hospitalId}/transfers/outgoing`,
   HOSPITAL_TRANSFER_ACCEPT: (hospitalId: string, transferId: string) =>
     `api/v1/hospitals/${hospitalId}/transfers/${transferId}/accept`,
   HOSPITAL_TRANSFER_DECLINE: (hospitalId: string, transferId: string) =>

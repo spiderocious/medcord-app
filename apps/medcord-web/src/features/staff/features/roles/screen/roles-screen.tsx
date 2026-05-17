@@ -1,30 +1,27 @@
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Loadable, Repeat, Show } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
-import { PERMISSIONS } from '@medcord/rbac';
+import { PERMISSIONS, ROLES } from '@medcord/rbac';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { usePermissions } from '@shared/hooks/use-permissions.ts';
+import { ROUTES } from '@shared/constants/routes.ts';
+import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useRoles, useDeleteRole } from '../api/use-roles.ts';
-import { RoleForm } from './parts/role-form.tsx';
 import type { CustomRole } from '@shared/types/staff.ts';
 
 export function RolesScreen() {
+  const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const hospitalId = activeHospitalId ?? '';
+  const navigate = useNavigate();
   const { can } = usePermissions();
 
   const { data, isLoading, error } = useRoles(hospitalId);
   const deleteMutation = useDeleteRole(hospitalId);
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
-
   const canManage = can(PERMISSIONS.SETTINGS_UPDATE);
   const roles = data?.roles ?? [];
-  const permissionDescriptions = data?.permissionDescriptions;
-  const permissionGroups = data?.permissionGroups;
-
   const systemRoles = roles.filter((r) => r.isSystem);
   const customRoles = roles.filter((r) => !r.isSystem);
 
@@ -37,8 +34,10 @@ export function RolesScreen() {
             Manage system and custom roles for this hospital.
           </AppText>
         </div>
-        <Show when={canManage && !showCreateForm && editingRoleId === null}>
-          <AppButton onClick={() => setShowCreateForm(true)}>New role</AppButton>
+        <Show when={canManage}>
+          <Link to={ROUTES.HOSPITAL_ROLE_CREATE(slug)}>
+            <AppButton>New role</AppButton>
+          </Link>
         </Show>
       </div>
 
@@ -56,7 +55,7 @@ export function RolesScreen() {
           </p>
         }
       >
-        {/* ── System roles (read-only) ─────────────────────────────────── */}
+        {/* ── System roles ──────────────────────────────────────────────── */}
         <div className="space-y-3">
           <AppText variant="caption" className="font-semibold uppercase text-charcoal-700/60">
             System roles · {systemRoles.length}
@@ -67,6 +66,8 @@ export function RolesScreen() {
                 <tr className="border-b border-forest-900/10 bg-cream-50">
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Name</th>
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Permissions</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Members</th>
+                  <th className="px-5 py-3" />
                 </tr>
               </thead>
               <tbody>
@@ -79,7 +80,7 @@ export function RolesScreen() {
                       </td>
                       <td className="px-5 py-4">
                         <Show
-                          when={role.slug !== 'super_admin'}
+                          when={role.slug !== ROLES.SUPER_ADMIN}
                           fallback={
                             <span className="inline-flex items-center rounded-full border border-forest-900/20 bg-forest-900/5 px-2.5 py-0.5 text-xs font-medium text-charcoal-700">
                               All permissions (bypass)
@@ -90,6 +91,25 @@ export function RolesScreen() {
                             {role.permissions.length} permission{role.permissions.length !== 1 ? 's' : ''}
                           </span>
                         </Show>
+                      </td>
+                      <td className="px-5 py-4 text-sm text-charcoal-700">{role.memberCount}</td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <AppButton
+                            variant="ghost"
+                            onClick={() => navigate(ROUTES.HOSPITAL_ROLE_VIEW(slug, role.id))}
+                          >
+                            View
+                          </AppButton>
+                          <Show when={canManage && role.slug !== ROLES.SUPER_ADMIN}>
+                            <AppButton
+                              variant="ghost"
+                              onClick={() => navigate(ROUTES.HOSPITAL_ROLE_EDIT(slug, role.id))}
+                            >
+                              Edit
+                            </AppButton>
+                          </Show>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -105,23 +125,12 @@ export function RolesScreen() {
             Custom roles · {customRoles.length}
           </AppText>
 
-          <Show when={showCreateForm && permissionDescriptions !== undefined && permissionGroups !== undefined}>
-            <RoleForm
-              hospitalId={hospitalId}
-              permissionDescriptions={permissionDescriptions!}
-              permissionGroups={permissionGroups!}
-              onDone={() => setShowCreateForm(false)}
-            />
-          </Show>
-
           <Show
             when={customRoles.length > 0}
             fallback={
-              <Show when={!showCreateForm}>
-                <p className="text-sm text-charcoal-700/60 py-6 text-center rounded-xl border border-forest-900/10 bg-white">
-                  No custom roles yet. Create one to extend the built-in system roles.
-                </p>
-              </Show>
+              <p className="text-sm text-charcoal-700/60 py-6 text-center rounded-xl border border-forest-900/10 bg-white">
+                No custom roles yet.{canManage ? ' Create one to extend the built-in system roles.' : ''}
+              </p>
             }
           >
             <div className="rounded-xl border border-forest-900/10 bg-white shadow-sm overflow-hidden">
@@ -130,58 +139,50 @@ export function RolesScreen() {
                   <tr className="border-b border-forest-900/10 bg-cream-50">
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Name</th>
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Permissions</th>
+                    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Members</th>
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Created</th>
-                    <Show when={canManage}>
-                      <th className="px-5 py-3" />
-                    </Show>
+                    <th className="px-5 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   <Repeat each={customRoles as CustomRole[]}>
                     {(role: CustomRole) => (
                       <tr key={role.id} className="border-b border-forest-900/5 last:border-0">
-                        <Show
-                          when={editingRoleId === role.id && permissionDescriptions !== undefined && permissionGroups !== undefined}
-                          fallback={
-                            <>
-                              <td className="px-5 py-4 text-sm font-medium text-charcoal-900">{role.name}</td>
-                              <td className="px-5 py-4">
-                                <span className="inline-flex items-center rounded-full border border-forest-900/10 bg-cream-50 px-2.5 py-0.5 text-xs font-medium text-charcoal-700">
-                                  {role.permissions.length} permission{role.permissions.length !== 1 ? 's' : ''}
-                                </span>
-                              </td>
-                              <td className="px-5 py-4 text-sm text-charcoal-700">
-                                {new Date(role.createdAt).toLocaleDateString()}
-                              </td>
-                              <Show when={canManage}>
-                                <td className="px-5 py-4">
-                                  <div className="flex items-center justify-end gap-2">
-                                    <AppButton variant="ghost" onClick={() => setEditingRoleId(role.id)}>
-                                      Edit
-                                    </AppButton>
-                                    <AppButton
-                                      variant="ghost"
-                                      onClick={() => { void deleteMutation.mutateAsync(role.id); }}
-                                      loading={deleteMutation.isPending}
-                                    >
-                                      Delete
-                                    </AppButton>
-                                  </div>
-                                </td>
-                              </Show>
-                            </>
-                          }
-                        >
-                          <td colSpan={canManage ? 4 : 3} className="px-5 py-4">
-                            <RoleForm
-                              hospitalId={hospitalId}
-                              role={role}
-                              permissionDescriptions={permissionDescriptions!}
-                              permissionGroups={permissionGroups!}
-                              onDone={() => setEditingRoleId(null)}
-                            />
-                          </td>
-                        </Show>
+                        <td className="px-5 py-4 text-sm font-medium text-charcoal-900">{role.name}</td>
+                        <td className="px-5 py-4">
+                          <span className="inline-flex items-center rounded-full border border-forest-900/10 bg-cream-50 px-2.5 py-0.5 text-xs font-medium text-charcoal-700">
+                            {role.permissions.length} permission{role.permissions.length !== 1 ? 's' : ''}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-sm text-charcoal-700">{role.memberCount}</td>
+                        <td className="px-5 py-4 text-sm text-charcoal-700">
+                          {new Date(role.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <AppButton
+                              variant="ghost"
+                              onClick={() => navigate(ROUTES.HOSPITAL_ROLE_VIEW(slug, role.id))}
+                            >
+                              View
+                            </AppButton>
+                            <Show when={canManage}>
+                              <AppButton
+                                variant="ghost"
+                                onClick={() => navigate(ROUTES.HOSPITAL_ROLE_EDIT(slug, role.id))}
+                              >
+                                Edit
+                              </AppButton>
+                              <AppButton
+                                variant="ghost"
+                                onClick={() => { void deleteMutation.mutateAsync(role.id); }}
+                                loading={deleteMutation.isPending}
+                              >
+                                Delete
+                              </AppButton>
+                            </Show>
+                          </div>
+                        </td>
                       </tr>
                     )}
                   </Repeat>

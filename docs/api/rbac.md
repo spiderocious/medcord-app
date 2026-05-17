@@ -52,7 +52,7 @@ Every write endpoint is guarded by `requirePermission()`. `super_admin` bypasses
 
 ## System Roles
 
-System roles are seeded automatically on hospital creation. They are read-only — permissions cannot be changed, and they cannot be deleted. Custom roles (user-created, `isSystem: false`) have a fully editable permission set.
+System roles are seeded automatically on hospital creation. Their **permissions are editable** but their names are immutable and they cannot be deleted. Custom roles (user-created, `isSystem: false`) have a fully editable name and permission set.
 
 ### `super_admin` — Super Admin
 
@@ -147,8 +147,8 @@ Base path: `/api/v1`
 |---|---|---|---|
 | `GET` | `/hospitals/:hospitalId/roles` | (member scope only) | Returns roles + `permissionDescriptions` + `permissionGroups` |
 | `POST` | `/hospitals/:hospitalId/roles` | `settings.update` | `isSystem: false`; slug must be unique per hospital |
-| `PATCH` | `/hospitals/:hospitalId/roles/:roleId` | `settings.update` | Fails if `isSystem: true`; permission change revokes member sessions |
-| `DELETE` | `/hospitals/:hospitalId/roles/:roleId` | `settings.update` | Fails if `isSystem: true` |
+| `PATCH` | `/hospitals/:hospitalId/roles/:roleId` | `settings.update` | System roles: only `permissions` applied, `name` ignored. Custom roles: both `name` and `permissions` accepted. Permission change revokes all member sessions for that role. |
+| `DELETE` | `/hospitals/:hospitalId/roles/:roleId` | `settings.update` | Fails with `403` if `isSystem: true` |
 
 ### Org Chart & Share
 

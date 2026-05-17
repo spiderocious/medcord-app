@@ -6,6 +6,7 @@ interface PatientFilters {
   readonly q?: string;
   readonly page?: number;
   readonly limit?: number;
+  readonly admissionStatus?: 'outpatient' | 'admitted' | 'discharged';
 }
 
 type PatientListResponse = { data: PatientListResult };
@@ -20,6 +21,7 @@ export function usePatients(hospitalId: string, filters: PatientFilters = {}) {
       if (filters.q) params.set('q', filters.q);
       if (filters.page) params.set('page', String(filters.page));
       if (filters.limit) params.set('limit', String(filters.limit));
+      if (filters.admissionStatus !== undefined) params.set('admissionStatus', filters.admissionStatus);
       const qs = params.toString();
       const r = await apiClient
         .get(`api/v1/hospitals/${hospitalId}/patients${qs ? `?${qs}` : ''}`)

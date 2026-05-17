@@ -12,11 +12,12 @@ interface RoleFormProps {
   readonly permissionDescriptions: Record<Permission, string>;
   readonly permissionGroups: PermissionGroup[];
   readonly onDone: () => void;
+  readonly readOnly?: boolean;
 }
 
 const INPUT_CLS = 'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900 disabled:opacity-50';
 
-export function RoleForm({ hospitalId, role, permissionDescriptions, permissionGroups, onDone }: RoleFormProps) {
+export function RoleForm({ hospitalId, role, permissionDescriptions, permissionGroups, onDone, readOnly = false }: RoleFormProps) {
   const isEdit = role !== undefined;
   const [name, setName] = useState(role?.name ?? '');
   const [selectedPerms, setSelectedPerms] = useState<Set<string>>(
@@ -67,7 +68,7 @@ export function RoleForm({ hospitalId, role, permissionDescriptions, permissionG
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          disabled={isPending || (isEdit && role.isSystem)}
+          disabled={isPending || (isEdit && role.isSystem) || readOnly}
           className={INPUT_CLS}
           placeholder="e.g. Senior Pharmacist"
         />
@@ -90,7 +91,7 @@ export function RoleForm({ hospitalId, role, permissionDescriptions, permissionG
                         type="checkbox"
                         checked={selectedPerms.has(perm)}
                         onChange={() => togglePerm(perm)}
-                        disabled={isPending}
+                        disabled={isPending || readOnly}
                         className="mt-0.5 h-4 w-4 rounded border-forest-900/30 text-forest-900 focus:ring-forest-900"
                       />
                       <span className="text-sm text-charcoal-900">{permissionDescriptions[perm]}</span>
@@ -108,11 +109,13 @@ export function RoleForm({ hospitalId, role, permissionDescriptions, permissionG
       </Show>
 
       <div className="flex items-center gap-2">
-        <AppButton onClick={() => { void handleSave(); }} loading={isPending}>
-          Save
-        </AppButton>
+        <Show when={!readOnly}>
+          <AppButton onClick={() => { void handleSave(); }} loading={isPending}>
+            Save
+          </AppButton>
+        </Show>
         <AppButton variant="ghost" onClick={onDone} disabled={isPending}>
-          Cancel
+          {readOnly ? 'Back' : 'Cancel'}
         </AppButton>
       </div>
     </div>

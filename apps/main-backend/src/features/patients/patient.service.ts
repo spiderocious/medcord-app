@@ -12,8 +12,11 @@ import type {
   RegisterPatientBody,
   SearchPatientsQuery,
   TransferBody,
+  UpdateAdmissionBody,
   UpdatePatientBody,
+  UpdateVisitBody,
 } from './patient.schema.js';
+import type { ICheckInVisit, VisitStage } from './patient.model.js';
 
 async function resolvePatientId(param: string): Promise<string> {
   if (param.startsWith('CAE-')) {
@@ -68,8 +71,8 @@ export const patientService = {
   ): Promise<PaginatedResult<IPatient>> {
     const skip = (query.page - 1) * query.limit;
     const [patients, total] = await Promise.all([
-      patientRepo.searchByHospital(hospitalId, query.q, skip, query.limit),
-      patientRepo.countSearchByHospital(hospitalId, query.q),
+      patientRepo.searchByHospital(hospitalId, query.q, skip, query.limit, query.admissionStatus),
+      patientRepo.countSearchByHospital(hospitalId, query.q, query.admissionStatus),
     ]);
     await Promise.all(patients.map((p: IPatient) => patientRepo.recordAccess(userId, hospitalId, p.id)));
     return { items: patients, total, page: query.page, limit: query.limit, totalPages: Math.ceil(total / query.limit) };
@@ -129,14 +132,35 @@ export const patientService = {
     return patientRepo.updateById(id, { 'idCard.isActive': false } as never);
   },
 
-  async checkIn(hospitalId: string, patientId: string, body: CheckInBody) {
+  async checkIn(hospitalId: string, patientId: string, checkedInBy: string, body: CheckInBody) {
     const id = await resolvePatientId(patientId);
     const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    const update: Partial<IPatient> = { currentHospitalId: hospitalId, admissionStatus: 'outpatient' };
-    if (body.department !== undefined) (update as Record<string, unknown>)['checkInDepartment'] = body.department;
-    if (body.assignedTo !== undefined) (update as Record<string, unknown>)['assignedTo'] = body.assignedTo;
-    return patientRepo.updateById(id, update as never);
+
+    const patient = await patientRepo.findById(id);
+    if (!patient) throw new NotFoundError('Patient');
+
+    const queueNumber = await patientRepo.nextQueueNumber(hospitalId);
+    const stage: VisitStage = body.assignedNurseId !== undefined ? 'waiting_nurse' : 'waiting_doctor';
+
+    await patientRepo.createVisit({
+      id: newId.visit(),
+      hospitalId,
+      patientId: id,
+      patientCode: patient.patientCode,
+      queueNumber,
+      checkedInAt: new Date(),
+      checkedInBy,
+      assignedNurseId: body.assignedNurseId,
+      nurseAssignedAt: body.assignedNurseId !== undefined ? new Date() : undefined,
+      assignedDoctorId: body.assignedDoctorId,
+      doctorAssignedAt: body.assignedDoctorId !== undefined ? new Date() : undefined,
+      stage,
+      department: body.department,
+      notes: body.notes,
+    });
+
+    return patientRepo.updateById(id, { currentHospitalId: hospitalId, admissionStatus: 'outpatient' });
   },
 
   async checkOut(hospitalId: string, patientId: string) {
@@ -146,14 +170,25 @@ export const patientService = {
     return patientRepo.updateById(id, { admissionStatus: 'outpatient' });
   },
 
-  async admit(hospitalId: string, patientId: string, _body: AdmitBody) {
+  async admit(hospitalId: string, patientId: string, body: AdmitBody) {
     const id = await resolvePatientId(patientId);
     const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
     return patientRepo.updateById(id, {
       admissionStatus: 'admitted',
       currentHospitalId: hospitalId,
+      assignedDoctorId: body.assignedTo,
     });
+  },
+
+  async updateAdmission(hospitalId: string, patientId: string, body: UpdateAdmissionBody) {
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
+    if (!link) throw new NotFoundError('Patient');
+    const patch: Partial<IPatient> = {};
+    if (body.assignedDoctorId !== undefined) patch.assignedDoctorId = body.assignedDoctorId;
+    if (body.department !== undefined) (patch as Record<string, unknown>)['department'] = body.department;
+    return patientRepo.updateById(id, patch);
   },
 
   async discharge(hospitalId: string, patientId: string, _body: DischargeBody) {
@@ -188,6 +223,10 @@ export const patientService = {
 
   async getIncomingTransfers(hospitalId: string) {
     return patientRepo.findIncomingTransfers(hospitalId);
+  },
+
+  async getOutgoingTransfers(hospitalId: string) {
+    return patientRepo.findOutgoingTransfers(hospitalId);
   },
 
   async acceptTransfer(hospitalId: string, transferId: string, userId: string) {
@@ -242,5 +281,63 @@ export const patientService = {
     const favs = await patientRepo.getFavorites(userId, hospitalId);
     const patients = await Promise.all(favs.map((f) => patientRepo.findById(f.patientId as string)));
     return patients.filter(Boolean);
+  },
+
+  // ── Visit / queue management ───────────────────────────────────────────────
+
+  async listActiveVisits(hospitalId: string) {
+    const visits = await patientRepo.listActiveVisits(hospitalId);
+    const patients = await Promise.all(
+      visits.map((v) => patientRepo.findById(v.patientId)),
+    );
+    return visits.map((v, i) => ({
+      ...v,
+      patient: patients[i]
+        ? {
+            id: patients[i]!.id,
+            patientCode: patients[i]!.patientCode,
+            firstName: patients[i]!.demographics.firstName,
+            lastName: patients[i]!.demographics.lastName,
+            photoKey: patients[i]!.photoKey,
+          }
+        : null,
+    }));
+  },
+
+  async updateVisit(hospitalId: string, visitId: string, body: UpdateVisitBody) {
+    const visit = await patientRepo.findVisitById(visitId);
+    if (!visit || visit.hospitalId !== hospitalId) throw new NotFoundError('Visit');
+    if (visit.checkedOutAt !== undefined) throw new ConflictError('Visit is already checked out');
+
+    const patch: Partial<ICheckInVisit> = {};
+    if (body.stage !== undefined) patch.stage = body.stage;
+    if (body.assignedNurseId !== undefined) {
+      patch.assignedNurseId = body.assignedNurseId;
+      patch.nurseAssignedAt = new Date();
+    }
+    if (body.assignedDoctorId !== undefined) {
+      patch.assignedDoctorId = body.assignedDoctorId;
+      patch.doctorAssignedAt = new Date();
+    }
+    if (body.notes !== undefined) patch.notes = body.notes;
+    if (body.department !== undefined) patch.department = body.department;
+
+    return patientRepo.updateVisit(visitId, patch);
+  },
+
+  async checkoutVisit(hospitalId: string, visitId: string, checkedOutBy: string) {
+    const visit = await patientRepo.findVisitById(visitId);
+    if (!visit || visit.hospitalId !== hospitalId) throw new NotFoundError('Visit');
+    if (visit.checkedOutAt !== undefined) throw new ConflictError('Visit is already checked out');
+
+    await patientRepo.updateVisit(visitId, {
+      checkedOutAt: new Date(),
+      checkedOutBy,
+      stage: 'done',
+    });
+
+    await patientRepo.updateById(visit.patientId, { admissionStatus: 'outpatient', currentHospitalId: undefined });
+
+    return patientRepo.findVisitById(visitId);
   },
 };

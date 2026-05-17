@@ -77,3 +77,36 @@ export interface PatientListResult {
   readonly limit: number;
   readonly totalPages: number;
 }
+
+export type VisitStage = 'waiting_nurse' | 'with_nurse' | 'waiting_doctor' | 'with_doctor' | 'done';
+
+export interface VisitPatientSnapshot {
+  readonly id: string;
+  readonly patientCode: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly photoKey?: string;
+}
+
+export interface CheckInVisit {
+  readonly id: string;
+  readonly hospitalId: string;
+  readonly patientId: string;
+  readonly patientCode: string;
+  readonly queueNumber: number;
+  readonly checkedInAt: string;
+  readonly checkedInBy: string;
+  readonly checkedOutAt?: string;
+  readonly checkedOutBy?: string;
+  readonly assignedNurseId?: string;
+  readonly nurseAssignedAt?: string;
+  readonly nurseSeenAt?: string;
+  readonly assignedDoctorId?: string;
+  readonly doctorAssignedAt?: string;
+  readonly stage: VisitStage;
+  readonly department?: string;
+  readonly notes?: string;
+  readonly patient: VisitPatientSnapshot | null;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}

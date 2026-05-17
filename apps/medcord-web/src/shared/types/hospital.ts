@@ -60,3 +60,16 @@ export interface HospitalStats {
   readonly patientCount: number;
   readonly storageUsedBytes: number;
 }
+
+export type HospitalUnitType = 'department' | 'unit' | 'ward';
+
+export interface HospitalUnit {
+  readonly id: string;
+  readonly hospitalId: string;
+  readonly name: string;
+  readonly type: HospitalUnitType;
+  readonly parentId?: string;
+  readonly isActive: boolean;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}

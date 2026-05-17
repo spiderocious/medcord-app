@@ -80,6 +80,21 @@ const RolesScreen = lazy(() =>
     default: m.RolesScreen,
   })),
 );
+const RoleCreateScreen = lazy(() =>
+  import('@features/staff/features/roles/screen/role-create-screen.tsx').then((m) => ({
+    default: m.RoleCreateScreen,
+  })),
+);
+const RoleEditScreen = lazy(() =>
+  import('@features/staff/features/roles/screen/role-edit-screen.tsx').then((m) => ({
+    default: m.RoleEditScreen,
+  })),
+);
+const RoleViewScreen = lazy(() =>
+  import('@features/staff/features/roles/screen/role-view-screen.tsx').then((m) => ({
+    default: m.RoleViewScreen,
+  })),
+);
 
 const StaffDirectoryScreen = lazy(() =>
   import('@features/staff/features/staff-directory/screen/staff-directory-screen.tsx').then((m) => ({
@@ -122,6 +137,21 @@ const PatientRegisterScreen = lazy(() =>
 const PatientProfileScreen = lazy(() =>
   import('@features/patients/features/patient-profile/screen/patient-profile-screen.tsx').then((m) => ({
     default: m.PatientProfileScreen,
+  })),
+);
+const AdmittedPatientsScreen = lazy(() =>
+  import('@features/patients/features/patient-admitted/screen/admitted-patients-screen.tsx').then((m) => ({
+    default: m.AdmittedPatientsScreen,
+  })),
+);
+const CheckedInPatientsScreen = lazy(() =>
+  import('@features/patients/features/patient-checkedin/screen/checkedin-patients-screen.tsx').then((m) => ({
+    default: m.CheckedInPatientsScreen,
+  })),
+);
+const QueueBoardScreen = lazy(() =>
+  import('@features/queue/screen/queue-board-screen.tsx').then((m) => ({
+    default: m.QueueBoardScreen,
   })),
 );
 
@@ -297,13 +327,19 @@ export function AppRoutes() {
         <Route path="staff/invite" element={<Lazy><StaffInviteScreen /></Lazy>} />
         <Route path="staff/org-chart" element={<Lazy><OrgChartScreen /></Lazy>} />
         <Route path="staff/roles" element={<Lazy><RolesScreen /></Lazy>} />
+        <Route path="staff/roles/new" element={<Lazy><RoleCreateScreen /></Lazy>} />
+        <Route path="staff/roles/:roleId" element={<Lazy><RoleViewScreen /></Lazy>} />
+        <Route path="staff/roles/:roleId/edit" element={<Lazy><RoleEditScreen /></Lazy>} />
         <Route path="staff/:staffId" element={<Lazy><StaffProfileScreen /></Lazy>} />
 
         {/* Patients */}
         <Route path="patients" element={<Lazy><PatientListScreen /></Lazy>} />
+        <Route path="patients/admitted" element={<Lazy><AdmittedPatientsScreen /></Lazy>} />
+        <Route path="patients/checked-in" element={<Lazy><CheckedInPatientsScreen /></Lazy>} />
         <Route path="patients/register" element={<Lazy><PatientRegisterScreen /></Lazy>} />
         <Route path="patients/transfers" element={<Lazy><TransfersScreen /></Lazy>} />
         <Route path="patients/:code" element={<Lazy><PatientProfileScreen /></Lazy>} />
+        <Route path="queue" element={<Lazy><QueueBoardScreen /></Lazy>} />
 
         {/* EMR Chart */}
         <Route path="patients/:code/chart" element={<Lazy><ChartOverviewScreen /></Lazy>} />

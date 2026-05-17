@@ -48,6 +48,7 @@ export type UpdatePatientBody = z.infer<typeof UpdatePatientBody>;
 
 export const SearchPatientsQuery = z.object({
   q: z.string().optional(),
+  admissionStatus: z.enum(['outpatient', 'admitted', 'discharged']).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
@@ -55,9 +56,27 @@ export type SearchPatientsQuery = z.infer<typeof SearchPatientsQuery>;
 
 export const CheckInBody = z.object({
   department: z.string().max(100, 'Department name is too long').optional(),
-  assignedTo: z.string().optional(),
+  assignedNurseId: z.string().optional(),
+  assignedDoctorId: z.string().optional(),
+  notes: z.string().max(500, 'Notes are too long').optional(),
 });
 export type CheckInBody = z.infer<typeof CheckInBody>;
+
+export const UpdateVisitBody = z.object({
+  assignedNurseId: z.string().optional(),
+  assignedDoctorId: z.string().optional(),
+  stage: z.enum(['waiting_nurse', 'with_nurse', 'waiting_doctor', 'with_doctor', 'done']).optional(),
+  notes: z.string().max(500, 'Notes are too long').optional(),
+  department: z.string().max(100, 'Department name is too long').optional(),
+});
+export type UpdateVisitBody = z.infer<typeof UpdateVisitBody>;
+
+export const UpdateAdmissionBody = z.object({
+  assignedDoctorId: z.string().optional(),
+  department: z.string().max(100, 'Department name is too long').optional(),
+  notes: z.string().max(1000, 'Notes are too long').optional(),
+});
+export type UpdateAdmissionBody = z.infer<typeof UpdateAdmissionBody>;
 
 export const AdmitBody = z.object({
   department: z.string().min(1, 'Department is required').max(100, 'Department name is too long').trim(),

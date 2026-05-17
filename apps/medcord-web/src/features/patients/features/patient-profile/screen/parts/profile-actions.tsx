@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { Switch, Case } from 'meemaw';
+import { Switch, Case, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
+import { useAuth } from '@shared/hooks/use-auth.ts';
+import { useStaff } from '@features/staff/features/staff-directory/api/use-staff.ts';
+import type { StaffMember } from '@features/staff/shared/types/staff.ts';
 import type { Patient } from '../../../../shared/types/patient.ts';
 import { useCheckin, useCheckout, useAdmit, useDischarge, useTransfer } from '../../api/use-patient.ts';
 
@@ -10,18 +13,26 @@ interface ProfileActionsProps {
 }
 
 export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
+  const { activeHospitalId } = useAuth();
   const checkinMutation = useCheckin(hospitalId, patient.id);
   const checkoutMutation = useCheckout(hospitalId, patient.id);
   const admitMutation = useAdmit(hospitalId, patient.id);
   const dischargeMutation = useDischarge(hospitalId, patient.id);
   const transferMutation = useTransfer(hospitalId, patient.id);
 
+  const { data: nurseData } = useStaff(activeHospitalId ?? '', { role: 'nurse', status: 'active', limit: 100 });
+  const { data: doctorData } = useStaff(activeHospitalId ?? '', { role: 'doctor', status: 'active', limit: 100 });
+
   function handleCheckin() {
     DrawerService.showCustomModal('Check in patient', () => (
-      <CheckinForm onConfirm={(dept, assigned) => {
-        checkinMutation.mutate({ department: dept || undefined, assignedTo: assigned || undefined });
-        DrawerService.dismissAllModals();
-      }} />
+      <CheckinForm
+        nurses={(nurseData?.items ?? []) as StaffMember[]}
+        doctors={(doctorData?.items ?? []) as StaffMember[]}
+        onConfirm={(dept, nurseId, doctorId) => {
+          checkinMutation.mutate({ department: dept || undefined, assignedNurseId: nurseId || undefined, assignedDoctorId: doctorId || undefined });
+          DrawerService.dismissAllModals();
+        }}
+      />
     ));
   }
 
@@ -97,9 +108,18 @@ export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
 
 const INPUT_CLS = 'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none';
 
-function CheckinForm({ onConfirm }: { onConfirm: (dept: string, assigned: string) => void }) {
+function CheckinForm({
+  nurses,
+  doctors,
+  onConfirm,
+}: {
+  nurses: StaffMember[];
+  doctors: StaffMember[];
+  onConfirm: (dept: string, nurseId: string, doctorId: string) => void;
+}) {
   const [dept, setDept] = useState('');
-  const [assigned, setAssigned] = useState('');
+  const [nurseId, setNurseId] = useState('');
+  const [doctorId, setDoctorId] = useState('');
   return (
     <div className="space-y-4">
       <div>
@@ -107,12 +127,26 @@ function CheckinForm({ onConfirm }: { onConfirm: (dept: string, assigned: string
         <input value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS} placeholder="e.g. Cardiology" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-charcoal-900">Assigned to</label>
-        <input value={assigned} onChange={(e) => setAssigned(e.target.value)} className={INPUT_CLS} placeholder="Staff name" />
+        <label className="block text-sm font-medium text-charcoal-900">Assign nurse</label>
+        <select value={nurseId} onChange={(e) => setNurseId(e.target.value)} className={INPUT_CLS}>
+          <option value="">— no nurse assigned —</option>
+          <Repeat each={nurses}>
+            {(n: StaffMember) => <option key={n.id} value={n.id}>{n.name}</option>}
+          </Repeat>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-charcoal-900">Assign doctor</label>
+        <select value={doctorId} onChange={(e) => setDoctorId(e.target.value)} className={INPUT_CLS}>
+          <option value="">— no doctor assigned —</option>
+          <Repeat each={doctors}>
+            {(d: StaffMember) => <option key={d.id} value={d.id}>{d.name}</option>}
+          </Repeat>
+        </select>
       </div>
       <div className="flex justify-end gap-2 pt-2">
         <AppButton variant="ghost" onClick={() => DrawerService.dismissAllModals()}>Cancel</AppButton>
-        <AppButton onClick={() => onConfirm(dept, assigned)}>Check in</AppButton>
+        <AppButton onClick={() => onConfirm(dept, nurseId, doctorId)}>Check in</AppButton>
       </div>
     </div>
   );

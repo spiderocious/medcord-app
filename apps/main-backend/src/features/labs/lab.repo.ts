@@ -52,6 +52,12 @@ export const labRepo = {
     return LabOrderModel.countDocuments(q);
   },
 
+  countPendingByHospital: (hospitalId: string) =>
+    LabOrderModel.countDocuments({
+      hospitalId,
+      status: { $in: ['awaiting_sample', 'sample_received', 'awaiting_test', 'in_progress', 'awaiting_result'] },
+    }),
+
   updateById: (id: string, data: Partial<ILabOrder>) =>
     LabOrderModel.findOneAndUpdate({ id }, { $set: data }, { new: true }).lean(),
 

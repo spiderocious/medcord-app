@@ -1,6 +1,8 @@
 import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { newId } from '@lib/ids.js';
 import { seedDefaultRoles } from '@lib/seed-roles.js';
+import { patientRepo } from '@features/patients/patient.repo.js';
+import { labRepo } from '@features/labs/lab.repo.js';
 
 import { hospitalRepo } from './hospital.repo.js';
 import type { IHospital } from './hospital.model.js';
@@ -109,8 +111,13 @@ export const hospitalService = {
   },
 
   async getUsage(hospitalId: string) {
-    const memberCount = await hospitalRepo.countMembers(hospitalId);
-    return { members: memberCount };
+    const [memberCount, patientsAdmitted, patientsCheckedIn, labsPending] = await Promise.all([
+      hospitalRepo.countMembers(hospitalId),
+      patientRepo.countByAdmissionStatus(hospitalId, 'admitted'),
+      patientRepo.countActiveVisits(hospitalId),
+      labRepo.countPendingByHospital(hospitalId),
+    ]);
+    return { members: memberCount, patientsAdmitted, patientsCheckedIn, labsPending };
   },
 
   async transferOwnership(hospitalId: string, requesterId: string, body: TransferOwnershipBody) {

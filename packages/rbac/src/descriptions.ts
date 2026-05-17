@@ -47,6 +47,7 @@ export const PERMISSION_DESCRIPTIONS: Record<Permission, string> = {
   [PERMISSIONS.AUDIT_VIEW]:         'Can view the hospital-wide audit log',
   [PERMISSIONS.SEARCH_USE]:         'Can use global search',
   [PERMISSIONS.NOTIFICATIONS_VIEW]: 'Can view notifications',
+  [PERMISSIONS.UNITS_MANAGE]:       'Can create, update, and delete hospital units and departments',
 };
 
 export interface PermissionGroup {
@@ -101,6 +102,7 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     permissions: [
       PERMISSIONS.SETTINGS_VIEW, PERMISSIONS.SETTINGS_UPDATE, PERMISSIONS.MODULES_MANAGE,
       PERMISSIONS.AUDIT_VIEW, PERMISSIONS.SEARCH_USE, PERMISSIONS.NOTIFICATIONS_VIEW,
+      PERMISSIONS.UNITS_MANAGE,
     ],
   },
 ];

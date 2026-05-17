@@ -21,6 +21,8 @@ export const newId = {
   reviewItem: () => make('REV-'),
   auditLog: () => make('AUD-'),
   notification: () => make('NOT-'),
+  visit: () => make('VIS-'),
+  unit: () => make('UNT-'),
 };
 
 export const newRawId = (): string => uuidv4();

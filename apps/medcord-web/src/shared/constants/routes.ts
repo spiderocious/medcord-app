@@ -19,6 +19,9 @@ export const ROUTES = {
   // Staff
   HOSPITAL_STAFF: (slug: string) => `/h/${slug}/staff`,
   HOSPITAL_ROLES: (slug: string) => `/h/${slug}/staff/roles`,
+  HOSPITAL_ROLE_CREATE: (slug: string) => `/h/${slug}/staff/roles/new`,
+  HOSPITAL_ROLE_VIEW: (slug: string, roleId: string) => `/h/${slug}/staff/roles/${roleId}`,
+  HOSPITAL_ROLE_EDIT: (slug: string, roleId: string) => `/h/${slug}/staff/roles/${roleId}/edit`,
   HOSPITAL_STAFF_PROFILE: (slug: string, staffId: string) =>
     `/h/${slug}/staff/${staffId}`,
   HOSPITAL_STAFF_INVITE: (slug: string) => `/h/${slug}/staff/invite`,
@@ -26,6 +29,9 @@ export const ROUTES = {
 
   // Patients
   HOSPITAL_PATIENTS: (slug: string) => `/h/${slug}/patients`,
+  HOSPITAL_PATIENTS_ADMITTED: (slug: string) => `/h/${slug}/patients/admitted`,
+  HOSPITAL_PATIENTS_CHECKEDIN: (slug: string) => `/h/${slug}/patients/checked-in`,
+  HOSPITAL_QUEUE: (slug: string) => `/h/${slug}/queue`,
   HOSPITAL_PATIENT_REGISTER: (slug: string) => `/h/${slug}/patients/register`,
   HOSPITAL_PATIENT_CHECK_IN: (slug: string) => `/h/${slug}/patients/check-in`,
   HOSPITAL_PATIENT_PROFILE: (slug: string, code: string) =>

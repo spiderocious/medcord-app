@@ -51,6 +51,7 @@ export const PERMISSIONS = {
   AUDIT_VIEW:         'audit.view',
   SEARCH_USE:         'search.use',
   NOTIFICATIONS_VIEW: 'notifications.view',
+  UNITS_MANAGE:       'units.manage',
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

@@ -11,6 +11,9 @@ import {
   IconSearch,
   IconSettings,
   IconRefresh,
+  IconStethoscope,
+  IconUserCheck,
+  IconActivity,
 } from '@icons';
 import { PERMISSIONS } from '@medcord/rbac';
 import { ROUTES } from '@shared/constants/routes.ts';
@@ -43,6 +46,9 @@ export function Sidebar({ slug, hospitalName, modules }: SidebarProps) {
     ...(can(PERMISSIONS.STAFF_VIEW) ? [{ label: 'Staff', Icon: IconUsers, to: ROUTES.HOSPITAL_STAFF(slug) }] : []),
     ...(can(PERMISSIONS.SETTINGS_UPDATE) ? [{ label: 'Roles', Icon: IconUsers, to: ROUTES.HOSPITAL_ROLES(slug) }] : []),
     ...(can(PERMISSIONS.PATIENT_VIEW) ? [{ label: 'Patients', Icon: IconHeartPulse, to: ROUTES.HOSPITAL_PATIENTS(slug), moduleKey: 'emr' as keyof HospitalModules }] : []),
+    ...(can(PERMISSIONS.PATIENT_VIEW) ? [{ label: 'Admitted', Icon: IconStethoscope, to: ROUTES.HOSPITAL_PATIENTS_ADMITTED(slug), moduleKey: 'emr' as keyof HospitalModules }] : []),
+    ...(can(PERMISSIONS.PATIENT_VIEW) ? [{ label: 'Checked In', Icon: IconUserCheck, to: ROUTES.HOSPITAL_PATIENTS_CHECKEDIN(slug), moduleKey: 'emr' as keyof HospitalModules }] : []),
+    ...(can(PERMISSIONS.PATIENT_VIEW) ? [{ label: 'Queue', Icon: IconActivity, to: ROUTES.HOSPITAL_QUEUE(slug), moduleKey: 'emr' as keyof HospitalModules }] : []),
     ...(can(PERMISSIONS.PATIENT_TRANSFER) ? [{ label: 'Transfers', Icon: IconRefresh, to: ROUTES.HOSPITAL_TRANSFERS(slug), moduleKey: 'emr' as keyof HospitalModules }] : []),
     ...(can(PERMISSIONS.LAB_VIEW) ? [{ label: 'Labs', Icon: IconFlask, to: ROUTES.HOSPITAL_LABS(slug), moduleKey: 'labs' as keyof HospitalModules }] : []),
     ...(can(PERMISSIONS.ASSET_VIEW) ? [{ label: 'Assets', Icon: IconPackage, to: ROUTES.HOSPITAL_ASSETS(slug), moduleKey: 'assets' as keyof HospitalModules }] : []),
