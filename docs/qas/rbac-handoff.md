@@ -65,11 +65,12 @@ For each row in the table below, call the endpoint with the blocked role's token
 |---|---|---|
 | `POST /hospitals/:id/invitations` | `hospital_admin` | `doctor` |
 | `POST /hospitals/:id/patients` | `doctor`, `nurse`, `reception` | `lab_tech`, `pharmacist` |
-| `GET /patients/:id/chart` | `doctor`, `nurse` | `reception`, `lab_tech` |
+| `GET /patients/:id/chart` | `doctor`, `nurse`, `lab_tech` | `reception`, `pharmacist` |
 | `POST /chart/vitals` | `doctor`, `nurse` | `reception`, `pharmacist` |
 | `POST /chart/medications` | `doctor` | `nurse`, `lab_tech` |
-| `POST /lab-orders` | `doctor`, `nurse`, `lab_tech` | `reception`, `pharmacist` |
-| `POST /lab-orders/:id/advance` | `lab_tech`, `doctor`, `nurse` | `reception`, `pharmacist` |
+| `GET /hospitals/:id/staff` | `hospital_admin`, `doctor`, `tech` | `pharmacist`, `reception` |
+| `POST /labs` | `doctor`, `nurse`, `lab_tech` | `reception`, `pharmacist` |
+| `POST /labs/:id/advance` | `lab_tech`, `doctor`, `nurse` | `reception`, `pharmacist` |
 | `PATCH /assets/:id` | `tech`, `hospital_admin` | `doctor`, `nurse` |
 | `DELETE /assets/:id` | `tech` | `doctor`, `nurse`, `hospital_admin` |
 | `PATCH /hospitals/:id` | `hospital_admin`, `super_admin` | `doctor` |
@@ -124,6 +125,7 @@ Scenarios:
 - The "Valid roles" hint text in the CSV format card must list the actual roles fetched from `GET /hospitals/:hospitalId/roles` — not a hardcoded string. Create a new custom role and reload the invite page; the hint text must include the new role's slug.
 - `super_admin` must not appear in the hint text even if it is present in the API response.
 - Submit a fully valid CSV. All rows must be submitted successfully. The backend must accept custom role slugs in bulk invitations.
+- `super_admin` must not appear as a valid role in the CSV hint text, and inviting via CSV with `role: super_admin` must be rejected by the backend with `403 Forbidden`.
 
 ---
 

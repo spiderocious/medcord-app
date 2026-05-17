@@ -9,7 +9,14 @@ export interface ResetPasswordPayload {
 export function useResetPassword() {
   return useMutation({
     mutationFn: async (payload: ResetPasswordPayload) => {
-      await apiClient.post(EP.AUTH_RESET_PASSWORD, { json: payload });
+      const res = await apiClient.post(EP.AUTH_RESET_PASSWORD, {
+        json: payload,
+        throwHttpErrors: false,
+      });
+      if (!res.ok) {
+        const body = await res.json() as { error?: { message?: string } };
+        throw new Error(body?.error?.message ?? 'Something went wrong');
+      }
     },
   });
 }

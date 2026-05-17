@@ -50,6 +50,8 @@ const makeInviteExpiry = () => {
 
 export const staffService = {
   async invite(hospitalId: string, invitedBy: string, body: InviteBody) {
+    if (body.role === 'super_admin') throw new ForbiddenError('super_admin cannot be assigned through invitations');
+
     const hospital = await hospitalRepo.findById(hospitalId);
     if (!hospital) throw new NotFoundError('Hospital');
 
@@ -244,6 +246,8 @@ export const staffService = {
   },
 
   async updateMember(hospitalId: string, memberId: string, body: UpdateMemberBody) {
+    if (body.role === 'super_admin') throw new ForbiddenError('super_admin cannot be assigned through role updates');
+
     const member = await staffRepo.findMemberById(memberId);
     if (!member || member.hospitalId !== hospitalId) throw new NotFoundError('Staff member');
     if (body.role !== undefined) {

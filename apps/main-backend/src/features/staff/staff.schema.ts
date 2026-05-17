@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { STAFF_ROLES } from '@shared/types/roles.types.js';
-
-const systemRoleEnum = z.enum(STAFF_ROLES, {
-  errorMap: () => ({ message: `Role must be one of: ${STAFF_ROLES.join(', ')}` }),
-});
-
-// Invite and update accept any string slug — service validates against actual hospital roles
-const roleSlug = z.string().min(1, 'Role is required').max(80, 'Role slug is too long').trim();
+// Invite and update accept any string slug — service validates against actual hospital roles.
+// super_admin is explicitly blocked: it can only be granted at hospital creation time.
+const roleSlug = z
+  .string()
+  .min(1, 'Role is required')
+  .max(80, 'Role slug is too long')
+  .trim()
+  .refine((v) => v !== 'super_admin', { message: 'super_admin cannot be assigned through invitations' });
 
 export const InviteBody = z.object({
   email: z.string().email('Invalid email address').toLowerCase().trim(),
@@ -68,7 +68,7 @@ export type AcceptInvitationBody = z.infer<typeof AcceptInvitationBody>;
 export const ListStaffQuery = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-  role: systemRoleEnum.optional(),
+  role: z.string().optional(),
   status: z.enum(['active', 'suspended']).optional(),
   q: z.string().optional(),
 });

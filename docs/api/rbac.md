@@ -209,12 +209,12 @@ All routes under `/hospitals/:hospitalId/patients/:patientId`.
 
 | Method | Path | Permission required | Notes |
 |---|---|---|---|
-| `GET` | `/lab-orders` | `lab.view` | |
-| `POST` | `/lab-orders` | `lab.create` | |
-| `GET` | `/lab-orders/:orderId` | `lab.view` | |
-| `PATCH` | `/lab-orders/:orderId` | `lab.create` | |
-| `POST` | `/lab-orders/:orderId/advance` | `lab.process` | |
-| `POST` | `/lab-orders/:orderId/result` | `lab.process` | |
+| `GET` | `/labs` | `lab.view` | |
+| `POST` | `/labs` | `lab.create` | |
+| `GET` | `/labs/:orderId` | `lab.view` | |
+| `PATCH` | `/labs/:orderId` | `lab.create` | |
+| `POST` | `/labs/:orderId/advance` | `lab.process` | |
+| `POST` | `/labs/:orderId/result` | `lab.process` | |
 
 ### Assets
 

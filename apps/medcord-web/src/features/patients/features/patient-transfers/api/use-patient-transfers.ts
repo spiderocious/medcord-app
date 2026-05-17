@@ -15,6 +15,7 @@ export function useIncomingTransfers(hospitalId: string) {
       return r.data.transfers;
     },
     enabled: hospitalId !== '',
+    retry: 0,
   });
 }
 

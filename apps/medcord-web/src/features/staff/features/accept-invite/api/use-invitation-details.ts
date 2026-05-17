@@ -32,6 +32,7 @@ export function useInvitationDetails(token: string) {
         .json<InvitationDetailsResponse>()
         .then((r) => r.data),
     enabled: token !== '',
-    retry: () => false,
+    retry: 0,
+    retryOnMount: false,
   });
 }

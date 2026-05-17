@@ -1,5 +1,3 @@
-import type { StaffRole } from '@shared/types/roles.types.js';
-
 import type { ICustomRole, IInvitation } from './staff.model.js';
 import { CustomRoleModel, InvitationModel } from './staff.model.js';
 import { HospitalMemberModel } from '@features/hospitals/hospital.model.js';
@@ -37,7 +35,7 @@ export const staffRepo = {
 
   listMembers: async (
     hospitalId: string,
-    filters: { role?: StaffRole | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
+    filters: { role?: string | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
     skip: number,
     limit: number,
   ) => {
@@ -56,7 +54,7 @@ export const staffRepo = {
 
   countMembers: async (
     hospitalId: string,
-    filters: { role?: StaffRole | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
+    filters: { role?: string | undefined; status?: 'active' | 'suspended' | undefined; q?: string | undefined },
   ) => {
     const query: Record<string, unknown> = { hospitalId };
     if (filters.role) query['role'] = filters.role;
