@@ -20,7 +20,7 @@ export function usePatient(hospitalId: string, patientId: string) {
   });
 }
 
-export function useUpdatePatient(hospitalId: string, patientId: string) {
+export function useUpdatePatient(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
@@ -30,7 +30,7 @@ export function useUpdatePatient(hospitalId: string, patientId: string) {
       return r.data.patient;
     },
     onSuccess: (patient) => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
       void qc.invalidateQueries({ queryKey: ['patients', hospitalId] });
       DrawerService.toast(`${patient.demographics.firstName}'s record updated.`, { type: 'success' });
     },
@@ -40,7 +40,7 @@ export function useUpdatePatient(hospitalId: string, patientId: string) {
   });
 }
 
-export function useCheckin(hospitalId: string, patientId: string) {
+export function useCheckin(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { department?: string; assignedNurseId?: string; assignedDoctorId?: string; notes?: string }) => {
@@ -50,7 +50,11 @@ export function useCheckin(hospitalId: string, patientId: string) {
       return r.data.patient;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      DrawerService.dismissAllModals();
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
+      void qc.invalidateQueries({ queryKey: ['patients', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['visits', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['patient-checkins', hospitalId, cacheKey] });
       DrawerService.toast('Patient checked in.', { type: 'success' });
     },
     onError: (err: unknown) => {
@@ -59,7 +63,7 @@ export function useCheckin(hospitalId: string, patientId: string) {
   });
 }
 
-export function useCheckout(hospitalId: string, patientId: string) {
+export function useCheckout(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {
@@ -69,7 +73,10 @@ export function useCheckout(hospitalId: string, patientId: string) {
       return r.data.patient;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
+      void qc.invalidateQueries({ queryKey: ['patients', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['visits', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['patient-checkins', hospitalId, cacheKey] });
       DrawerService.toast('Patient checked out.', { type: 'success' });
     },
     onError: (err: unknown) => {
@@ -78,17 +85,19 @@ export function useCheckout(hospitalId: string, patientId: string) {
   });
 }
 
-export function useAdmit(hospitalId: string, patientId: string) {
+export function useAdmit(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { department: string; assignedTo?: string; notes?: string }) => {
+    mutationFn: async (payload: { department?: string; assignedTo?: string; notes?: string }) => {
       const r = await apiClient
         .post(`api/v1/hospitals/${hospitalId}/patients/${patientId}/admit`, { json: payload })
         .json<PatientResponse>();
       return r.data.patient;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
+      void qc.invalidateQueries({ queryKey: ['patients', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['patient-admissions', hospitalId, cacheKey] });
       DrawerService.toast('Patient admitted.', { type: 'success' });
     },
     onError: (err: unknown) => {
@@ -97,7 +106,7 @@ export function useAdmit(hospitalId: string, patientId: string) {
   });
 }
 
-export function useDischarge(hospitalId: string, patientId: string) {
+export function useDischarge(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { notes?: string; followUpDate?: string }) => {
@@ -107,7 +116,9 @@ export function useDischarge(hospitalId: string, patientId: string) {
       return r.data.patient;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
+      void qc.invalidateQueries({ queryKey: ['patients', hospitalId] });
+      void qc.invalidateQueries({ queryKey: ['patient-admissions', hospitalId, cacheKey] });
       DrawerService.toast('Patient discharged.', { type: 'success' });
     },
     onError: (err: unknown) => {
@@ -116,7 +127,7 @@ export function useDischarge(hospitalId: string, patientId: string) {
   });
 }
 
-export function useTransfer(hospitalId: string, patientId: string) {
+export function useTransfer(hospitalId: string, patientId: string, cacheKey: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: {
@@ -137,7 +148,7 @@ export function useTransfer(hospitalId: string, patientId: string) {
       return r.data.transfer;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, patientId] });
+      void qc.invalidateQueries({ queryKey: ['patient', hospitalId, cacheKey] });
       DrawerService.toast('Transfer request sent.', { type: 'success' });
     },
     onError: (err: unknown) => {

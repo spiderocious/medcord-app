@@ -8,6 +8,7 @@ import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useReviewQueue } from '../api/use-review-queue.ts';
 import type { ReviewItem, ReviewItemStatus, ReviewItemType, ReviewItemPriority } from '../shared/types/review.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
 
 const TYPE_LABEL: Record<ReviewItemType, string> = {
   lab_result: 'Lab result',
@@ -172,8 +173,12 @@ export function ReviewQueueScreen() {
                           {item.priority.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-charcoal-700">{item.patientId}</td>
-                      <td className="px-4 py-3 text-sm text-charcoal-700">{item.submittedBy}</td>
+                      <td className="px-4 py-3">
+                        <EntityLink id={item.patientId} to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, item.patientId)} label="Patient" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <EntityLink id={item.submittedBy} to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, item.submittedBy)} label="Staff member" />
+                      </td>
                       <td className="px-4 py-3 text-sm text-charcoal-700">{new Date(item.createdAt).toLocaleDateString()}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[item.status]}`}>

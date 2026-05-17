@@ -185,7 +185,8 @@ export function Table<T extends TableRow>({
       ) : null}
 
       {/* Table */}
-      <table className="w-full border-collapse bg-[var(--surface-raised)] border border-[var(--text-primary)] border-t-0">
+      <div className="overflow-x-auto">
+      <table className="min-w-full border-collapse bg-[var(--surface-raised)] border border-[var(--text-primary)] border-t-0">
         <thead>
           <tr>
             {selectable && (
@@ -315,6 +316,7 @@ export function Table<T extends TableRow>({
           })}
         </tbody>
       </table>
+      </div>
 
       {/* Pagination */}
       {pageCount > 1 && (

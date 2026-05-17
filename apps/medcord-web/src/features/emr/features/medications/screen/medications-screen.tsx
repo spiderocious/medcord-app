@@ -41,7 +41,7 @@ export function MedicationsScreen() {
   return (
     <ChartLayout slug={slug} patientCode={code}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Medications</p>
           <Show when={can(PERMISSIONS.EMR_MEDICATIONS_WRITE)}>
             <AppButton
@@ -69,8 +69,8 @@ export function MedicationsScreen() {
             <div className="divide-y divide-forest-900/10 rounded-xl border border-forest-900/10 overflow-hidden">
               <Repeat each={(medications ?? []) as Medication[]}>
                 {(med: Medication) => (
-                  <div key={med.id} className="flex items-start justify-between gap-4 bg-white px-4 py-4 hover:bg-cream-50/60 transition-colors">
-                    <div className="min-w-0 space-y-0.5">
+                  <div key={med.id} className="flex flex-wrap items-start justify-between gap-3 bg-white px-4 py-4 hover:bg-cream-50/60 transition-colors">
+                    <div className="min-w-0 flex-1 space-y-0.5">
                       <p className="text-sm font-medium text-charcoal-900">{med.drug}</p>
                       <p className="text-xs text-charcoal-700/60">
                         {[med.strength, med.route, med.frequency].filter(Boolean).join(' · ')}
@@ -80,7 +80,7 @@ export function MedicationsScreen() {
                       </Show>
                       <p className="text-xs text-charcoal-700/40">Prescribed by {med.prescribedBy}</p>
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex shrink-0 items-center gap-2">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[med.status]}`}>
                         {STATUS_LABEL[med.status]}
                       </span>

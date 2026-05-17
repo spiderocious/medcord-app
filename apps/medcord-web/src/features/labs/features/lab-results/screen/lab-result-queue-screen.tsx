@@ -7,6 +7,7 @@ import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useHospitalLabOrders } from '../../lab-orders/api/use-lab-orders.ts';
 import type { LabOrder } from '../../../shared/types/lab.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
 
 const PRIORITY_STYLE: Record<string, string> = {
   routine: 'text-charcoal-700 border-forest-900/10 bg-cream-50',
@@ -120,7 +121,9 @@ export function LabResultQueueScreen() {
                           {order.priority.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-charcoal-700">{order.patientId}</td>
+                      <td className="px-4 py-3">
+                        <EntityLink id={order.patientId} to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, order.patientId)} label="Patient" />
+                      </td>
                       <td className="px-4 py-3 text-sm text-charcoal-700">{new Date(order.createdAt).toLocaleDateString()}</td>
                     </tr>
                   )}

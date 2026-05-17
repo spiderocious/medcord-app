@@ -30,6 +30,9 @@ export function AddMedicationForm({ hospitalId, patientId }: AddMedicationFormPr
     };
     mutation.mutate(payload, {
       onSuccess: () => { DrawerService.dismissAllModals(); },
+      onError: (err: unknown) => {
+        DrawerService.toast(err instanceof Error ? err.message : 'Something went wrong.', { type: 'error' });
+      },
     });
   }
 

@@ -16,12 +16,12 @@ export function HospitalListScreen() {
   return (
     <div className="flex min-h-full flex-col bg-cream-50">
       {/* Minimal topbar */}
-      <header className="flex h-14 items-center justify-between border-b border-forest-900/10 bg-white px-6">
+      <header className="flex h-14 items-center justify-between border-b border-forest-900/10 bg-white px-4 sm:px-6">
         <span className="text-sm font-semibold text-forest-900">Medcord</span>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Show when={user != null}>
-            <span className="text-sm text-charcoal-700">{user?.email}</span>
+            <span className="hidden max-w-[180px] truncate text-sm text-charcoal-700 sm:block">{user?.email}</span>
           </Show>
           <AppButton variant="ghost" onClick={logout}>
             Sign out
@@ -29,8 +29,8 @@ export function HospitalListScreen() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-2xl px-4 py-12">
-        <div className="mb-8 flex items-start justify-between gap-4">
+      <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:py-12">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <AppText variant="heading-2" className="text-charcoal-900">
               Your workspaces

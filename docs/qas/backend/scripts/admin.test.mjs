@@ -4,7 +4,7 @@
  * Routes: /admin/stats, /admin/hospitals, /admin/users
  *
  * Usage:
- *   1. node seed.mjs
+ *   1. node restore-seed.mjs
  *   2. Bootstrap alice as platform admin:
  *      mongo medcord --eval 'db.users.updateOne({email:"alice@medcord.test"},{$set:{isAdmin:true}})'
  *   3. node admin.test.mjs

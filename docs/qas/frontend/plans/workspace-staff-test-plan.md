@@ -549,7 +549,7 @@ These are checked globally across all Module 2 and 3 screens.
 | `bob@medcord.test` / `Medcord123!` | doctor | Staff member in alice's hospital |
 | Invite target: `newstaff@medcord.test` | — | Use for invitation happy path (not in DB) |
 
-> **Note:** Re-run `node seed.mjs` from `docs/qas/backend/scripts/` if users don't exist or tokens are expired.
+> **Note:** If users don't exist or tokens are expired, run `node docs/qas/backend/scripts/restore-seed.mjs` — it is safe to re-run and will not wipe existing data.
 
 ---
 

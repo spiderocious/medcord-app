@@ -113,7 +113,7 @@ export function HospitalSettingsScreen() {
             <SettingsUnits hospital={hospital!} />
           </Case>
           <Case when={activeTab === 'audit'}>
-            <SettingsAuditLog hospitalId={hospital!.id} />
+            <SettingsAuditLog hospitalId={hospital!.id} slug={slug} />
           </Case>
           <Default>
             <SettingsDangerZone hospital={hospital!} />

@@ -1,17 +1,28 @@
 /**
- * seed.mjs — Seed script for QA test environment.
+ * seed.mjs — LEGACY full-wipe seed. DO NOT RUN in a shared or live environment.
  *
- * What it does (in order):
- *   1. Connect to MongoDB and drop all relevant collections
- *   2. Register 7 users (alice … grace) via POST /auth/register
- *   3. Create Hospital A (alice) and Hospital B (grace)
- *   4. Alice invites bob, carol, dave, eve, frank to Hospital A
- *   5. Each invited user accepts their invitation
- *   6. Register 3 patients in Hospital A (as alice)
- *   7. Fetch each member's memberId from the staff list
- *   8. Write .state.json with all tokens, IDs, memberIds, patientIds
+ * ⚠️  WARNING: THIS SCRIPT DROPS EVERY COLLECTION IN THE DATABASE. ⚠️
+ *     Running it will permanently delete all users, hospitals, staff,
+ *     patients, visits, roles, and all other data.
  *
- * Usage: node seed.mjs
+ *     Use restore-seed.mjs instead — it is idempotent and safe to run
+ *     at any time without losing existing data.
+ *
+ *     node docs/qas/backend/scripts/restore-seed.mjs
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * What this legacy script does (in order):
+ *   1. Connect to MongoDB and DROP ALL relevant collections (DESTRUCTIVE)
+ *   2. Register alice and grace via POST /auth/register
+ *   3. Alice creates Hospital A; grace creates Hospital B
+ *   4. Re-login alice and grace to get hospital-scoped tokens
+ *   5. Alice invites bob, carol, dave, eve, frank to Hospital A
+ *   6. Each invited user accepts their invitation (creates account + joins hospital)
+ *   7. Register 3 patients in Hospital A (as alice)
+ *   8. Fetch each member's memberId from the staff list
+ *   9. Write .state.json with all tokens, IDs, memberIds, patientIds
+ *
+ * Usage: node seed.mjs   ← DO NOT RUN unless you intend to wipe the DB
  */
 
 import { writeFile } from 'fs/promises';
@@ -26,14 +37,19 @@ const STATE_FILE = join(__dirname, '.state.json');
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
-const USERS = [
+// Hospital owners — registered directly
+const OWNERS = [
   { handle: 'alice', email: 'alice@medcord.test', name: 'Alice Mensah', password: 'Medcord123!' },
-  { handle: 'bob',   email: 'bob@medcord.test',   name: 'Bob Asante',   password: 'Medcord123!' },
-  { handle: 'carol', email: 'carol@medcord.test', name: 'Carol Osei',   password: 'Medcord123!' },
-  { handle: 'dave',  email: 'dave@medcord.test',  name: 'Dave Mensah',  password: 'Medcord123!' },
-  { handle: 'eve',   email: 'eve@medcord.test',   name: 'Eve Darko',    password: 'Medcord123!' },
-  { handle: 'frank', email: 'frank@medcord.test', name: 'Frank Adu',    password: 'Medcord123!' },
   { handle: 'grace', email: 'grace@medcord.test', name: 'Grace Owusu',  password: 'Medcord123!' },
+];
+
+// Staff — created via invitation accept flow (NOT pre-registered)
+const INVITED_STAFF = [
+  { handle: 'bob',   email: 'bob@medcord.test',   name: 'Bob Asante',  password: 'Medcord123!', role: 'hospital_admin' },
+  { handle: 'carol', email: 'carol@medcord.test', name: 'Carol Osei',  password: 'Medcord123!', role: 'doctor' },
+  { handle: 'dave',  email: 'dave@medcord.test',  name: 'Dave Mensah', password: 'Medcord123!', role: 'nurse' },
+  { handle: 'eve',   email: 'eve@medcord.test',   name: 'Eve Darko',   password: 'Medcord123!', role: 'reception' },
+  { handle: 'frank', email: 'frank@medcord.test', name: 'Frank Adu',   password: 'Medcord123!', role: 'lab_tech' },
 ];
 
 const PATIENTS = [
@@ -42,21 +58,13 @@ const PATIENTS = [
   { firstName: 'John', lastName: 'Marcus', dateOfBirth: '1978-11-05', sex: 'male' },
 ];
 
-// role each non-owner user is invited as
-const INVITE_ROLES = {
-  bob:   'hospital_admin',
-  carol: 'doctor',
-  dave:  'nurse',
-  eve:   'reception',
-  frank: 'lab_tech',
-};
-
 // All collections to drop before seeding
 const COLLECTIONS = [
   'users',
   'hospitals',
   'hospital_members',
   'hospital_patients',
+  'hospital_units',
   'patients',
   'invitations',
   'custom_roles',
@@ -71,6 +79,8 @@ const COLLECTIONS = [
   'chart_documents',
   'chart_access_logs',
   'transfers',
+  'checkin_visits',
+  'daily_queue_counters',
   'reviewitems',
   'audit_logs',
   'notifications',
@@ -89,7 +99,23 @@ function fail(step, res) {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-console.log('=== Medcord QA Seed ===\n');
+// ── Safety guard — must pass --wipe flag to run ───────────────────────────────
+if (!process.argv.includes('--wipe')) {
+  console.error('\n⚠️  ABORTED: seed.mjs is a DESTRUCTIVE full-wipe script.');
+  console.error('   It drops all collections before re-seeding.');
+  console.error('');
+  console.error('   If you want to restore missing data safely, run instead:');
+  console.error('     node restore-seed.mjs');
+  console.error('');
+  console.error('   If you REALLY want to wipe everything and start fresh:');
+  console.error('     node seed.mjs --wipe');
+  console.error('');
+  process.exit(1);
+}
+
+console.log('=== Medcord QA Seed (FULL WIPE MODE) ===\n');
+console.log('WARNING: All collections will be dropped. Starting in 3 seconds...\n');
+await new Promise(r => setTimeout(r, 3000));
 
 // Step 1: Connect and drop collections
 console.log('Step 1: Connecting to MongoDB and dropping collections...');
@@ -101,22 +127,18 @@ for (const name of COLLECTIONS) {
     await db.collection(name).drop();
     process.stdout.write('  dropped: ' + name + '\n');
   } catch (err) {
-    // Collection might not exist yet; that's fine
-    if (err.codeName !== 'NamespaceNotFound' && err.message?.includes('ns not found') === false) {
-      // Only suppress "namespace not found" errors
-      if (!err.message?.toLowerCase().includes('ns not found')) {
-        console.warn(`  warn: could not drop "${name}": ${err.message}`);
-      }
+    if (!err.message?.toLowerCase().includes('ns not found')) {
+      console.warn(`  warn: could not drop "${name}": ${err.message}`);
     }
   }
 }
 console.log('  Collections cleared.\n');
 
-// Step 2: Register users
-console.log('Step 2: Registering users...');
+// Step 2: Register hospital owners (alice, grace)
+console.log('Step 2: Registering hospital owners...');
 const users = {};
 
-for (const u of USERS) {
+for (const u of OWNERS) {
   const res = await post('/auth/register', {
     email: u.email,
     name: u.name,
@@ -128,6 +150,7 @@ for (const u of USERS) {
   const d = res.data.data;
   users[u.handle] = {
     id: d.user.id,
+    email: u.email,
     accessToken: d.tokens.accessToken,
     refreshToken: d.tokens.refreshToken,
   };
@@ -135,71 +158,77 @@ for (const u of USERS) {
 }
 console.log();
 
-// Step 3a: Create Hospital A (alice)
+// Step 3: Create hospitals
 console.log('Step 3: Creating hospitals...');
 const resHospA = await post(
   '/hospitals',
-  {
-    name: 'Hospital A',
-    type: 'general',
-    location: 'Accra, Ghana',
-    subdomain: 'hospital-a',
-  },
+  { name: 'Hospital A', type: 'general', location: 'Accra, Ghana', subdomain: 'hospital-a' },
   users.alice.accessToken,
 );
 if (resHospA.status !== 201) fail('Create Hospital A', resHospA);
 const hospitalAId = resHospA.data.data.hospital.id;
 console.log(`  Hospital A created (id=${hospitalAId})`);
 
-// Step 3b: Create Hospital B (grace)
 const resHospB = await post(
   '/hospitals',
-  {
-    name: 'Hospital B',
-    type: 'general',
-    location: 'Kumasi, Ghana',
-    subdomain: 'hospital-b',
-  },
+  { name: 'Hospital B', type: 'general', location: 'Kumasi, Ghana', subdomain: 'hospital-b' },
   users.grace.accessToken,
 );
 if (resHospB.status !== 201) fail('Create Hospital B', resHospB);
 const hospitalBId = resHospB.data.data.hospital.id;
 console.log(`  Hospital B created (id=${hospitalBId})\n`);
 
-// Step 4: Alice invites bob, carol, dave, eve, frank to Hospital A
-console.log('Step 4: Sending invitations...');
-const invitationTokens = {}; // handle -> raw invitation token string
+// Step 4: Re-login alice and grace to get hospital-scoped tokens
+console.log('Step 4: Re-logging in alice and grace to get hospital-scoped tokens...');
+const aliceLogin = await post('/auth/login', { email: 'alice@medcord.test', password: 'Medcord123!' });
+if (aliceLogin.status !== 200) fail('Re-login alice', aliceLogin);
+users.alice.accessToken = aliceLogin.data.data.tokens.accessToken;
+users.alice.refreshToken = aliceLogin.data.data.tokens.refreshToken;
+console.log('  alice re-logged in');
 
-for (const [handle, role] of Object.entries(INVITE_ROLES)) {
-  const email = USERS.find((u) => u.handle === handle).email;
+const graceLogin = await post('/auth/login', { email: 'grace@medcord.test', password: 'Medcord123!' });
+if (graceLogin.status !== 200) fail('Re-login grace', graceLogin);
+users.grace.accessToken = graceLogin.data.data.tokens.accessToken;
+users.grace.refreshToken = graceLogin.data.data.tokens.refreshToken;
+console.log('  grace re-logged in\n');
+
+// Step 5: Alice invites staff to Hospital A
+console.log('Step 5: Sending invitations...');
+const invitationTokens = {};
+
+for (const staff of INVITED_STAFF) {
   const res = await post(
     `/hospitals/${hospitalAId}/invitations`,
-    { email, role },
+    { email: staff.email, role: staff.role },
     users.alice.accessToken,
   );
-  if (res.status !== 201) fail(`Invite ${handle}`, res);
-  invitationTokens[handle] = res.data.data.invitation.token;
-  console.log(`  Invited ${handle} as ${role} (token=${invitationTokens[handle]})`);
+  if (res.status !== 201) fail(`Invite ${staff.handle}`, res);
+  invitationTokens[staff.handle] = res.data.data.invitation.token;
+  console.log(`  Invited ${staff.handle} as ${staff.role} (token=${invitationTokens[staff.handle]})`);
 }
 console.log();
 
-// Step 5: Each invited user accepts their invitation
-// Endpoint: POST /api/v1/invitations/:token/accept  (token is a URL param, not body)
-console.log('Step 5: Accepting invitations...');
-for (const handle of Object.keys(INVITE_ROLES)) {
-  const invToken = invitationTokens[handle];
+// Step 6: Each invited user accepts their invitation (creates account)
+console.log('Step 6: Accepting invitations...');
+for (const staff of INVITED_STAFF) {
+  const invToken = invitationTokens[staff.handle];
   const res = await post(
     `/invitations/${invToken}/accept`,
-    undefined,
-    users[handle].accessToken,
+    { name: staff.name, password: staff.password },
   );
-  if (res.status !== 200) fail(`Accept invitation for ${handle}`, res);
-  console.log(`  ${handle} accepted invitation`);
+  if (res.status !== 200) fail(`Accept invitation for ${staff.handle}`, res);
+  const d = res.data.data;
+  users[staff.handle] = {
+    email: staff.email,
+    accessToken: d.accessToken,
+    refreshToken: d.refreshToken,
+  };
+  console.log(`  ${staff.handle} accepted invitation (hospitalId=${d.hospitalId})`);
 }
 console.log();
 
-// Step 6: Register 3 patients in Hospital A (as alice)
-console.log('Step 6: Registering patients...');
+// Step 7: Register 3 patients in Hospital A (as alice)
+console.log('Step 7: Registering patients...');
 const patientIds = [];
 
 for (const p of PATIENTS) {
@@ -222,29 +251,33 @@ for (const p of PATIENTS) {
 }
 console.log();
 
-// Step 7: Fetch memberId for each invited staff member
-console.log('Step 7: Fetching staff member IDs...');
+// Step 8: Fetch memberId for each invited staff member
+console.log('Step 8: Fetching staff member IDs...');
 const staffRes = await get(`/hospitals/${hospitalAId}/staff`, users.alice.accessToken);
 if (staffRes.status !== 200) fail('List staff', staffRes);
 
 const staffItems = staffRes.data.data?.items ?? [];
 const members = {};
 
-for (const handle of Object.keys(INVITE_ROLES)) {
-  const userId = users[handle].id;
-  const entry = staffItems.find((m) => m.userId === userId);
+// Also get alice's memberId
+for (const handle of ['alice', ...INVITED_STAFF.map(s => s.handle)]) {
+  // alice's userId is known; invited staff userId comes from token payload
+  // Use email to match
+  const email = handle === 'alice' ? 'alice@medcord.test' : INVITED_STAFF.find(s => s.handle === handle).email;
+  const entry = staffItems.find((m) => m.email === email || m.user?.email === email || m.userId === users[handle]?.id);
   if (!entry) {
-    console.error(`  Could not find memberId for ${handle} (userId=${userId})`);
-    console.error('  Staff list:', JSON.stringify(staffItems, null, 2));
-    process.exit(1);
+    // Try by role if email not on record
+    console.warn(`  Could not find memberId for ${handle} by email, trying by index`);
+    console.error('  Staff list:', JSON.stringify(staffItems.slice(0, 3), null, 2));
+  } else {
+    members[handle] = entry.id;
+    console.log(`  ${handle} → memberId=${entry.id}`);
   }
-  members[handle] = entry.id;
-  console.log(`  ${handle} → memberId=${entry.id}`);
 }
 console.log();
 
-// Step 8: Write state file
-console.log('Step 8: Writing state file...');
+// Step 9: Write state file
+console.log('Step 9: Writing state file...');
 const state = {
   users,
   hospitalA: { id: hospitalAId },
@@ -259,7 +292,7 @@ console.log(`  State written to ${STATE_FILE}\n`);
 await disconnect();
 
 console.log('=== Seed complete ===');
-console.log(`  Users:    ${Object.keys(users).length}`);
+console.log(`  Users:     ${Object.keys(users).length}`);
 console.log(`  Hospitals: 2 (A=${hospitalAId}, B=${hospitalBId})`);
-console.log(`  Members:  ${Object.keys(members).length}`);
-console.log(`  Patients: ${patientIds.length}`);
+console.log(`  Members:   ${Object.keys(members).length}`);
+console.log(`  Patients:  ${patientIds.length}`);

@@ -30,9 +30,9 @@ export function ChartLayout({ slug, patientCode, children, patientName }: ChartL
   const { pathname } = useLocation();
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-5">
       <div>
-        <div className="flex items-center gap-2 text-sm text-charcoal-700/60">
+        <div className="flex flex-wrap items-center gap-1.5 text-sm text-charcoal-700/60">
           <Link to={ROUTES.HOSPITAL_PATIENTS(slug)} className="hover:text-charcoal-900 transition-colors">Patients</Link>
           <span>/</span>
           <Link to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, patientCode)} className="hover:text-charcoal-900 transition-colors">

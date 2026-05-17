@@ -19,12 +19,12 @@
 | Base URL | `http://localhost:8085/admin` |
 | Auth | `Authorization: Bearer <accessToken>` |
 | DB | MongoDB `medcord` (local) |
-| Prerequisite | QA seed must have run (`node seed.mjs`) so users/hospitals exist |
+| Prerequisite | Restore seed must have run (`node docs/qas/backend/scripts/restore-seed.mjs`) so users/hospitals exist |
 
 ### Bootstrapping a Platform Admin
 
 There is no signup flow for platform admins. To create one:
-1. Run the seed: `node seed.mjs`  
+1. Run the restore seed: `node docs/qas/backend/scripts/restore-seed.mjs`  
 2. Set `isAdmin: true` directly in MongoDB on alice's user document:
    ```js
    db.users.updateOne({ email: "alice@medcord.test" }, { $set: { isAdmin: true } })
@@ -243,4 +243,4 @@ The following checks confirm the 4 code-level fixes (BUG-A-01 through BUG-A-03) 
 ## Scripts Location
 
 Test script will be written to: `docs/qas/scripts/admin.test.mjs`  
-Run after `node seed.mjs` and the manual DB bootstrap of alice's `isAdmin` flag.
+Run after `node docs/qas/backend/scripts/restore-seed.mjs` and the manual DB bootstrap of alice's `isAdmin` flag.

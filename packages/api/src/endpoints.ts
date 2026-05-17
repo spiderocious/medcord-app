@@ -81,6 +81,10 @@ export const EP = {
     `api/v1/hospitals/${hospitalId}/patients/${patientId}/transfer`,
   PATIENT_ID_CARD: (hospitalId: string, patientId: string) =>
     `api/v1/hospitals/${hospitalId}/patients/${patientId}/id-card`,
+  PATIENT_ADMISSIONS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/admissions`,
+  PATIENT_CHECK_INS: (hospitalId: string, patientId: string) =>
+    `api/v1/hospitals/${hospitalId}/patients/${patientId}/check-ins`,
   PATIENT_LOOKUP: (patientCode: string) => `api/v1/patients/lookup/${patientCode}`,
   HOSPITAL_TRANSFERS_INCOMING: (hospitalId: string) =>
     `api/v1/hospitals/${hospitalId}/transfers/incoming`,

@@ -14,6 +14,7 @@ import {
   IconStethoscope,
   IconUserCheck,
   IconActivity,
+  IconClose,
 } from '@icons';
 import { PERMISSIONS } from '@medcord/rbac';
 import { ROUTES } from '@shared/constants/routes.ts';
@@ -24,6 +25,7 @@ interface SidebarProps {
   readonly slug: string;
   readonly hospitalName: string;
   readonly modules: HospitalModules;
+  readonly onClose?: () => void;
 }
 
 interface NavEntry {
@@ -38,7 +40,7 @@ const LINK_BASE =
   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-charcoal-700 hover:bg-forest-900/5 hover:text-forest-900';
 const LINK_ACTIVE = '!bg-forest-900/10 !text-forest-900';
 
-export function Sidebar({ slug, hospitalName, modules }: SidebarProps) {
+export function Sidebar({ slug, hospitalName, modules, onClose }: SidebarProps) {
   const { can } = usePermissions();
 
   const entries: NavEntry[] = [
@@ -62,8 +64,16 @@ export function Sidebar({ slug, hospitalName, modules }: SidebarProps) {
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-forest-900/10 bg-white">
-      <div className="flex h-14 items-center border-b border-forest-900/10 px-4">
+      <div className="flex h-14 items-center justify-between border-b border-forest-900/10 px-4">
         <span className="truncate text-sm font-semibold text-forest-900">{hospitalName}</span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="ml-2 rounded-lg p-1 text-charcoal-700 hover:bg-forest-900/5 md:hidden"
+          aria-label="Close menu"
+        >
+          <IconClose size={18} />
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2">
@@ -74,6 +84,7 @@ export function Sidebar({ slug, hospitalName, modules }: SidebarProps) {
                 <NavLink
                   to={entry.to}
                   end={entry.to === ROUTES.HOSPITAL_DASHBOARD(slug)}
+                  onClick={onClose}
                   className={({ isActive }) =>
                     [LINK_BASE, isActive ? LINK_ACTIVE : ''].join(' ')
                   }

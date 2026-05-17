@@ -34,7 +34,7 @@ export function AuthLayout({ title, subtitle, children, footerLink }: AuthLayout
           </Show>
         </div>
 
-        <div className="rounded-xl border border-forest-900/10 bg-white p-8 shadow-sm">
+        <div className="rounded-xl border border-forest-900/10 bg-white p-6 shadow-sm sm:p-8">
           {children}
         </div>
 

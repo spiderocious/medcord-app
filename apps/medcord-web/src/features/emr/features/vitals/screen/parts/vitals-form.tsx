@@ -46,6 +46,9 @@ export function VitalsForm({ hospitalId, patientId }: VitalsFormProps) {
     };
     mutation.mutate(payload, {
       onSuccess: () => { DrawerService.dismissAllModals(); },
+      onError: (err: unknown) => {
+        DrawerService.toast(err instanceof Error ? err.message : 'Something went wrong.', { type: 'error' });
+      },
     });
   }
 

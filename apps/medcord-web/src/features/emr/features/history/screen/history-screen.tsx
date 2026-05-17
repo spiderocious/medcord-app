@@ -19,19 +19,18 @@ export function HistoryScreen() {
   const { data: history, isLoading, error } = useHistory(activeHospitalId ?? '', code);
 
   function handleEdit() {
-    if (!history) return;
     DrawerService.showCustomModal('Edit medical history', () => (
-      <HistoryEditForm history={history} hospitalId={activeHospitalId ?? ''} patientId={code} />
+      <HistoryEditForm history={history ?? null} hospitalId={activeHospitalId ?? ''} patientId={code} />
     ));
   }
 
   return (
     <ChartLayout slug={slug} patientCode={code}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Medical history</p>
           <Show when={can(PERMISSIONS.EMR_HISTORY_WRITE)}>
-            <AppButton variant="secondary" onClick={handleEdit} disabled={!history}>Edit</AppButton>
+            <AppButton variant="secondary" onClick={handleEdit} disabled={isLoading}>Edit</AppButton>
           </Show>
         </div>
 

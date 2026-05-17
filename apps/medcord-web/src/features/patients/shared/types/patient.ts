@@ -70,6 +70,22 @@ export interface Transfer {
   readonly updatedAt: string;
 }
 
+export interface PatientAdmission {
+  readonly id: string;
+  readonly patientId: string;
+  readonly hospitalId: string;
+  readonly admittedAt: string;
+  readonly admittedBy: string;
+  readonly department?: string;
+  readonly assignedTo?: string;
+  readonly notes?: string;
+  readonly dischargedAt?: string;
+  readonly dischargedBy?: string;
+  readonly dischargeNotes?: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
 export interface PatientListResult {
   readonly items: readonly Patient[];
   readonly total: number;

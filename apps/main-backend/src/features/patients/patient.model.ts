@@ -305,3 +305,45 @@ const dailyQueueCounterSchema = new Schema<IDailyQueueCounter>(
 dailyQueueCounterSchema.index({ hospitalId: 1, date: 1 }, { unique: true });
 
 export const DailyQueueCounterModel = mongoose.model<IDailyQueueCounter>('DailyQueueCounter', dailyQueueCounterSchema);
+
+// ── PatientAdmission ──────────────────────────────────────────────────────────
+
+export interface IPatientAdmission {
+  id: string;
+  patientId: string;
+  hospitalId: string;
+  admittedAt: Date;
+  admittedBy: string;
+  department?: string | undefined;
+  assignedTo?: string | undefined;
+  notes?: string | undefined;
+  dischargedAt?: Date | undefined;
+  dischargedBy?: string | undefined;
+  dischargeNotes?: string | undefined;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPatientAdmissionDocument extends IPatientAdmission, Document {}
+
+const patientAdmissionSchema = new Schema<IPatientAdmissionDocument>(
+  {
+    id: { type: String, required: true, unique: true, index: true },
+    patientId: { type: String, required: true, index: true },
+    hospitalId: { type: String, required: true, index: true },
+    admittedAt: { type: Date, required: true },
+    admittedBy: { type: String, required: true },
+    department: String,
+    assignedTo: String,
+    notes: String,
+    dischargedAt: Date,
+    dischargedBy: String,
+    dischargeNotes: String,
+  },
+  { timestamps: true, collection: 'patient_admissions' },
+);
+
+patientAdmissionSchema.index({ patientId: 1, hospitalId: 1 });
+patientAdmissionSchema.index({ hospitalId: 1, admittedAt: -1 });
+
+export const PatientAdmissionModel = mongoose.model<IPatientAdmissionDocument>('PatientAdmission', patientAdmissionSchema);

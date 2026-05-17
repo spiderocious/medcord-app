@@ -52,7 +52,7 @@ All scripts will use a shared `db.mjs` helper that connects to MongoDB directly 
 ```
 docs/qas/scripts/
   db.mjs          — MongoDB connection helper
-  seed.mjs        — creates users, hospital, members, patients
+  restore-seed.mjs — idempotent restore: creates/skips users, hospitals, members, patients
   api.mjs         — shared fetch wrapper (logs req/res)
   auth.test.mjs
   hospitals.test.mjs
@@ -563,7 +563,7 @@ The `hospitalScope` middleware now blocks access to archived hospitals. However,
 
 Scripts must run in this order (state builds on prior steps):
 
-1. `seed.mjs` — create test users and Hospital A/B
+1. `restore-seed.mjs` — restore/create test users and Hospital A/B (safe to re-run)
 2. `auth.test.mjs`
 3. `hospitals.test.mjs`
 4. `staff.test.mjs`

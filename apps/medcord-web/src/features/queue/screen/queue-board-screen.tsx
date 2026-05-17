@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loadable, Repeat, Show } from 'meemaw';
 
@@ -64,12 +65,21 @@ function VisitCard({ visit, canAct, isActive, onAdvance, onRemove }: VisitCardPr
   );
 }
 
+function matchesVisit(visit: CheckInVisit, q: string): boolean {
+  const term = q.toLowerCase();
+  const fullName = visit.patient
+    ? `${visit.patient.firstName} ${visit.patient.lastName}`.toLowerCase()
+    : '';
+  return fullName.includes(term) || visit.patientCode.toLowerCase().includes(term);
+}
+
 export function QueueBoardScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const hospitalId = activeHospitalId ?? '';
   const navigate = useNavigate();
   const { can } = usePermissions();
+  const [q, setQ] = useState('');
 
   const { data: visits, isLoading, error, refetch } = useVisits(hospitalId);
   const updateMutation = useUpdateVisit(hospitalId);
@@ -77,10 +87,14 @@ export function QueueBoardScreen() {
 
   const canAct = can(PERMISSIONS.PATIENT_ADMIT);
 
-  const waitingNurse = (visits ?? []).filter((v) => v.stage === 'waiting_nurse');
-  const withNurse = (visits ?? []).filter((v) => v.stage === 'with_nurse');
-  const waitingDoctor = (visits ?? []).filter((v) => v.stage === 'waiting_doctor');
-  const withDoctor = (visits ?? []).filter((v) => v.stage === 'with_doctor');
+  const displayVisits = q.trim() === ''
+    ? (visits ?? [])
+    : (visits ?? []).filter((v) => matchesVisit(v, q.trim()));
+
+  const waitingNurse = displayVisits.filter((v) => v.stage === 'waiting_nurse');
+  const withNurse = displayVisits.filter((v) => v.stage === 'with_nurse');
+  const waitingDoctor = displayVisits.filter((v) => v.stage === 'waiting_doctor');
+  const withDoctor = displayVisits.filter((v) => v.stage === 'with_doctor');
 
   const activeVisits = [...withNurse, ...withDoctor];
 
@@ -104,8 +118,8 @@ export function QueueBoardScreen() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <AppText variant="heading-2" className="text-charcoal-900">Queue Board</AppText>
           <AppText variant="body-sm" className="mt-1 text-charcoal-700">
@@ -122,13 +136,23 @@ export function QueueBoardScreen() {
         </div>
       </div>
 
+      <div className="flex items-center gap-3">
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search by name or code…"
+          className="w-full max-w-sm rounded-lg border border-forest-900/15 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder:text-charcoal-700/40 focus:border-forest-900/40 focus:outline-none focus:ring-2 focus:ring-forest-900/10"
+        />
+      </div>
+
       <Show when={(activeVisits.length) > 0}>
         <div className="rounded-xl border-2 border-forest-900/30 bg-forest-900/5 px-5 py-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-forest-900/60 mb-3">Now serving</p>
-          <div className="flex flex-wrap gap-4">
-            <Repeat each={activeVisits as CheckInVisit[]}>
+          <div className="flex flex-row flex-wrap gap-4">
+            <Repeat each={activeVisits.splice(0, 6) as CheckInVisit[]}>
               {(visit: CheckInVisit) => (
-                <div key={visit.id} className="flex items-center gap-3">
+                <div key={visit.id} className="flex items-center gap-3 w-full">
                   <span className="text-2xl font-bold text-forest-900">#{visit.queueNumber}</span>
                   <div>
                     <p className="text-sm font-semibold text-charcoal-900">
@@ -168,6 +192,15 @@ export function QueueBoardScreen() {
             </div>
           }
         >
+          <Show
+            when={displayVisits.length > 0}
+            fallback={
+              <div className="flex flex-col items-center gap-3 py-20 text-center">
+                <IconActivity size={32} className="text-charcoal-700/30" />
+                <AppText variant="body-sm" className="text-charcoal-700">No results for "{q}".</AppText>
+              </div>
+            }
+          >
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Waiting for nurse */}
             <div className="space-y-3">
@@ -272,6 +305,7 @@ export function QueueBoardScreen() {
               </Show>
             </div>
           </div>
+          </Show>
         </Show>
       </Loadable>
     </div>

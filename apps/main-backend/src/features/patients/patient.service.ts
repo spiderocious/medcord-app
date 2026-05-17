@@ -16,7 +16,15 @@ import type {
   UpdatePatientBody,
   UpdateVisitBody,
 } from './patient.schema.js';
-import type { ICheckInVisit, VisitStage } from './patient.model.js';
+import type { ICheckInVisit, IPatientAdmission, VisitStage } from './patient.model.js';
+
+const VALID_TRANSITIONS: Record<VisitStage, readonly VisitStage[]> = {
+  waiting_nurse:  ['with_nurse', 'waiting_doctor'],
+  with_nurse:     ['waiting_doctor'],
+  waiting_doctor: ['with_doctor'],
+  with_doctor:    ['done'],
+  done:           [],
+};
 
 async function resolvePatientId(param: string): Promise<string> {
   if (param.startsWith('CAE-')) {
@@ -167,13 +175,25 @@ export const patientService = {
     const id = await resolvePatientId(patientId);
     const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
-    return patientRepo.updateById(id, { admissionStatus: 'outpatient' });
+    return patientRepo.updateById(id, { admissionStatus: 'outpatient', currentHospitalId: undefined });
   },
 
-  async admit(hospitalId: string, patientId: string, body: AdmitBody) {
+  async admit(hospitalId: string, patientId: string, admittedBy: string, body: AdmitBody) {
     const id = await resolvePatientId(patientId);
     const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
+
+    await patientRepo.createAdmission({
+      id: newId.admission(),
+      patientId: id,
+      hospitalId,
+      admittedAt: new Date(),
+      admittedBy,
+      department: body.department,
+      assignedTo: body.assignedTo,
+      notes: body.notes,
+    });
+
     return patientRepo.updateById(id, {
       admissionStatus: 'admitted',
       currentHospitalId: hospitalId,
@@ -191,10 +211,17 @@ export const patientService = {
     return patientRepo.updateById(id, patch);
   },
 
-  async discharge(hospitalId: string, patientId: string, _body: DischargeBody) {
+  async discharge(hospitalId: string, patientId: string, dischargedBy: string, body: DischargeBody) {
     const id = await resolvePatientId(patientId);
     const link = await patientRepo.findHospitalPatient(hospitalId, id);
     if (!link) throw new NotFoundError('Patient');
+
+    await patientRepo.closeAdmission(id, hospitalId, {
+      dischargedAt: new Date(),
+      dischargedBy,
+      dischargeNotes: body.notes,
+    });
+
     return patientRepo.updateById(id, { admissionStatus: 'discharged' });
   },
 
@@ -310,7 +337,12 @@ export const patientService = {
     if (visit.checkedOutAt !== undefined) throw new ConflictError('Visit is already checked out');
 
     const patch: Partial<ICheckInVisit> = {};
-    if (body.stage !== undefined) patch.stage = body.stage;
+    if (body.stage !== undefined) {
+      if (!VALID_TRANSITIONS[visit.stage].includes(body.stage)) {
+        throw new ConflictError(`Cannot transition visit from '${visit.stage}' to '${body.stage}'`);
+      }
+      patch.stage = body.stage;
+    }
     if (body.assignedNurseId !== undefined) {
       patch.assignedNurseId = body.assignedNurseId;
       patch.nurseAssignedAt = new Date();
@@ -340,4 +372,19 @@ export const patientService = {
 
     return patientRepo.findVisitById(visitId);
   },
+
+  async getAdmissions(hospitalId: string, patientId: string): Promise<IPatientAdmission[]> {
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
+    if (!link) throw new NotFoundError('Patient');
+    return patientRepo.findAdmissionsByPatient(id, hospitalId) as Promise<IPatientAdmission[]>;
+  },
+
+  async getCheckIns(hospitalId: string, patientId: string): Promise<ICheckInVisit[]> {
+    const id = await resolvePatientId(patientId);
+    const link = await patientRepo.findHospitalPatient(hospitalId, id);
+    if (!link) throw new NotFoundError('Patient');
+    return patientRepo.findVisitsByPatient(id, hospitalId) as Promise<ICheckInVisit[]>;
+  },
+
 };

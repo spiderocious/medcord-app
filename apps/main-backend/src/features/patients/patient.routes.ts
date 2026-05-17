@@ -16,7 +16,6 @@ import {
   TransferBody,
   UpdateAdmissionBody,
   UpdatePatientBody,
-  UpdateVisitBody,
 } from './patient.schema.js';
 import { patientService } from './patient.service.js';
 
@@ -195,6 +194,7 @@ router.post(
     const patient = await patientService.admit(
       req.params['hospitalId'] as string,
       req.params['patientId'] as string,
+      req.user!.id,
       body,
     );
     return ResponseUtil.ok(res, { patient });
@@ -211,6 +211,7 @@ router.post(
     const patient = await patientService.discharge(
       req.params['hospitalId'] as string,
       req.params['patientId'] as string,
+      req.user!.id,
       body,
     );
     return ResponseUtil.ok(res, { patient });
@@ -261,6 +262,34 @@ router.delete(
       req.params['patientId'] as string,
     );
     return ResponseUtil.noContent(res);
+  }),
+);
+
+router.get(
+  '/:patientId/admissions',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
+  asyncHandler(async (req, res) => {
+    const admissions = await patientService.getAdmissions(
+      req.params['hospitalId'] as string,
+      req.params['patientId'] as string,
+    );
+    return ResponseUtil.ok(res, { admissions });
+  }),
+);
+
+router.get(
+  '/:patientId/check-ins',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
+  asyncHandler(async (req, res) => {
+    const visits = await patientService.getCheckIns(
+      req.params['hospitalId'] as string,
+      req.params['patientId'] as string,
+    );
+    return ResponseUtil.ok(res, { visits });
   }),
 );
 

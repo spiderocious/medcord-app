@@ -27,7 +27,7 @@ export function ProfileHeader({ patient, hospitalId, isFavorited }: ProfileHeade
   const { firstName, lastName, preferredName } = patient.demographics;
 
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="flex items-center gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-forest-900/10 text-forest-900">
           <IconUser size={24} />

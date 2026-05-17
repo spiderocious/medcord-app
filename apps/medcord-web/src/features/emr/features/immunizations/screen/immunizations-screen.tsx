@@ -22,7 +22,7 @@ export function ImmunizationsScreen() {
   return (
     <ChartLayout slug={slug} patientCode={code}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Immunizations</p>
           <Show when={can(PERMISSIONS.EMR_IMMUNIZATIONS_WRITE)}>
             <AppButton
@@ -47,7 +47,8 @@ export function ImmunizationsScreen() {
             when={(immunizations?.length ?? 0) > 0}
             fallback={<p className="py-8 text-center text-sm text-charcoal-700/50">No immunizations recorded.</p>}
           >
-            <div className="overflow-x-auto rounded-xl border border-forest-900/10">
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto rounded-xl border border-forest-900/10 md:block">
               <table className="min-w-full divide-y divide-forest-900/10 bg-white">
                 <thead>
                   <tr className="bg-cream-50">
@@ -74,6 +75,27 @@ export function ImmunizationsScreen() {
                   </Repeat>
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="space-y-2 md:hidden">
+              <Repeat each={(immunizations ?? []) as Immunization[]}>
+                {(imm: Immunization) => (
+                  <div key={imm.id} className="rounded-xl border border-forest-900/10 bg-white p-4 space-y-2">
+                    <p className="text-sm font-semibold text-charcoal-900">{imm.vaccine}</p>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-charcoal-700/60">
+                      <Show when={imm.dose !== undefined}>
+                        <span>Dose: {imm.dose}</span>
+                      </Show>
+                      <span>{new Date(imm.administeredAt).toLocaleDateString()}</span>
+                      <Show when={imm.nextDueDate !== undefined}>
+                        <span>Next: {new Date(imm.nextDueDate!).toLocaleDateString()}</span>
+                      </Show>
+                      <span>{imm.administrator}</span>
+                    </div>
+                  </div>
+                )}
+              </Repeat>
             </div>
           </Show>
         </Loadable>

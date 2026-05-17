@@ -38,8 +38,8 @@ export function ProfileMeta({ member }: ProfileMetaProps) {
         </AppText>
       </div>
       <div className="divide-y divide-forest-900/5 px-5 py-4">
-        <MetaRow label="Member ID" value={member.id.slice(0, 8).toUpperCase()} />
-        <MetaRow label="User ID" value={member.userId.slice(0, 8).toUpperCase()} />
+        <MetaRow label="Member ID" value={member.id} />
+        <MetaRow label="User ID" value={member.userId} />
         <MetaRow label="Joined" value={joinedFormatted} />
         <MetaRow label="Status" value={member.status === 'active' ? 'Active' : 'Suspended'} />
       </div>

@@ -50,8 +50,8 @@ export function LabOrdersScreen() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <AppText variant="heading-2" className="text-charcoal-900">Lab orders</AppText>
           <AppText variant="body-sm" className="mt-1 text-charcoal-700">
@@ -106,7 +106,8 @@ export function LabOrdersScreen() {
             </div>
           }
         >
-          <div className="overflow-x-auto rounded-xl border border-forest-900/10">
+          {/* Desktop table */}
+          <div className="hidden overflow-x-auto rounded-xl border border-forest-900/10 md:block">
             <table className="min-w-full divide-y divide-forest-900/10 bg-white">
               <thead>
                 <tr className="bg-cream-50">
@@ -149,6 +150,40 @@ export function LabOrdersScreen() {
                 </Repeat>
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="space-y-2 md:hidden">
+            <Repeat each={(data?.items ?? []) as LabOrder[]}>
+              {(order: LabOrder) => (
+                <button
+                  key={order.id}
+                  type="button"
+                  className="w-full rounded-xl border border-forest-900/10 bg-white p-4 text-left transition-colors hover:bg-cream-50/60 active:bg-cream-50"
+                  onClick={() => navigate(`${ROUTES.HOSPITAL_LAB_ORDER(slug, order.id)}?patientId=${order.patientId}`)}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-charcoal-900">{order.testName}</p>
+                      <Show when={order.testCode !== undefined}>
+                        <p className="font-mono text-xs text-charcoal-700/60">{order.testCode}</p>
+                      </Show>
+                    </div>
+                    <span className={`shrink-0 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[order.status]}`}>
+                      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
+                      {STATUS_LABEL[order.status]}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${PRIORITY_STYLE[order.priority]}`}>
+                      {order.priority.toUpperCase()}
+                    </span>
+                    <span className="text-xs text-charcoal-700/60">{order.orderedBy}</span>
+                    <span className="text-xs text-charcoal-700/60">{new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </button>
+              )}
+            </Repeat>
           </div>
         </Show>
       </Loadable>

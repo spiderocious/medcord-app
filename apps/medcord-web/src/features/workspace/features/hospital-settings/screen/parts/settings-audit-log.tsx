@@ -4,9 +4,12 @@ import { Loadable, Repeat, Show } from 'meemaw';
 import { AppButton } from '@medcord/ui';
 import { useAuditLog } from '@features/workspace/features/audit-log/api/use-audit-log.ts';
 import type { AuditAction, AuditLog } from '@shared/types/audit.ts';
+import { ROUTES } from '@shared/constants/routes.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
 
 interface SettingsAuditLogProps {
   readonly hospitalId: string;
+  readonly slug: string;
 }
 
 const AUDIT_ACTIONS: AuditAction[] = [
@@ -51,7 +54,14 @@ const AUDIT_ACTION_LABEL: Record<AuditAction, string> = {
 
 const INPUT_CLS = 'rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900';
 
-export function SettingsAuditLog({ hospitalId }: SettingsAuditLogProps) {
+function auditResourceRoute(slug: string, id: string): string {
+  if (id.startsWith('LAB-')) return ROUTES.HOSPITAL_LAB_ORDER(slug, id);
+  if (id.startsWith('AST-')) return ROUTES.HOSPITAL_ASSET_DETAIL(slug, id);
+  if (id.startsWith('STF-') || id.startsWith('MBR-')) return ROUTES.HOSPITAL_STAFF_PROFILE(slug, id);
+  return ROUTES.HOSPITAL_PATIENT_PROFILE(slug, id);
+}
+
+export function SettingsAuditLog({ hospitalId, slug }: SettingsAuditLogProps) {
   const [action, setAction] = useState<AuditAction | ''>('');
   const [actorIdInput, setActorIdInput] = useState('');
   const [actorId, setActorId] = useState('');
@@ -140,9 +150,13 @@ export function SettingsAuditLog({ hospitalId }: SettingsAuditLogProps) {
                       </td>
                       <td className="px-4 py-3 text-sm text-charcoal-700">
                         <span className="font-medium">{log.resourceType}</span>
-                        <span className="ml-1 font-mono text-xs text-charcoal-700/60">{log.resourceId.slice(0, 8)}…</span>
+                        <span className="ml-2">
+                          <EntityLink id={log.resourceId} to={auditResourceRoute(slug, log.resourceId)} label={log.resourceType} />
+                        </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-charcoal-700">{log.actorId.slice(0, 12)}…</td>
+                      <td className="px-4 py-3">
+                        <EntityLink id={log.actorId} to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, log.actorId)} label="Staff member" />
+                      </td>
                       <td className="px-4 py-3 text-sm text-charcoal-700">
                         <Show when={log.actorRole !== undefined}>
                           <span>{log.actorRole}</span>

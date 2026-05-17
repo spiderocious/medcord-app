@@ -22,8 +22,8 @@ export function PatientListScreen() {
   const { data, isLoading, error } = usePatients(activeHospitalId ?? '', { q: q || undefined });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <AppText variant="heading-2" className="text-charcoal-900">Patients</AppText>
           <AppText variant="body-sm" className="mt-1 text-charcoal-700">

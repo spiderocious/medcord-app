@@ -19,6 +19,22 @@ export function useIncomingTransfers(hospitalId: string) {
   });
 }
 
+export function useOutgoingTransfers(hospitalId: string) {
+  return useQuery({
+    queryKey: ['outgoing-transfers', hospitalId],
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      const r = await apiClient
+        .get(EP.HOSPITAL_TRANSFERS_OUTGOING(hospitalId))
+        .json<{ data: { transfers: PatientTransfer[] } }>();
+      return r.data.transfers;
+    },
+    enabled: hospitalId !== '',
+    retry: 0,
+  });
+}
+
 export function useAcceptTransfer(hospitalId: string) {
   const qc = useQueryClient();
   return useMutation({

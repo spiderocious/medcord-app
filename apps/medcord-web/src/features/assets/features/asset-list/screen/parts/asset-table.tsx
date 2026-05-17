@@ -59,7 +59,8 @@ export function AssetTable({ assets, slug, hospitalId }: AssetTableProps) {
         </div>
       }
     >
-      <div className="overflow-x-auto rounded-xl border border-forest-900/10">
+      {/* Desktop table */}
+      <div className="hidden overflow-x-auto rounded-xl border border-forest-900/10 md:block">
         <table className="min-w-full divide-y divide-forest-900/10 bg-white">
           <thead>
             <tr className="bg-cream-50">
@@ -112,6 +113,55 @@ export function AssetTable({ assets, slug, hospitalId }: AssetTableProps) {
             </Repeat>
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-2 md:hidden">
+        <Repeat each={assets as Asset[]}>
+          {(asset: Asset) => (
+            <div
+              key={asset.id}
+              className="rounded-xl border border-forest-900/10 bg-white p-4"
+            >
+              <button
+                type="button"
+                className="w-full text-left"
+                onClick={() => navigate(ROUTES.HOSPITAL_ASSET_DETAIL(slug, asset.id))}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-charcoal-900">{asset.name}</p>
+                    <Show when={asset.modelName !== undefined}>
+                      <p className="text-xs text-charcoal-700/60">{asset.modelName}</p>
+                    </Show>
+                  </div>
+                  <span className={`shrink-0 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[asset.status]}`}>
+                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
+                    {STATUS_LABEL[asset.status]}
+                  </span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-charcoal-700/60">
+                  <span>{asset.category}</span>
+                  <Show when={asset.currentLocation !== undefined}>
+                    <span>{asset.currentLocation}</span>
+                  </Show>
+                  <Show when={asset.assetTag !== undefined}>
+                    <span className="font-mono">{asset.assetTag}</span>
+                  </Show>
+                </div>
+              </button>
+              <div className="mt-3 flex justify-end border-t border-forest-900/5 pt-3">
+                <button
+                  type="button"
+                  onClick={() => handleDelete(asset)}
+                  className="rounded px-2 py-1 text-xs text-charcoal-700/50 hover:bg-red-50 hover:text-red-600 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </Repeat>
       </div>
     </Show>
   );

@@ -6,17 +6,17 @@ import { useUpdateHistory } from '../../api/use-history.ts';
 const INPUT_CLS = 'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900 disabled:opacity-50';
 
 interface HistoryEditFormProps {
-  readonly history: MedicalHistory;
+  readonly history: MedicalHistory | null;
   readonly hospitalId: string;
   readonly patientId: string;
 }
 
 export function HistoryEditForm({ history, hospitalId, patientId }: HistoryEditFormProps) {
   const mutation = useUpdateHistory(hospitalId, patientId);
-  const [notes, setNotes] = useState(history.notes ?? '');
-  const [smoking, setSmoking] = useState(history.socialHistory.smoking ?? '');
-  const [alcohol, setAlcohol] = useState(history.socialHistory.alcohol ?? '');
-  const [occupation, setOccupation] = useState(history.socialHistory.occupation ?? '');
+  const [notes, setNotes] = useState(history?.notes ?? '');
+  const [smoking, setSmoking] = useState(history?.socialHistory.smoking ?? '');
+  const [alcohol, setAlcohol] = useState(history?.socialHistory.alcohol ?? '');
+  const [occupation, setOccupation] = useState(history?.socialHistory.occupation ?? '');
 
   function handleSave() {
     mutation.mutate(

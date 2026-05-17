@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Switch, Case, Repeat } from 'meemaw';
+import { Switch, Case, Repeat, Show } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
+import { ROLES } from '@medcord/rbac';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { useStaff } from '@features/staff/features/staff-directory/api/use-staff.ts';
+import { useHospitalUnits } from '@features/workspace/features/hospital-settings/api/use-hospital-units.ts';
 import type { StaffMember } from '@features/staff/shared/types/staff.ts';
+import type { HospitalUnit } from '@shared/types/hospital.ts';
 import type { Patient } from '../../../../shared/types/patient.ts';
 import { useCheckin, useCheckout, useAdmit, useDischarge, useTransfer } from '../../api/use-patient.ts';
 
@@ -14,23 +17,37 @@ interface ProfileActionsProps {
 
 export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
   const { activeHospitalId } = useAuth();
-  const checkinMutation = useCheckin(hospitalId, patient.id);
-  const checkoutMutation = useCheckout(hospitalId, patient.id);
-  const admitMutation = useAdmit(hospitalId, patient.id);
-  const dischargeMutation = useDischarge(hospitalId, patient.id);
-  const transferMutation = useTransfer(hospitalId, patient.id);
+  const checkinMutation = useCheckin(hospitalId, patient.id, patient.patientCode);
+  const checkoutMutation = useCheckout(hospitalId, patient.id, patient.patientCode);
+  const admitMutation = useAdmit(hospitalId, patient.id, patient.patientCode);
+  const dischargeMutation = useDischarge(hospitalId, patient.id, patient.patientCode);
+  const transferMutation = useTransfer(hospitalId, patient.id, patient.patientCode);
 
-  const { data: nurseData } = useStaff(activeHospitalId ?? '', { role: 'nurse', status: 'active', limit: 100 });
-  const { data: doctorData } = useStaff(activeHospitalId ?? '', { role: 'doctor', status: 'active', limit: 100 });
+  const { data: nurseData } = useStaff(activeHospitalId ?? '', { role: ROLES.NURSE, status: 'active', limit: 100 });
+  const { data: npData } = useStaff(activeHospitalId ?? '', { role: ROLES.NURSE_PRACTITIONER, status: 'active', limit: 100 });
+  const { data: paData } = useStaff(activeHospitalId ?? '', { role: ROLES.PHYSICIAN_ASSISTANT, status: 'active', limit: 100 });
+  const { data: doctorData } = useStaff(activeHospitalId ?? '', { role: ROLES.DOCTOR, status: 'active', limit: 100 });
+  const { data: unitsData } = useHospitalUnits(activeHospitalId ?? '');
+
+  const clinicalStaff: StaffMember[] = [
+    ...((nurseData?.items ?? []) as StaffMember[]),
+    ...((npData?.items ?? []) as StaffMember[]),
+    ...((paData?.items ?? []) as StaffMember[]),
+    ...((doctorData?.items ?? []) as StaffMember[]),
+  ];
+
+  const departments: HospitalUnit[] = (unitsData ?? []).filter(
+    (u) => u.type === 'department' && u.isActive,
+  );
 
   function handleCheckin() {
     DrawerService.showCustomModal('Check in patient', () => (
       <CheckinForm
+        departments={departments}
         nurses={(nurseData?.items ?? []) as StaffMember[]}
         doctors={(doctorData?.items ?? []) as StaffMember[]}
         onConfirm={(dept, nurseId, doctorId) => {
           checkinMutation.mutate({ department: dept || undefined, assignedNurseId: nurseId || undefined, assignedDoctorId: doctorId || undefined });
-          DrawerService.dismissAllModals();
         }}
       />
     ));
@@ -49,10 +66,14 @@ export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
 
   function handleAdmit() {
     DrawerService.showCustomModal('Admit patient', () => (
-      <AdmitForm onConfirm={(dept, assigned, notes) => {
-        admitMutation.mutate({ department: dept, assignedTo: assigned || undefined, notes: notes || undefined });
-        DrawerService.dismissAllModals();
-      }} />
+      <AdmitForm
+        departments={departments}
+        staff={clinicalStaff}
+        onConfirm={(dept, assigned, notes) => {
+          admitMutation.mutate({ department: dept, assignedTo: assigned || undefined, notes: notes || undefined });
+          DrawerService.dismissAllModals();
+        }}
+      />
     ));
   }
 
@@ -70,8 +91,8 @@ export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
 
   function handleTransfer() {
     DrawerService.showCustomModal('Transfer patient', () => (
-      <TransferForm onConfirm={(toHospitalId, reason) => {
-        transferMutation.mutate({ toHospitalId, reason });
+      <TransferForm onConfirm={(toHospitalId, reason, recordsPackage) => {
+        transferMutation.mutate({ toHospitalId, reason, recordsPackage });
         DrawerService.dismissAllModals();
       }} />
     ));
@@ -108,30 +129,42 @@ export function ProfileActions({ patient, hospitalId }: ProfileActionsProps) {
 
 const INPUT_CLS = 'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none';
 
-function CheckinForm({
-  nurses,
-  doctors,
-  onConfirm,
-}: {
-  nurses: StaffMember[];
-  doctors: StaffMember[];
-  onConfirm: (dept: string, nurseId: string, doctorId: string) => void;
-}) {
+interface CheckinFormProps {
+  readonly departments: HospitalUnit[];
+  readonly nurses: StaffMember[];
+  readonly doctors: StaffMember[];
+  readonly onConfirm: (dept: string, nurseId: string, doctorId: string) => void;
+}
+
+function CheckinForm({ departments, nurses, doctors, onConfirm }: CheckinFormProps) {
   const [dept, setDept] = useState('');
   const [nurseId, setNurseId] = useState('');
   const [doctorId, setDoctorId] = useState('');
+
+  const hasDepartments = departments.length > 0;
+
   return (
     <div className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-charcoal-900">Department</label>
-        <input value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS} placeholder="e.g. Cardiology" />
+        <Show when={hasDepartments}>
+          <select value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS}>
+            <option value="">— none —</option>
+            <Repeat each={departments}>
+              {(d: HospitalUnit) => <option key={d.id} value={d.name}>{d.name}</option>}
+            </Repeat>
+          </select>
+        </Show>
+        <Show when={!hasDepartments}>
+          <input value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS} placeholder="e.g. Cardiology" />
+        </Show>
       </div>
       <div>
         <label className="block text-sm font-medium text-charcoal-900">Assign nurse</label>
         <select value={nurseId} onChange={(e) => setNurseId(e.target.value)} className={INPUT_CLS}>
           <option value="">— no nurse assigned —</option>
           <Repeat each={nurses}>
-            {(n: StaffMember) => <option key={n.id} value={n.id}>{n.name}</option>}
+            {(n: StaffMember) => <option key={n.id} value={n.id}>{n.name ?? n.id}</option>}
           </Repeat>
         </select>
       </div>
@@ -140,7 +173,7 @@ function CheckinForm({
         <select value={doctorId} onChange={(e) => setDoctorId(e.target.value)} className={INPUT_CLS}>
           <option value="">— no doctor assigned —</option>
           <Repeat each={doctors}>
-            {(d: StaffMember) => <option key={d.id} value={d.id}>{d.name}</option>}
+            {(d: StaffMember) => <option key={d.id} value={d.id}>{d.name ?? d.id}</option>}
           </Repeat>
         </select>
       </div>
@@ -152,19 +185,43 @@ function CheckinForm({
   );
 }
 
-function AdmitForm({ onConfirm }: { onConfirm: (dept: string, assigned: string, notes: string) => void }) {
+interface AdmitFormProps {
+  readonly departments: HospitalUnit[];
+  readonly staff: StaffMember[];
+  readonly onConfirm: (dept: string, assigned: string, notes: string) => void;
+}
+
+function AdmitForm({ departments, staff, onConfirm }: AdmitFormProps) {
   const [dept, setDept] = useState('');
   const [assigned, setAssigned] = useState('');
   const [notes, setNotes] = useState('');
+
+  const hasDepartments = departments.length > 0;
+
   return (
     <div className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-charcoal-900">Department <span className="text-red-500">*</span></label>
-        <input value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS} placeholder="e.g. ICU" />
+        <Show when={hasDepartments}>
+          <select value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS}>
+            <option value="">— select department —</option>
+            <Repeat each={departments}>
+              {(d: HospitalUnit) => <option key={d.id} value={d.name}>{d.name}</option>}
+            </Repeat>
+          </select>
+        </Show>
+        <Show when={!hasDepartments}>
+          <input value={dept} onChange={(e) => setDept(e.target.value)} className={INPUT_CLS} placeholder="e.g. ICU" />
+        </Show>
       </div>
       <div>
         <label className="block text-sm font-medium text-charcoal-900">Assigned to</label>
-        <input value={assigned} onChange={(e) => setAssigned(e.target.value)} className={INPUT_CLS} placeholder="Staff name" />
+        <select value={assigned} onChange={(e) => setAssigned(e.target.value)} className={INPUT_CLS}>
+          <option value="">— unassigned —</option>
+          <Repeat each={staff}>
+            {(s: StaffMember) => <option key={s.id} value={s.id}>{s.name ?? s.id}</option>}
+          </Repeat>
+        </select>
       </div>
       <div>
         <label className="block text-sm font-medium text-charcoal-900">Notes</label>
@@ -178,9 +235,37 @@ function AdmitForm({ onConfirm }: { onConfirm: (dept: string, assigned: string, 
   );
 }
 
-function TransferForm({ onConfirm }: { onConfirm: (toHospitalId: string, reason: string) => void }) {
+interface RecordsPackage {
+  includeVitals: boolean;
+  includeMedications: boolean;
+  includeHistory: boolean;
+  includeLabs: boolean;
+  includeDocuments: boolean;
+}
+
+function TransferForm({ onConfirm }: { onConfirm: (toHospitalId: string, reason: string, recordsPackage: RecordsPackage) => void }) {
   const [toHospitalId, setToHospitalId] = useState('');
   const [reason, setReason] = useState('');
+  const [records, setRecords] = useState<RecordsPackage>({
+    includeVitals: true,
+    includeMedications: true,
+    includeHistory: true,
+    includeLabs: true,
+    includeDocuments: false,
+  });
+
+  function toggleRecord(key: keyof RecordsPackage) {
+    setRecords((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  const RECORD_LABELS: { key: keyof RecordsPackage; label: string }[] = [
+    { key: 'includeVitals', label: 'Vitals' },
+    { key: 'includeMedications', label: 'Medications' },
+    { key: 'includeHistory', label: 'History' },
+    { key: 'includeLabs', label: 'Labs' },
+    { key: 'includeDocuments', label: 'Documents' },
+  ];
+
   return (
     <div className="space-y-4">
       <div>
@@ -191,9 +276,29 @@ function TransferForm({ onConfirm }: { onConfirm: (toHospitalId: string, reason:
         <label className="block text-sm font-medium text-charcoal-900">Reason <span className="text-red-500">*</span></label>
         <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className={INPUT_CLS} />
       </div>
+      <div>
+        <label className="block text-sm font-medium text-charcoal-900 mb-2">Records to include</label>
+        <div className="flex flex-wrap gap-2">
+          {RECORD_LABELS.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => toggleRecord(key)}
+              className={[
+                'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                records[key]
+                  ? 'bg-forest-900 text-white border-forest-900'
+                  : 'bg-white text-charcoal-700 border-forest-900/20 hover:border-forest-900/40',
+              ].join(' ')}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="flex justify-end gap-2 pt-2">
         <AppButton variant="ghost" onClick={() => DrawerService.dismissAllModals()}>Cancel</AppButton>
-        <AppButton onClick={() => { if (!toHospitalId.trim() || !reason.trim()) return; onConfirm(toHospitalId.trim(), reason.trim()); }}>Send transfer request</AppButton>
+        <AppButton onClick={() => { if (!toHospitalId.trim() || !reason.trim()) return; onConfirm(toHospitalId.trim(), reason.trim(), records); }}>Send transfer request</AppButton>
       </div>
     </div>
   );

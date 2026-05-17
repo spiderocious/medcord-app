@@ -22,7 +22,7 @@ export function ProceduresScreen() {
   return (
     <ChartLayout slug={slug} patientCode={code}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Procedures</p>
           <Show when={can(PERMISSIONS.EMR_PROCEDURES_WRITE)}>
             <AppButton

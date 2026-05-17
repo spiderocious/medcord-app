@@ -8,6 +8,13 @@ import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useReviewItem, useActOnReviewItem } from '../api/use-review-queue.ts';
 import type { ReviewItemType, ReviewItemStatus, ReviewItemPriority } from '../shared/types/review.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
+
+function referenceIdRoute(slug: string, id: string): string {
+  if (id.startsWith('LAB-')) return ROUTES.HOSPITAL_LAB_ORDER(slug, id);
+  if (id.startsWith('AST-')) return ROUTES.HOSPITAL_ASSET_DETAIL(slug, id);
+  return ROUTES.HOSPITAL_PATIENT_PROFILE(slug, id);
+}
 
 const TYPE_LABEL: Record<ReviewItemType, string> = {
   lab_result: 'Lab result',
@@ -138,15 +145,21 @@ export function ReviewItemScreen() {
                     </div>
                     <div>
                       <dt className="text-xs text-charcoal-700/60">Patient ID</dt>
-                      <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{item.patientId}</dd>
+                      <dd className="mt-0.5">
+                        <EntityLink id={item.patientId} to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, item.patientId)} label="Patient" />
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-xs text-charcoal-700/60">Reference ID</dt>
-                      <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{item.referenceId}</dd>
+                      <dd className="mt-0.5">
+                        <EntityLink id={item.referenceId} to={referenceIdRoute(slug, item.referenceId)} label="Reference" />
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-xs text-charcoal-700/60">Submitted by</dt>
-                      <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{item.submittedBy}</dd>
+                      <dd className="mt-0.5">
+                        <EntityLink id={item.submittedBy} to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, item.submittedBy)} label="Staff member" />
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-xs text-charcoal-700/60">Submitted at</dt>

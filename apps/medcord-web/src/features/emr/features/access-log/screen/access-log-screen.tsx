@@ -28,7 +28,7 @@ export function AccessLogScreen() {
   return (
     <ChartLayout slug={slug} patientCode={code}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Access audit log</p>
           <Show when={can(PERMISSIONS.EMR_BREAK_GLASS)}>
             <AppButton variant="ghost" leadingIcon={<IconLock size={14} />} onClick={handleBreakGlass}>
@@ -47,7 +47,8 @@ export function AccessLogScreen() {
             when={(data?.items?.length ?? 0) > 0}
             fallback={<p className="py-8 text-center text-sm text-charcoal-700/50">No access events recorded.</p>}
           >
-            <div className="overflow-x-auto rounded-xl border border-forest-900/10">
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto rounded-xl border border-forest-900/10 md:block">
               <table className="min-w-full divide-y divide-forest-900/10 bg-white">
                 <thead>
                   <tr className="bg-cream-50">
@@ -75,6 +76,27 @@ export function AccessLogScreen() {
                   </Repeat>
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="space-y-2 md:hidden">
+              <Repeat each={(data?.items ?? []) as ChartAccessLog[]}>
+                {(log: ChartAccessLog, idx: number) => (
+                  <div
+                    key={`${log.accessedAt}-${idx}`}
+                    className={['rounded-xl border border-forest-900/10 bg-white p-4 space-y-1.5', log.isBreakGlass ? 'border-amber-200 bg-amber-50/40' : ''].join(' ')}
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Show when={log.isBreakGlass}>
+                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">BREAK GLASS</span>
+                      </Show>
+                      <p className="text-sm font-medium text-charcoal-900 capitalize">{log.action.replace(/_/g, ' ')}</p>
+                    </div>
+                    <p className="text-xs text-charcoal-700/60">{log.accessedBy} · {log.section}</p>
+                    <p className="font-mono text-[11px] text-charcoal-700/40">{new Date(log.accessedAt).toLocaleString()}</p>
+                  </div>
+                )}
+              </Repeat>
             </div>
           </Show>
         </Loadable>

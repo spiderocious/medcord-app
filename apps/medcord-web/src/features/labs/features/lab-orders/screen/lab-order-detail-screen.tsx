@@ -13,6 +13,7 @@ import {
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { ROUTES } from '@shared/constants/routes.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
 import {
   useGetLabOrder,
   useAdvanceLabStatus,
@@ -352,11 +353,15 @@ export function LabOrderDetailScreen() {
                     <dl className="grid gap-3 sm:grid-cols-2">
                       <div>
                         <dt className="text-xs text-charcoal-700/60">Patient ID</dt>
-                        <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{order.patientId}</dd>
+                        <dd className="mt-0.5">
+                          <EntityLink id={order.patientId} to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, order.patientId)} label="Patient" />
+                        </dd>
                       </div>
                       <div>
                         <dt className="text-xs text-charcoal-700/60">Ordered by</dt>
-                        <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{order.orderedBy}</dd>
+                        <dd className="mt-0.5">
+                          <EntityLink id={order.orderedBy} to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, order.orderedBy)} label="Staff member" />
+                        </dd>
                       </div>
                       <Show when={order.sampleType !== undefined}>
                         <div>
@@ -375,7 +380,9 @@ export function LabOrderDetailScreen() {
                       <Show when={order.sampleCollectedBy !== undefined}>
                         <div>
                           <dt className="text-xs text-charcoal-700/60">Collected by</dt>
-                          <dd className="mt-0.5 text-sm font-medium text-charcoal-900">{order.sampleCollectedBy}</dd>
+                          <dd className="mt-0.5">
+                            <EntityLink id={order.sampleCollectedBy!} to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, order.sampleCollectedBy!)} label="Staff member" />
+                          </dd>
                         </div>
                       </Show>
                       <div>

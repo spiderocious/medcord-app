@@ -12,6 +12,7 @@ import { ProfileHeader } from './parts/profile-header.tsx';
 import { ProfileDemographics } from './parts/profile-demographics.tsx';
 import { ProfileActions } from './parts/profile-actions.tsx';
 import { IdCardPanel } from './parts/id-card-panel.tsx';
+import { ProfileHistory } from './parts/profile-history.tsx';
 
 export function PatientProfileScreen() {
   const slug = useHospitalSlug();
@@ -66,8 +67,12 @@ export function PatientProfileScreen() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 space-y-6">
                 <ProfileDemographics patient={patient as Patient} />
+                <ProfileHistory
+                  hospitalId={activeHospitalId ?? ''}
+                  patientId={patient?.id ?? ''}
+                />
               </div>
               <div className="space-y-4">
                 <ProfileActions patient={patient as Patient} hospitalId={activeHospitalId ?? ''} />

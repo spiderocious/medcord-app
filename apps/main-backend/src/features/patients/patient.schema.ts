@@ -79,7 +79,7 @@ export const UpdateAdmissionBody = z.object({
 export type UpdateAdmissionBody = z.infer<typeof UpdateAdmissionBody>;
 
 export const AdmitBody = z.object({
-  department: z.string().min(1, 'Department is required').max(100, 'Department name is too long').trim(),
+  department: z.string().max(100, 'Department name is too long').trim().optional(),
   assignedTo: z.string().optional(),
   notes: z.string().max(1000, 'Notes are too long').optional(),
 });

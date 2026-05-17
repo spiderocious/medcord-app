@@ -23,6 +23,7 @@ export const newId = {
   notification: () => make('NOT-'),
   visit: () => make('VIS-'),
   unit: () => make('UNT-'),
+  admission: () => make('ADM-'),
 };
 
 export const newRawId = (): string => uuidv4();

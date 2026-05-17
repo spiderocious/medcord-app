@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { IconBell, IconSearch } from '@icons';
+import { IconBell, IconSearch, IconMenu } from '@icons';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useNotificationBell } from '@features/notifications/api/use-notifications.ts';
 import { UserMenu } from './user-menu.tsx';
@@ -8,14 +8,23 @@ import { UserMenu } from './user-menu.tsx';
 interface TopbarProps {
   readonly slug: string;
   readonly hospitalId: string;
+  readonly onMenuClick?: () => void;
 }
 
-export function Topbar({ slug, hospitalId }: TopbarProps) {
+export function Topbar({ slug, hospitalId, onMenuClick }: TopbarProps) {
   const { data: unreadCount = 0 } = useNotificationBell(hospitalId);
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-forest-900/10 bg-white px-4">
       <div className="flex items-center gap-2 text-xs text-charcoal-700">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="mr-1 rounded-lg p-1.5 text-charcoal-700 hover:bg-forest-900/5 md:hidden"
+          aria-label="Open menu"
+        >
+          <IconMenu size={20} />
+        </button>
         <span className="font-semibold text-forest-900">Medcord</span>
       </div>
 

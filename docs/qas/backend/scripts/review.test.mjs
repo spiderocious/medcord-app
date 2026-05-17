@@ -4,7 +4,7 @@
  * Routes: /api/v1/hospitals/:hospitalId/review-queue[/...]
  *
  * Usage: node review.test.mjs
- * Prerequisite: seed.mjs must have run and .state.json must be current.
+ * Prerequisite: restore-seed.mjs must have run (node restore-seed.mjs). Safe to re-run.
  */
 
 import { readFile } from 'fs/promises';

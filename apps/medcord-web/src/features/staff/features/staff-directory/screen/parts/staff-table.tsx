@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Repeat } from 'meemaw';
 import { Table, StaffAvatar, StatusPill } from '@medcord/ui';
 import type { StaffRole as AvatarRole } from '@medcord/ui';
 import type { TableColumn } from '@medcord/ui';
@@ -120,13 +121,76 @@ export function StaffTable({ slug, members, page, pageCount, onPageChange }: Sta
   ];
 
   return (
-    <Table<StaffRow>
-      columns={columns}
-      rows={members as StaffRow[]}
-      page={page}
-      pageCount={pageCount}
-      onPageChange={onPageChange}
-      totalCount={members.length}
-    />
+    <>
+      {/* Desktop table */}
+      <div className="hidden md:block">
+        <Table<StaffRow>
+          columns={columns}
+          rows={members as StaffRow[]}
+          page={page}
+          pageCount={pageCount}
+          onPageChange={onPageChange}
+          totalCount={members.length}
+        />
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-2 md:hidden">
+        <Repeat each={members as StaffRow[]}>
+          {(row: StaffRow) => (
+            <Link
+              key={row.id}
+              to={ROUTES.HOSPITAL_STAFF_PROFILE(slug, row.id)}
+              className="flex items-center gap-3 rounded-xl border border-forest-900/10 bg-white p-4 transition-colors hover:bg-cream-50/60 active:bg-cream-50"
+            >
+              <StaffAvatar
+                initials={row.name != null && row.name !== '' ? getInitials(row.name) : row.role.slice(0, 2).toUpperCase()}
+                role={ROLE_TO_AVATAR[row.role] ?? 'other'}
+                size="md"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-sm font-medium text-charcoal-900">{row.name ?? '—'}</p>
+                  <StatusPill
+                    label={row.status === 'active' ? 'Active' : 'Suspended'}
+                    variant={row.status === 'active' ? 'ok' : 'crit'}
+                  />
+                </div>
+                <p className="mt-0.5 truncate font-mono text-[11px] text-charcoal-700/60">
+                  {ROLE_LABELS[row.role] ?? row.role}
+                  {row.department != null ? ` · ${row.department}` : ''}
+                </p>
+                <p className="truncate font-mono text-[11px] text-charcoal-700/40">{row.email ?? row.userId}</p>
+              </div>
+            </Link>
+          )}
+        </Repeat>
+
+        {/* Mobile pagination */}
+        {pageCount > 1 && (
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-xs text-charcoal-700/60">Page {page} of {pageCount}</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => onPageChange(page - 1)}
+                className="rounded-lg border border-forest-900/15 bg-white px-3 py-1.5 text-xs text-charcoal-700 disabled:opacity-40"
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                disabled={page >= pageCount}
+                onClick={() => onPageChange(page + 1)}
+                className="rounded-lg border border-forest-900/15 bg-white px-3 py-1.5 text-xs text-charcoal-700 disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

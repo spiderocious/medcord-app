@@ -5,6 +5,9 @@ import type { ApiResponse } from '@shared/types/api.ts';
 
 interface HospitalUsage {
   readonly members: number;
+  readonly patientsAdmitted: number;
+  readonly patientsCheckedIn: number;
+  readonly labsPending: number;
 }
 
 type HospitalUsageResponse = ApiResponse<HospitalUsage>

@@ -1,4 +1,4 @@
-import type { IPatient, ITransfer, ICheckInVisit } from './patient.model.js';
+import type { IPatient, ITransfer, ICheckInVisit, IPatientAdmission } from './patient.model.js';
 import {
   HospitalPatientModel,
   PatientFavoriteModel,
@@ -7,6 +7,7 @@ import {
   TransferModel,
   CheckInVisitModel,
   DailyQueueCounterModel,
+  PatientAdmissionModel,
 } from './patient.model.js';
 
 export const patientRepo = {
@@ -186,4 +187,22 @@ export const patientRepo = {
 
   updateVisit: (id: string, data: Partial<ICheckInVisit>) =>
     CheckInVisitModel.findOneAndUpdate({ id }, { $set: data }, { new: true }).lean(),
+
+  findVisitsByPatient: (patientId: string, hospitalId: string) =>
+    CheckInVisitModel.find({ patientId, hospitalId }).sort({ checkedInAt: -1 }).lean(),
+
+  // ── Admissions ─────────────────────────────────────────────────────────────
+
+  createAdmission: (data: Omit<IPatientAdmission, 'createdAt' | 'updatedAt'>) =>
+    PatientAdmissionModel.create(data),
+
+  closeAdmission: (patientId: string, hospitalId: string, patch: Pick<IPatientAdmission, 'dischargedAt' | 'dischargedBy' | 'dischargeNotes'>) =>
+    PatientAdmissionModel.findOneAndUpdate(
+      { patientId, hospitalId, dischargedAt: { $exists: false } },
+      { $set: patch },
+      { new: true },
+    ).lean(),
+
+  findAdmissionsByPatient: (patientId: string, hospitalId: string) =>
+    PatientAdmissionModel.find({ patientId, hospitalId }).sort({ admittedAt: -1 }).lean(),
 };

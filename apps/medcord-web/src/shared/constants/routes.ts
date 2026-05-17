@@ -59,6 +59,7 @@ export const ROUTES = {
 
   // Transfers
   HOSPITAL_TRANSFERS: (slug: string) => `/h/${slug}/patients/transfers`,
+  HOSPITAL_TRANSFERS_OUTGOING: (slug: string) => `/h/${slug}/patients/transfers/outgoing`,
 
   // Labs
   HOSPITAL_LABS: (slug: string) => `/h/${slug}/labs`,

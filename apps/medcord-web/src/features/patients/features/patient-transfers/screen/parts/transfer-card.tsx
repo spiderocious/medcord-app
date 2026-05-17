@@ -1,8 +1,11 @@
-import { CopyToClipboard, Show } from 'meemaw';
+import { Show } from 'meemaw';
 
 import { AppButton, DrawerService } from '@medcord/ui';
 import { useAcceptTransfer, useDeclineTransfer } from '../../api/use-patient-transfers.ts';
 import type { PatientTransfer } from '@shared/types/patient.ts';
+import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
+import { ROUTES } from '@shared/constants/routes.ts';
+import { EntityLink } from '@shared/components/entity-link.tsx';
 
 interface TransferCardProps {
   readonly transfer: PatientTransfer;
@@ -15,6 +18,7 @@ interface RecordPill {
 }
 
 export function TransferCard({ transfer, hospitalId }: TransferCardProps) {
+  const slug = useHospitalSlug();
   const acceptMutation = useAcceptTransfer(hospitalId);
   const declineMutation = useDeclineTransfer(hospitalId);
 
@@ -43,16 +47,7 @@ export function TransferCard({ transfer, hospitalId }: TransferCardProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="text-xs text-charcoal-700/60">Patient ID</span>
-            <CopyToClipboard text={transfer.patientId}>
-              {(copy, copied) => (
-                <button
-                  onClick={copy}
-                  className="font-mono text-sm font-medium text-charcoal-900 hover:text-forest-900 transition-colors"
-                >
-                  {copied ? 'Copied!' : transfer.patientId}
-                </button>
-              )}
-            </CopyToClipboard>
+            <EntityLink id={transfer.patientId} to={ROUTES.HOSPITAL_PATIENT_PROFILE(slug, transfer.patientId)} label="Patient" />
           </div>
           <p className="text-xs text-charcoal-700/60">
             From: <span className="font-medium text-charcoal-900">{transfer.fromHospitalId}</span>

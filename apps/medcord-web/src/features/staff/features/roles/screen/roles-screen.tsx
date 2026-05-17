@@ -27,7 +27,7 @@ export function RolesScreen() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <AppText variant="heading-2" className="text-charcoal-900">Roles</AppText>
           <AppText variant="body-sm" className="mt-1 text-charcoal-700">
@@ -60,8 +60,8 @@ export function RolesScreen() {
           <AppText variant="caption" className="font-semibold uppercase text-charcoal-700/60">
             System roles · {systemRoles.length}
           </AppText>
-          <div className="rounded-xl border border-forest-900/10 bg-white shadow-sm overflow-hidden">
-            <table className="w-full">
+          <div className="overflow-x-auto rounded-xl border border-forest-900/10 bg-white shadow-sm">
+            <table className="min-w-full">
               <thead>
                 <tr className="border-b border-forest-900/10 bg-cream-50">
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Name</th>
@@ -133,8 +133,8 @@ export function RolesScreen() {
               </p>
             }
           >
-            <div className="rounded-xl border border-forest-900/10 bg-white shadow-sm overflow-hidden">
-              <table className="w-full">
+            <div className="overflow-x-auto rounded-xl border border-forest-900/10 bg-white shadow-sm">
+              <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-forest-900/10 bg-cream-50">
                     <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Name</th>
