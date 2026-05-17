@@ -21,17 +21,17 @@ const STATUS_LABEL: Record<LabOrderStatus, string> = {
 
 const STATUS_STYLE: Record<LabOrderStatus, string> = {
   awaiting_sample: 'text-charcoal-700 border-forest-900/10 bg-cream-50',
-  sample_received: 'text-[#92400e] border-[#fde68a] bg-[#fffbeb]',
-  awaiting_test: 'text-[#92400e] border-[#fde68a] bg-[#fffbeb]',
-  in_progress: 'text-[#1e40af] border-[#bfdbfe] bg-[#eff6ff]',
-  awaiting_result: 'text-[#1e40af] border-[#bfdbfe] bg-[#eff6ff]',
-  result_ready: 'text-[#166534] border-[#bbf7d0] bg-[#f0fdf4]',
-  result_released: 'text-[#166534] border-[#bbf7d0] bg-[#f0fdf4]',
+  sample_received: 'text-equipment-800 border-equipment-200 bg-equipment-50',
+  awaiting_test: 'text-equipment-800 border-equipment-200 bg-equipment-50',
+  in_progress: 'text-patient-800 border-patient-200 bg-patient-50',
+  awaiting_result: 'text-patient-800 border-patient-200 bg-patient-50',
+  result_ready: 'text-records-800 border-records-200 bg-records-50',
+  result_released: 'text-records-800 border-records-200 bg-records-50',
 };
 
 const PRIORITY_STYLE: Record<string, string> = {
   routine: 'text-charcoal-700 border-forest-900/10 bg-cream-50',
-  urgent: 'text-[#92400e] border-[#fde68a] bg-[#fffbeb]',
+  urgent: 'text-equipment-800 border-equipment-200 bg-equipment-50',
   stat: 'text-red-700 border-red-200 bg-red-50',
 };
 

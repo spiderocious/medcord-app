@@ -36,6 +36,8 @@ export function AssetDetailScreen() {
     win.document.close();
   }
 
+  console.log('Asset data:', data);
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">
@@ -66,20 +68,20 @@ export function AssetDetailScreen() {
           <div className="space-y-6">
             {/* Hidden printable label */}
             <div ref={labelRef} className="hidden">
-              <h2>{data!.name}</h2>
-              <p>{data!.category}</p>
-              <Show when={data!.assetTag !== undefined}>
-                <p>Tag: {data!.assetTag}</p>
+              <h2>{data?.name}</h2>
+              <p>{data?.category}</p>
+              <Show when={data?.assetTag !== undefined}>
+                <p>Tag: {data?.assetTag}</p>
               </Show>
-              <p className="id">ID: {data!.id}</p>
+              <p className="id">ID: {data?.id}</p>
             </div>
 
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <AppText variant="heading-2" className="text-charcoal-900">{data!.name}</AppText>
+                <AppText variant="heading-2" className="text-charcoal-900">{data?.name}</AppText>
                 <AppText variant="body-sm" className="mt-1 text-charcoal-700">
-                  {data!.category}
-                  {data!.assetTag ? ` · ${data!.assetTag}` : ''}
+                  {data?.category}
+                  {data?.assetTag ? ` · ${data?.assetTag}` : ''}
                 </AppText>
               </div>
               <AppButton
@@ -97,7 +99,9 @@ export function AssetDetailScreen() {
                   <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Asset information</p>
                   <AssetInfoForm asset={data!} hospitalId={activeHospitalId ?? ''} />
                 </div>
-                <AssetLocationHistoryPanel history={data!.locationHistory} />
+                <Show when={data?.locationHistory !== undefined && data?.locationHistory.length > 0}>
+                  <AssetLocationHistoryPanel history={data?.locationHistory ?? []} />
+                </Show>
               </div>
 
               <div className="space-y-4">

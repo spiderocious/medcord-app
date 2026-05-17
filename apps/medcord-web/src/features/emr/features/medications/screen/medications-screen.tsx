@@ -10,9 +10,9 @@ import { useMedications, useAddMedication, useUpdateMedication, type AddMedicati
 import type { Medication, MedicationStatus } from '../../../shared/types/emr.ts';
 
 const STATUS_STYLE: Record<MedicationStatus, string> = {
-  active: 'text-[#166534] border-[#bbf7d0] bg-[#f0fdf4]',
+  active: 'text-records-800 border-records-200 bg-records-50',
   discontinued: 'text-charcoal-700 border-forest-900/10 bg-cream-50',
-  on_hold: 'text-[#92400e] border-[#fde68a] bg-[#fffbeb]',
+  on_hold: 'text-equipment-800 border-equipment-200 bg-equipment-50',
 };
 
 const STATUS_LABEL: Record<MedicationStatus, string> = {
