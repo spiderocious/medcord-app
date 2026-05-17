@@ -53,12 +53,12 @@ export function IdCardPanel({ idCard, hospitalId, patientId }: IdCardPanelProps)
           </div>
           <Show when={idCard.issuedAt !== undefined}>
             <p className="text-xs text-charcoal-700/60">
-              Issued {new Date(idCard.issuedAt!).toLocaleDateString()}
+              Issued {new Date(idCard.issuedAt ?? '').toLocaleDateString()}
             </p>
           </Show>
           <Show when={idCard.reissuedAt !== undefined}>
             <p className="text-xs text-charcoal-700/60">
-              Reissued {new Date(idCard.reissuedAt!).toLocaleDateString()}
+              Reissued {new Date(idCard.reissuedAt ?? '').toLocaleDateString()}
             </p>
           </Show>
           <div className="flex gap-2 pt-1">

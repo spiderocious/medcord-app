@@ -8,6 +8,7 @@ export interface AuthUser {
   id: string;
   email: string;
   tokenVersion: number;
+  hospitalPermissions: Record<string, string[]>;
 }
 
 declare global {
@@ -32,7 +33,12 @@ export const authenticate = async (req: Request, _res: Response, next: NextFunct
     if (!dbUser || dbUser.tokenVersion !== payload.tokenVersion) {
       return next(new UnauthorizedError('Token has been revoked'));
     }
-    req.user = { id: payload.sub, email: payload.email, tokenVersion: payload.tokenVersion };
+    req.user = {
+      id: payload.sub,
+      email: payload.email,
+      tokenVersion: payload.tokenVersion,
+      hospitalPermissions: payload.hospitalPermissions ?? {},
+    };
     next();
   } catch {
     next(new UnauthorizedError('Invalid or expired token'));

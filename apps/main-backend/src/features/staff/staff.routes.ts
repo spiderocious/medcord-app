@@ -4,7 +4,8 @@ import { asyncHandler } from '@lib/http/asyncHandler.js';
 import { ResponseUtil } from '@lib/response.js';
 import { authenticate } from '@middlewares/auth.middleware.js';
 import { hospitalScope } from '@middlewares/hospital-scope.middleware.js';
-import { requireRole } from '@middlewares/require-role.middleware.js';
+import { requirePermission } from '@middlewares/require-permission.middleware.js';
+import { PERMISSIONS } from '@medcord/rbac';
 
 import {
   BulkInviteBody,
@@ -24,7 +25,7 @@ router.post(
   '/invitations',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_INVITE),
   asyncHandler(async (req, res) => {
     const body = InviteBody.parse(req.body);
     const inv = await staffService.invite(req.params['hospitalId'] as string, req.user!.id, body);
@@ -36,7 +37,7 @@ router.post(
   '/invitations/bulk',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_INVITE),
   asyncHandler(async (req, res) => {
     const body = BulkInviteBody.parse(req.body);
     const results = await staffService.bulkInvite(req.params['hospitalId'] as string, req.user!.id, body);
@@ -48,7 +49,7 @@ router.get(
   '/invitations',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_INVITE),
   asyncHandler(async (req, res) => {
     const invitations = await staffService.listInvitations(req.params['hospitalId'] as string);
     return ResponseUtil.ok(res, { invitations });
@@ -59,7 +60,7 @@ router.delete(
   '/invitations/:invitationId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_INVITE),
   asyncHandler(async (req, res) => {
     await staffService.revokeInvitation(req.params['hospitalId'] as string, req.params['invitationId'] as string);
     return ResponseUtil.noContent(res);
@@ -70,7 +71,7 @@ router.post(
   '/invitations/:invitationId/resend',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_INVITE),
   asyncHandler(async (req, res) => {
     const inv = await staffService.resendInvitation(
       req.params['hospitalId'] as string,
@@ -86,6 +87,7 @@ router.get(
   '/staff',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.STAFF_VIEW),
   asyncHandler(async (req, res) => {
     const query = ListStaffQuery.parse(req.query);
     const result = await staffService.listStaff(req.params['hospitalId'] as string, query);
@@ -94,9 +96,23 @@ router.get(
 );
 
 router.get(
+  '/staff/me',
+  authenticate,
+  hospitalScope,
+  asyncHandler(async (req, res) => {
+    const member = await staffService.getMyMembership(
+      req.params['hospitalId'] as string,
+      req.user!.id,
+    );
+    return ResponseUtil.ok(res, { member });
+  }),
+);
+
+router.get(
   '/staff/:memberId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.STAFF_VIEW),
   asyncHandler(async (req, res) => {
     const member = await staffService.getMember(
       req.params['hospitalId'] as string,
@@ -110,7 +126,7 @@ router.patch(
   '/staff/:memberId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateMemberBody.parse(req.body);
     const member = await staffService.updateMember(
@@ -126,7 +142,7 @@ router.post(
   '/staff/:memberId/suspend',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_SUSPEND),
   asyncHandler(async (req, res) => {
     await staffService.suspendMember(
       req.params['hospitalId'] as string,
@@ -141,7 +157,7 @@ router.post(
   '/staff/:memberId/activate',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_SUSPEND),
   asyncHandler(async (req, res) => {
     await staffService.activateMember(req.params['hospitalId'] as string, req.params['memberId'] as string);
     return ResponseUtil.noContent(res);
@@ -152,7 +168,7 @@ router.delete(
   '/staff/:memberId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.STAFF_REMOVE),
   asyncHandler(async (req, res) => {
     await staffService.removeMember(
       req.params['hospitalId'] as string,
@@ -170,8 +186,8 @@ router.get(
   authenticate,
   hospitalScope,
   asyncHandler(async (req, res) => {
-    const roles = await staffService.listRoles(req.params['hospitalId'] as string);
-    return ResponseUtil.ok(res, { roles });
+    const result = await staffService.listRoles(req.params['hospitalId'] as string);
+    return ResponseUtil.ok(res, result);
   }),
 );
 
@@ -179,7 +195,7 @@ router.post(
   '/roles',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = CreateRoleBody.parse(req.body);
     const role = await staffService.createRole(req.params['hospitalId'] as string, body);
@@ -191,7 +207,7 @@ router.patch(
   '/roles/:roleId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateRoleBody.parse(req.body);
     const role = await staffService.updateRole(
@@ -200,6 +216,17 @@ router.patch(
       body,
     );
     return ResponseUtil.ok(res, { role });
+  }),
+);
+
+router.delete(
+  '/roles/:roleId',
+  authenticate,
+  hospitalScope,
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
+  asyncHandler(async (req, res) => {
+    await staffService.deleteRole(req.params['hospitalId'] as string, req.params['roleId'] as string);
+    return ResponseUtil.noContent(res);
   }),
 );
 

@@ -13,6 +13,7 @@ export interface StaffMember {
   readonly managerId?: string;
   readonly status: 'active' | 'suspended';
   readonly joinedAt: string;
+  readonly permissions: string[] | null;
 }
 
 export interface Invitation {
@@ -35,6 +36,7 @@ export interface CustomRole {
   readonly name: string;
   readonly slug: string;
   readonly permissions: readonly string[];
+  readonly isSystem: boolean;
   readonly createdAt: string;
 }
 

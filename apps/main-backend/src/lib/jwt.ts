@@ -6,6 +6,8 @@ export interface AccessTokenPayload {
   sub: string;
   email: string;
   tokenVersion: number;
+  // hospitalId → permission strings. super_admin entries contain '__super_admin__' sentinel.
+  hospitalPermissions: Record<string, string[]>;
 }
 
 export interface RefreshTokenPayload {

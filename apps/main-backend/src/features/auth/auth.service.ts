@@ -1,26 +1,38 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { generateSecret, generateURI, verify as totpVerify } from 'otplib';
 
-import { ConflictError, InvalidCredentialsError, NotFoundError, UnauthorizedError } from '@lib/errors.js';
+import { BadRequestError, ConflictError, ForbiddenError, InvalidCredentialsError, NotFoundError, UnauthorizedError } from '@lib/errors.js';
 import { newId } from '@lib/ids.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '@lib/jwt.js';
+import { resolveAllPermissions } from '@lib/permissions.js';
+import { staffRepo } from '@features/staff/staff.repo.js';
+import { HospitalMemberModel } from '@features/hospitals/hospital.model.js';
 
 import { authRepo } from './auth.repo.js';
 import type { IUser } from './auth.model.js';
 import type {
   ChangePasswordBody,
+  GenerateResetCodeBody,
   LoginBody,
   LogoutBody,
   RefreshBody,
   RegisterBody,
+  ResetPasswordBody,
   UpdateMeBody,
   Verify2faBody,
+  VerifyResetCodeBody,
 } from './auth.schema.js';
 
 const SALT_ROUNDS = 12;
 
-const buildTokens = (userId: string, email: string, tokenVersion: number) => ({
-  accessToken: signAccessToken({ sub: userId, email, tokenVersion }),
+const buildTokens = (
+  userId: string,
+  email: string,
+  tokenVersion: number,
+  hospitalPermissions: Record<string, string[]> = {},
+) => ({
+  accessToken: signAccessToken({ sub: userId, email, tokenVersion, hospitalPermissions }),
   refreshToken: signRefreshToken({ sub: userId, tokenVersion }),
 });
 
@@ -63,7 +75,9 @@ export const authService = {
       if (!valid) throw new UnauthorizedError('Invalid two-factor code');
     }
 
-    const tokens = buildTokens(user.id, user.email, user.tokenVersion);
+    const memberships = await HospitalMemberModel.find({ userId: user.id, status: 'active' }).lean();
+    const hospitalPermissions = await resolveAllPermissions(memberships as Parameters<typeof resolveAllPermissions>[0]);
+    const tokens = buildTokens(user.id, user.email, user.tokenVersion, hospitalPermissions);
     return { user: { id: user.id, email: user.email, name: user.name }, tokens };
   },
 
@@ -81,7 +95,9 @@ export const authService = {
       throw new UnauthorizedError('Token has been revoked');
     }
 
-    const tokens = buildTokens(user.id, user.email, user.tokenVersion);
+    const memberships = await HospitalMemberModel.find({ userId: user.id, status: 'active' }).lean();
+    const hospitalPermissions = await resolveAllPermissions(memberships as Parameters<typeof resolveAllPermissions>[0]);
+    const tokens = buildTokens(user.id, user.email, user.tokenVersion, hospitalPermissions);
     return { tokens };
   },
 
@@ -136,5 +152,49 @@ export const authService = {
     const passwordHash = await bcrypt.hash(body.newPassword, SALT_ROUNDS);
     await authRepo.updateById(userId, { passwordHash });
     await authRepo.bumpTokenVersion(userId);
+  },
+
+  async generateResetCode(requesterId: string, body: GenerateResetCodeBody) {
+    const requesterMemberships = await staffRepo.findMembershipsByUserId(requesterId);
+    const superAdminHospitalIds = requesterMemberships
+      .filter((m) => m.role === 'super_admin')
+      .map((m) => m.hospitalId);
+    if (superAdminHospitalIds.length === 0) {
+      throw new ForbiddenError('Only super admins can generate reset codes');
+    }
+
+    const targetMemberships = await staffRepo.findMembershipsByUserId(body.userId);
+    const sharedHospital = targetMemberships.some((m) => superAdminHospitalIds.includes(m.hospitalId));
+    if (!sharedHospital) throw new ForbiddenError('User is not a member of your hospital');
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    const bytes = crypto.randomBytes(7);
+    for (const byte of bytes) {
+      code += chars[byte % chars.length];
+    }
+
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await authRepo.updateById(body.userId, {
+      passwordResetCode: code,
+      passwordResetCodeExpiresAt: expiresAt,
+    } as Partial<IUser>);
+
+    return { code };
+  },
+
+  async verifyResetCode(body: VerifyResetCodeBody) {
+    const user = await authRepo.findByResetCode(body.code);
+    if (!user) throw new BadRequestError('Invalid or expired reset code');
+    return { valid: true };
+  },
+
+  async resetPassword(body: ResetPasswordBody) {
+    const user = await authRepo.findByResetCode(body.code);
+    if (!user) throw new BadRequestError('Invalid or expired reset code');
+
+    const passwordHash = await bcrypt.hash(body.password, SALT_ROUNDS);
+    await authRepo.updateById(user.id, { passwordHash } as Partial<IUser>);
+    await authRepo.clearResetCode(user.id);
   },
 };

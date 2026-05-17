@@ -132,7 +132,7 @@ export function SearchScreen() {
                     <p className="text-xs text-charcoal-700/60">
                       {patient.patientCode}
                       <Show when={patient.demographics.dateOfBirth !== undefined}>
-                        {' · '}{new Date(patient.demographics.dateOfBirth!).toLocaleDateString()}
+                        {' · '}{new Date(patient.demographics.dateOfBirth ?? '').toLocaleDateString()}
                       </Show>
                     </p>
                   </div>

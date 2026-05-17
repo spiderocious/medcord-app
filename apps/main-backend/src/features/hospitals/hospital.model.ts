@@ -1,7 +1,5 @@
 import mongoose, { type Document, Schema } from 'mongoose';
 
-import type { StaffRole } from '@shared/types/roles.types.js';
-
 // ── Hospital ──────────────────────────────────────────────────────────────────
 
 export interface IHospitalBranding {
@@ -91,7 +89,7 @@ export interface IHospitalMember {
   id: string;
   hospitalId: string;
   userId: string;
-  role: StaffRole;
+  role: string;
   department?: string | undefined;
   unit?: string | undefined;
   specialty?: string | undefined;

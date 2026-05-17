@@ -4,8 +4,10 @@ import { Loadable, Show } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
 import { IconArrowLeft } from '@icons';
 import { ROUTES } from '@shared/constants/routes.ts';
+import { useAuth } from '@shared/hooks/use-auth.ts';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
 import { useStaffMember } from '../api/use-staff-member.ts';
+import { useMyMembership } from '../api/use-my-membership.ts';
 import {
   useSuspendStaff,
   useActivateStaff,
@@ -14,15 +16,18 @@ import {
 import { ProfileHeader } from './parts/profile-header.tsx';
 import { ProfileInfo } from './parts/profile-info.tsx';
 import { ProfileMeta } from './parts/profile-meta.tsx';
+import { ProfileActions } from './parts/profile-actions.tsx';
 
 export function StaffProfileScreen() {
   const { slug = '', staffId = '' } = useParams<{ slug: string; staffId: string }>();
   const navigate = useNavigate();
 
+  const { user } = useAuth();
   const { data: hospital } = useHospitalBySlug(slug);
   const hospitalId = hospital?.id ?? '';
 
   const { data: member, isLoading, error } = useStaffMember(hospitalId, staffId);
+  const { data: myMembership } = useMyMembership(hospitalId);
 
   const suspendMutation = useSuspendStaff(hospitalId);
   const activateMutation = useActivateStaff(hospitalId);
@@ -128,7 +133,14 @@ export function StaffProfileScreen() {
             />
             <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
               <ProfileInfo member={member!} />
-              <ProfileMeta member={member!} />
+              <div className="space-y-4">
+                <ProfileMeta member={member!} />
+                <ProfileActions
+                  member={member!}
+                  currentUserRole={myMembership?.role}
+                  currentUserId={user?.id}
+                />
+              </div>
             </div>
           </div>
         </Show>

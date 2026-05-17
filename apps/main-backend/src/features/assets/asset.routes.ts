@@ -4,6 +4,8 @@ import { asyncHandler } from '@lib/http/asyncHandler.js';
 import { ResponseUtil } from '@lib/response.js';
 import { authenticate } from '@middlewares/auth.middleware.js';
 import { hospitalScope } from '@middlewares/hospital-scope.middleware.js';
+import { requirePermission } from '@middlewares/require-permission.middleware.js';
+import { PERMISSIONS } from '@medcord/rbac';
 
 import {
   AddAssetPhotoBody,
@@ -21,6 +23,7 @@ router.get(
   '/',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_VIEW),
   asyncHandler(async (req, res) => {
     const query = ListAssetsQuery.parse(req.query);
     const result = await assetService.list(req.params['hospitalId'] as string, query);
@@ -32,6 +35,7 @@ router.post(
   '/',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_CREATE),
   asyncHandler(async (req, res) => {
     const body = CreateAssetBody.parse(req.body);
     const asset = await assetService.create(req.params['hospitalId'] as string, body);
@@ -43,6 +47,7 @@ router.get(
   '/:assetId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_VIEW),
   asyncHandler(async (req, res) => {
     const asset = await assetService.get(req.params['hospitalId'] as string, req.params['assetId'] as string);
     return ResponseUtil.ok(res, { asset });
@@ -53,6 +58,7 @@ router.patch(
   '/:assetId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateAssetBody.parse(req.body);
     const asset = await assetService.update(
@@ -68,6 +74,7 @@ router.patch(
   '/:assetId/status',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_STATUS),
   asyncHandler(async (req, res) => {
     const body = UpdateAssetStatusBody.parse(req.body);
     const asset = await assetService.updateStatus(
@@ -83,6 +90,7 @@ router.post(
   '/:assetId/move',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_MOVE),
   asyncHandler(async (req, res) => {
     const body = MoveAssetBody.parse(req.body);
     const asset = await assetService.move(
@@ -99,6 +107,7 @@ router.post(
   '/:assetId/photos',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_UPDATE),
   asyncHandler(async (req, res) => {
     const body = AddAssetPhotoBody.parse(req.body);
     const asset = await assetService.addPhoto(
@@ -114,6 +123,7 @@ router.delete(
   '/:assetId/photos/:fileKey',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_UPDATE),
   asyncHandler(async (req, res) => {
     const asset = await assetService.removePhoto(
       req.params['hospitalId'] as string,
@@ -128,6 +138,7 @@ router.delete(
   '/:assetId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.ASSET_DELETE),
   asyncHandler(async (req, res) => {
     await assetService.delete(req.params['hospitalId'] as string, req.params['assetId'] as string);
     return ResponseUtil.noContent(res);

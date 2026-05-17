@@ -16,7 +16,8 @@ export function LoginScreen() {
   const [searchParams] = useSearchParams();
   const { setUser, setTokens } = useAuth();
 
-  const nextUrl = searchParams.get('next') ?? ROUTES.HOSPITALS;
+  const rawNext = searchParams.get('next') ?? '';
+  const nextUrl = rawNext.startsWith('/') ? rawNext : ROUTES.HOSPITALS;
   const loginMutation = useLogin();
 
   const [step, setStep] = useState<Step>('credentials');

@@ -4,7 +4,8 @@ import { asyncHandler } from '@lib/http/asyncHandler.js';
 import { ResponseUtil } from '@lib/response.js';
 import { authenticate } from '@middlewares/auth.middleware.js';
 import { hospitalScope } from '@middlewares/hospital-scope.middleware.js';
-import { requireRole } from '@middlewares/require-role.middleware.js';
+import { requirePermission } from '@middlewares/require-permission.middleware.js';
+import { PERMISSIONS } from '@medcord/rbac';
 
 import {
   CreateHospitalBody,
@@ -51,7 +52,7 @@ router.patch(
   '/:hospitalId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateHospitalBody.parse(req.body);
     const hospital = await hospitalService.update(req.params['hospitalId'] as string, body);
@@ -63,7 +64,7 @@ router.patch(
   '/:hospitalId/branding',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateBrandingBody.parse(req.body);
     const hospital = await hospitalService.updateBranding(req.params['hospitalId'] as string, body);
@@ -75,7 +76,7 @@ router.patch(
   '/:hospitalId/modules',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.MODULES_MANAGE),
   asyncHandler(async (req, res) => {
     const body = UpdateModulesBody.parse(req.body);
     const hospital = await hospitalService.updateModules(req.params['hospitalId'] as string, body);
@@ -87,6 +88,7 @@ router.get(
   '/:hospitalId/domain',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.SETTINGS_VIEW),
   asyncHandler(async (req, res) => {
     const data = await hospitalService.getDomain(req.params['hospitalId'] as string);
     return ResponseUtil.ok(res, data);
@@ -97,7 +99,7 @@ router.patch(
   '/:hospitalId/domain',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdateDomainBody.parse(req.body);
     const hospital = await hospitalService.updateDomain(req.params['hospitalId'] as string, body);
@@ -109,7 +111,7 @@ router.get(
   '/:hospitalId/usage',
   authenticate,
   hospitalScope,
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_VIEW),
   asyncHandler(async (req, res) => {
     const usage = await hospitalService.getUsage(req.params['hospitalId'] as string);
     return ResponseUtil.ok(res, usage);
@@ -120,7 +122,7 @@ router.post(
   '/:hospitalId/transfer-ownership',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     const body = TransferOwnershipBody.parse(req.body);
     const hospital = await hospitalService.transferOwnership(
@@ -136,7 +138,7 @@ router.delete(
   '/:hospitalId',
   authenticate,
   hospitalScope,
-  requireRole('super_admin'),
+  requirePermission(PERMISSIONS.SETTINGS_UPDATE),
   asyncHandler(async (req, res) => {
     await hospitalService.archive(req.params['hospitalId'] as string, req.user!.id);
     return ResponseUtil.noContent(res);

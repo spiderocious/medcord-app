@@ -4,6 +4,8 @@ import { asyncHandler } from '@lib/http/asyncHandler.js';
 import { ResponseUtil } from '@lib/response.js';
 import { authenticate } from '@middlewares/auth.middleware.js';
 import { hospitalScope } from '@middlewares/hospital-scope.middleware.js';
+import { requirePermission } from '@middlewares/require-permission.middleware.js';
+import { PERMISSIONS } from '@medcord/rbac';
 
 import {
   AdmitBody,
@@ -22,6 +24,7 @@ router.post(
   '/',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_CREATE),
   asyncHandler(async (req, res) => {
     const body = RegisterPatientBody.parse(req.body);
     const result = await patientService.register(
@@ -37,6 +40,7 @@ router.get(
   '/',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     const query = SearchPatientsQuery.parse(req.query);
     const result = await patientService.search(
@@ -52,6 +56,7 @@ router.get(
   '/recent',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     const patients = await patientService.getRecent(req.user!.id, req.params['hospitalId'] as string);
     return ResponseUtil.ok(res, { patients });
@@ -62,6 +67,7 @@ router.get(
   '/:patientId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     const patient = await patientService.get(
       req.params['hospitalId'] as string,
@@ -76,6 +82,7 @@ router.patch(
   '/:patientId',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_UPDATE),
   asyncHandler(async (req, res) => {
     const body = UpdatePatientBody.parse(req.body);
     const patient = await patientService.update(
@@ -91,6 +98,7 @@ router.get(
   '/:patientId/id-card',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     const data = await patientService.getIdCard(
       req.params['hospitalId'] as string,
@@ -104,6 +112,7 @@ router.post(
   '/:patientId/id-card',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_UPDATE),
   asyncHandler(async (req, res) => {
     const patient = await patientService.issueIdCard(
       req.params['hospitalId'] as string,
@@ -117,6 +126,7 @@ router.delete(
   '/:patientId/id-card',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_UPDATE),
   asyncHandler(async (req, res) => {
     await patientService.deactivateIdCard(
       req.params['hospitalId'] as string,
@@ -130,6 +140,7 @@ router.post(
   '/:patientId/checkin',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_ADMIT),
   asyncHandler(async (req, res) => {
     const body = CheckInBody.parse(req.body);
     const patient = await patientService.checkIn(
@@ -145,6 +156,7 @@ router.post(
   '/:patientId/checkout',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_ADMIT),
   asyncHandler(async (req, res) => {
     const patient = await patientService.checkOut(
       req.params['hospitalId'] as string,
@@ -158,6 +170,7 @@ router.post(
   '/:patientId/admit',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_ADMIT),
   asyncHandler(async (req, res) => {
     const body = AdmitBody.parse(req.body);
     const patient = await patientService.admit(
@@ -173,6 +186,7 @@ router.post(
   '/:patientId/discharge',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_ADMIT),
   asyncHandler(async (req, res) => {
     const body = DischargeBody.parse(req.body);
     const patient = await patientService.discharge(
@@ -188,6 +202,7 @@ router.post(
   '/:patientId/transfer',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_TRANSFER),
   asyncHandler(async (req, res) => {
     const body = TransferBody.parse(req.body);
     const transfer = await patientService.requestTransfer(
@@ -204,6 +219,7 @@ router.post(
   '/:patientId/favorite',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     await patientService.addFavorite(
       req.user!.id,
@@ -218,6 +234,7 @@ router.delete(
   '/:patientId/favorite',
   authenticate,
   hospitalScope,
+  requirePermission(PERMISSIONS.PATIENT_VIEW),
   asyncHandler(async (req, res) => {
     await patientService.removeFavorite(
       req.user!.id,

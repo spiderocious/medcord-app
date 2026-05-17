@@ -40,12 +40,12 @@ export function AuthLayout({ title, subtitle, children, footerLink }: AuthLayout
 
         <Show when={footerLink !== undefined}>
           <AppText variant="body-sm" className="mt-6 text-center text-charcoal-700">
-            {footerLink!.label}{' '}
+            {footerLink?.label}{' '}
             <Link
-              to={footerLink!.to}
+              to={footerLink?.to ?? ''}
               className="font-medium text-forest-900 hover:underline"
             >
-              {footerLink!.text}
+              {footerLink?.text}
             </Link>
           </AppText>
         </Show>

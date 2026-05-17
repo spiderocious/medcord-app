@@ -151,6 +151,9 @@ importers:
       '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@medcord/rbac':
+        specifier: workspace:*
+        version: link:../../packages/rbac
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -230,6 +233,9 @@ importers:
       '@medcord/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@medcord/rbac':
+        specifier: workspace:*
+        version: link:../../packages/rbac
       '@medcord/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -337,6 +343,12 @@ importers:
         version: 5.9.3
 
   packages/core:
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
+  packages/rbac:
     devDependencies:
       typescript:
         specifier: ^5.8.3

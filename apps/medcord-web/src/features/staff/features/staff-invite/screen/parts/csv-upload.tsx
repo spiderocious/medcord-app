@@ -3,26 +3,22 @@ import { Show, Repeat } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
 import { parseApiError } from '@medcord/api';
+import { ROLES } from '@medcord/rbac';
 import { IconUpload, IconCheckCircle, IconAlert, IconFileText } from '@icons';
-import type { StaffRole } from '@shared/types/hospital.ts';
 import type { BulkInviteEntry } from '../../api/use-invite-staff.ts';
 import { useBulkInviteStaff } from '../../api/use-invite-staff.ts';
-
-const VALID_ROLES = new Set<string>([
-  'doctor', 'nurse', 'nurse_practitioner', 'physician_assistant',
-  'lab_tech', 'pharmacist', 'reception', 'hospital_admin', 'tech', 'custom',
-]);
+import { useRoles } from '../../../roles/api/use-roles.ts';
 
 interface ParsedRow {
   readonly email: string;
-  readonly role: StaffRole;
+  readonly role: string;
   readonly department?: string;
   readonly unit?: string;
   readonly valid: boolean;
   readonly errorMsg?: string;
 }
 
-function parseCSV(text: string): ParsedRow[] {
+function parseCSV(text: string, validRoles: Set<string>): ParsedRow[] {
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
   const dataLines = lines[0]?.toLowerCase().startsWith('email') ? lines.slice(1) : lines;
 
@@ -34,13 +30,13 @@ function parseCSV(text: string): ParsedRow[] {
     const unit = cols[3] !== undefined && cols[3] !== '' ? cols[3] : undefined;
 
     if (email === '' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return { email, role: 'doctor', valid: false, errorMsg: 'Invalid email' };
+      return { email, role: '', valid: false, errorMsg: 'Invalid email' };
     }
-    if (!VALID_ROLES.has(role)) {
-      return { email, role: 'doctor', valid: false, errorMsg: `Unknown role: ${role}` };
+    if (!validRoles.has(role)) {
+      return { email, role: '', valid: false, errorMsg: `Unknown role: ${role}` };
     }
 
-    return { email, role: role as StaffRole, department, unit, valid: true };
+    return { email, role, department, unit, valid: true };
   });
 }
 
@@ -50,7 +46,18 @@ interface CsvUploadProps {
 
 export function CsvUpload({ hospitalId }: CsvUploadProps) {
   const mutation = useBulkInviteStaff(hospitalId);
+  const { data: rolesData } = useRoles(hospitalId);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const validRoleSlugs = new Set(
+    (rolesData?.roles ?? [])
+      .filter((r) => r.slug !== ROLES.SUPER_ADMIN)
+      .map((r) => r.slug),
+  );
+  const roleHintText = (rolesData?.roles ?? [])
+    .filter((r) => r.slug !== ROLES.SUPER_ADMIN)
+    .map((r) => r.slug)
+    .join(', ');
 
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -67,7 +74,7 @@ export function CsvUpload({ hospitalId }: CsvUploadProps) {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result as string;
-      setRows(parseCSV(text));
+      setRows(parseCSV(text, validRoleSlugs));
     };
     reader.readAsText(file);
   }
@@ -117,7 +124,7 @@ export function CsvUpload({ hospitalId }: CsvUploadProps) {
             email,role,department,unit
           </code>
           <AppText variant="caption" as="p" className="mt-1 normal-case tracking-normal text-charcoal-700/70">
-            Valid roles: doctor, nurse, nurse_practitioner, physician_assistant, lab_tech, pharmacist, reception, hospital_admin, tech
+            Valid roles: {roleHintText !== '' ? roleHintText : 'loading…'}
           </AppText>
         </div>
 

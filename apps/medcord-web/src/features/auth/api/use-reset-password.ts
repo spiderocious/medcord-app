@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiClient, parseApiError, EP } from '@medcord/api';
+import { apiClient, EP } from '@medcord/api';
 
 export interface ResetPasswordPayload {
-  readonly token: string;
-  readonly newPassword: string;
+  readonly code: string;
+  readonly password: string;
 }
 
 export function useResetPassword() {
@@ -11,6 +11,5 @@ export function useResetPassword() {
     mutationFn: async (payload: ResetPasswordPayload) => {
       await apiClient.post(EP.AUTH_RESET_PASSWORD, { json: payload });
     },
-    onError: (err: unknown) => parseApiError(err),
   });
 }

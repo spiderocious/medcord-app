@@ -23,4 +23,17 @@ export const authRepo = {
     UserModel.findOneAndUpdate({ id }, { $inc: { tokenVersion: 1 } }, { new: true })
       .select('+tokenVersion')
       .lean(),
+
+  findByResetCode: (code: string) =>
+    UserModel.findOne({
+      passwordResetCode: code,
+      passwordResetCodeExpiresAt: { $gt: new Date() },
+    }).lean<IUser>(),
+
+  clearResetCode: (id: string) =>
+    UserModel.findOneAndUpdate(
+      { id },
+      { $unset: { passwordResetCode: '', passwordResetCodeExpiresAt: '' } },
+      { new: true },
+    ).lean(),
 };

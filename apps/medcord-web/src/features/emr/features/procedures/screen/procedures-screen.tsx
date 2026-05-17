@@ -2,8 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
 import { IconPlus } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
 import { useProcedures } from '../api/use-procedures.ts';
 import type { Procedure } from '../../../shared/types/emr.ts';
@@ -13,6 +15,7 @@ export function ProceduresScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const { code = '' } = useParams<{ slug: string; code: string }>();
+  const { can } = usePermissions();
 
   const { data: procedures, isLoading, error } = useProcedures(activeHospitalId ?? '', code);
 
@@ -21,15 +24,17 @@ export function ProceduresScreen() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Procedures</p>
-          <AppButton
-            variant="secondary"
-            leadingIcon={<IconPlus size={14} />}
-            onClick={() => DrawerService.showCustomModal('Record procedure', () => (
-              <AddProcedureForm hospitalId={activeHospitalId ?? ''} patientId={code} />
-            ))}
-          >
-            Record procedure
-          </AppButton>
+          <Show when={can(PERMISSIONS.EMR_PROCEDURES_WRITE)}>
+            <AppButton
+              variant="secondary"
+              leadingIcon={<IconPlus size={14} />}
+              onClick={() => DrawerService.showCustomModal('Record procedure', () => (
+                <AddProcedureForm hospitalId={activeHospitalId ?? ''} patientId={code} />
+              ))}
+            >
+              Record procedure
+            </AppButton>
+          </Show>
         </div>
 
         <Loadable

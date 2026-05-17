@@ -30,6 +30,9 @@ export const staffRepo = {
   findMember: (hospitalId: string, userId: string) =>
     HospitalMemberModel.findOne({ hospitalId, userId }).lean(),
 
+  findMembershipsByUserId: (userId: string) =>
+    HospitalMemberModel.find({ userId }).lean(),
+
   findMemberById: (id: string) => HospitalMemberModel.findOne({ id }).lean(),
 
   listMembers: async (
@@ -87,4 +90,9 @@ export const staffRepo = {
 
   updateRole: (id: string, data: Partial<ICustomRole>) =>
     CustomRoleModel.findOneAndUpdate({ id }, { $set: data }, { new: true }).lean(),
+
+  findRoleBySlug: (hospitalId: string, slug: string) =>
+    CustomRoleModel.findOne({ hospitalId, slug }).lean(),
+
+  deleteRole: (id: string) => CustomRoleModel.deleteOne({ id }),
 };

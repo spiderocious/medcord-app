@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, AppText, DrawerService } from '@medcord/ui';
 import { IconPlus, IconFlask } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useAuth } from '@shared/hooks/use-auth.ts';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ROUTES } from '@shared/constants/routes.ts';
 import { useHospitalLabOrders } from '../api/use-lab-orders.ts';
 import type { LabOrder, LabOrderStatus } from '../../../shared/types/lab.ts';
@@ -40,6 +42,7 @@ export function LabOrdersScreen() {
   const { activeHospitalId } = useAuth();
   const slug = useHospitalSlug();
   const navigate = useNavigate();
+  const { can } = usePermissions();
   const [statusFilter, setStatusFilter] = useState<LabOrderStatus | ''>('');
 
   const { data, isLoading, error } = useHospitalLabOrders(activeHospitalId ?? '', {
@@ -55,14 +58,16 @@ export function LabOrdersScreen() {
             {data ? `${data.total} order${data.total !== 1 ? 's' : ''}` : 'Hospital-wide lab queue'}
           </AppText>
         </div>
-        <AppButton
-          leadingIcon={<IconPlus size={14} />}
-          onClick={() => DrawerService.showCustomModal('Create lab order', () => (
-            <CreateLabOrderForm hospitalId={activeHospitalId ?? ''} patientId="" />
-          ))}
-        >
-          New order
-        </AppButton>
+        <Show when={can(PERMISSIONS.LAB_CREATE)}>
+          <AppButton
+            leadingIcon={<IconPlus size={14} />}
+            onClick={() => DrawerService.showCustomModal('Create lab order', () => (
+              <CreateLabOrderForm hospitalId={activeHospitalId ?? ''} patientId="" />
+            ))}
+          >
+            New order
+          </AppButton>
+        </Show>
       </div>
 
       <div className="flex items-center gap-3">

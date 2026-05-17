@@ -1,14 +1,12 @@
 import mongoose, { type Document, Schema } from 'mongoose';
 
-import type { StaffRole } from '@shared/types/roles.types.js';
-
 // ── Invitation ────────────────────────────────────────────────────────────────
 
 export interface IInvitation {
   id: string;
   hospitalId: string;
   email: string;
-  role: StaffRole;
+  role: string;
   department?: string | undefined;
   unit?: string | undefined;
   invitedBy: string;
@@ -54,6 +52,7 @@ export interface ICustomRole {
   name: string;
   slug: string;
   permissions: string[];
+  isSystem: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -67,6 +66,7 @@ const customRoleSchema = new Schema<ICustomRoleDocument>(
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, trim: true, lowercase: true },
     permissions: [{ type: String }],
+    isSystem: { type: Boolean, required: true, default: false },
   },
   { timestamps: true, collection: 'custom_roles' },
 );

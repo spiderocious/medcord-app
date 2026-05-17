@@ -1,4 +1,4 @@
-import { ConflictError, NotFoundError } from '@lib/errors.js';
+import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { newId } from '@lib/ids.js';
 import { patientRepo } from '@features/patients/patient.repo.js';
 import type { PaginatedResult } from '@shared/types/service.types.js';
@@ -127,6 +127,7 @@ export const labService = {
     patientId: string,
     orderId: string,
     userId: string,
+    userRole: string,
     body: AdvanceStatusBody,
   ) {
     const order = await labRepo.findById(orderId);
@@ -145,6 +146,11 @@ export const labService = {
     }
     if (nextStatus === 'result_released' && !order.result) {
       throw new ConflictError('Cannot release result without recording it first');
+    }
+
+    const PRESCRIBER_ROLES = ['doctor', 'nurse_practitioner', 'physician_assistant'];
+    if (nextStatus === 'result_released' && !PRESCRIBER_ROLES.includes(userRole)) {
+      throw new ForbiddenError('Only prescribers can release lab results');
     }
 
     const historyEntry = {

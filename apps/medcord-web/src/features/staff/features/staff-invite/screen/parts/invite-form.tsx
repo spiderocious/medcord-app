@@ -3,30 +3,15 @@ import { Show, Repeat } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
 import { parseApiError } from '@medcord/api';
+import { ROLES } from '@medcord/rbac';
 import { IconCheckCircle } from '@icons';
-import type { StaffRole } from '@shared/types/hospital.ts';
 import type { InvitePayload } from '../../api/use-invite-staff.ts';
 import { useInviteStaff } from '../../api/use-invite-staff.ts';
+import { useRoles } from '../../../roles/api/use-roles.ts';
+import type { CustomRole } from '@shared/types/staff.ts';
 
 const INPUT_CLS =
   'mt-1 block w-full rounded-lg border border-forest-900/20 bg-white px-3 py-2 text-sm text-charcoal-900 placeholder-charcoal-700/50 focus:border-forest-900 focus:outline-none focus:ring-1 focus:ring-forest-900 disabled:cursor-not-allowed disabled:opacity-50';
-
-interface RoleOption {
-  readonly value: StaffRole;
-  readonly label: string;
-}
-
-const ROLE_OPTIONS: ReadonlyArray<RoleOption> = [
-  { value: 'doctor', label: 'Doctor' },
-  { value: 'nurse', label: 'Nurse' },
-  { value: 'nurse_practitioner', label: 'Nurse Practitioner' },
-  { value: 'physician_assistant', label: 'Physician Assistant' },
-  { value: 'lab_tech', label: 'Lab Tech' },
-  { value: 'pharmacist', label: 'Pharmacist' },
-  { value: 'reception', label: 'Reception' },
-  { value: 'hospital_admin', label: 'Hospital Admin' },
-  { value: 'tech', label: 'Tech' },
-];
 
 interface InviteFormProps {
   readonly hospitalId: string;
@@ -34,13 +19,21 @@ interface InviteFormProps {
 
 export function InviteForm({ hospitalId }: InviteFormProps) {
   const mutation = useInviteStaff(hospitalId);
+  const { data: rolesData } = useRoles(hospitalId);
+
+  const invitableRoles: CustomRole[] = (rolesData?.roles ?? []).filter(
+    (r) => r.slug !== ROLES.SUPER_ADMIN,
+  );
+  const defaultRole = invitableRoles[0]?.slug ?? '';
 
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<StaffRole>('doctor');
+  const [role, setRole] = useState('');
   const [department, setDepartment] = useState('');
   const [unit, setUnit] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [invited, setInvited] = useState<string | null>(null);
+
+  const selectedRole = role !== '' ? role : defaultRole;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -49,7 +42,7 @@ export function InviteForm({ hospitalId }: InviteFormProps) {
 
     const payload: InvitePayload = {
       email: email.trim(),
-      role,
+      role: selectedRole,
       ...(department.trim() !== '' ? { department: department.trim() } : {}),
       ...(unit.trim() !== '' ? { unit: unit.trim() } : {}),
     };
@@ -97,14 +90,14 @@ export function InviteForm({ hospitalId }: InviteFormProps) {
           </label>
           <select
             id="if-role"
-            value={role}
-            onChange={(e) => setRole(e.target.value as StaffRole)}
-            disabled={mutation.isPending}
+            value={selectedRole}
+            onChange={(e) => setRole(e.target.value)}
+            disabled={mutation.isPending || invitableRoles.length === 0}
             className={INPUT_CLS}
           >
-            <Repeat each={ROLE_OPTIONS as RoleOption[]}>
-              {(opt: RoleOption) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <Repeat each={invitableRoles}>
+              {(r: CustomRole) => (
+                <option key={r.slug} value={r.slug}>{r.name}</option>
               )}
             </Repeat>
           </select>
@@ -150,7 +143,7 @@ export function InviteForm({ hospitalId }: InviteFormProps) {
           <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
         </Show>
 
-        <AppButton type="submit" loading={mutation.isPending} disabled={email.trim() === ''}>
+        <AppButton type="submit" loading={mutation.isPending} disabled={email.trim() === '' || selectedRole === ''}>
           Send invitation
         </AppButton>
       </div>

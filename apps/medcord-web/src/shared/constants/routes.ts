@@ -4,6 +4,7 @@ export const ROUTES = {
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
+  RESET_PASSWORD_NEW: '/reset-password/new',
   SETUP_2FA: '/setup-2fa',
 
   // Workspace — hospital picker
@@ -17,6 +18,7 @@ export const ROUTES = {
 
   // Staff
   HOSPITAL_STAFF: (slug: string) => `/h/${slug}/staff`,
+  HOSPITAL_ROLES: (slug: string) => `/h/${slug}/staff/roles`,
   HOSPITAL_STAFF_PROFILE: (slug: string, staffId: string) =>
     `/h/${slug}/staff/${staffId}`,
   HOSPITAL_STAFF_INVITE: (slug: string) => `/h/${slug}/staff/invite`,
@@ -48,6 +50,9 @@ export const ROUTES = {
     `/h/${slug}/patients/${code}/chart/documents`,
   HOSPITAL_CHART_AUDIT: (slug: string, code: string) =>
     `/h/${slug}/patients/${code}/chart/audit`,
+
+  // Transfers
+  HOSPITAL_TRANSFERS: (slug: string) => `/h/${slug}/patients/transfers`,
 
   // Labs
   HOSPITAL_LABS: (slug: string) => `/h/${slug}/labs`,

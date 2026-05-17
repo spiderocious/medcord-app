@@ -15,7 +15,7 @@ export interface InvitationDetails {
     readonly location: string;
   };
   readonly invitedBy: {
-    readonly name: string;
+    readonly name?: string;
   };
 }
 
@@ -32,6 +32,6 @@ export function useInvitationDetails(token: string) {
         .json<InvitationDetailsResponse>()
         .then((r) => r.data),
     enabled: token !== '',
-    retry: false,
+    retry: () => false,
   });
 }

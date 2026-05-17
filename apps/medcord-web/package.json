@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@medcord/api": "workspace:*",
+    "@medcord/rbac": "workspace:*",
     "@medcord/core": "workspace:*",
     "@medcord/ui": "workspace:*",
     "@tanstack/react-query": "^5.62.0",

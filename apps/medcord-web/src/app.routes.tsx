@@ -23,9 +23,14 @@ const ForgotPasswordScreen = lazy(() =>
     default: m.ForgotPasswordScreen,
   })),
 );
-const ResetPasswordScreen = lazy(() =>
-  import('@features/auth/features/reset-password/screen/reset-password-screen.tsx').then((m) => ({
-    default: m.ResetPasswordScreen,
+const EnterCodeScreen = lazy(() =>
+  import('@features/auth/features/reset-password/screen/enter-code-screen.tsx').then((m) => ({
+    default: m.EnterCodeScreen,
+  })),
+);
+const NewPasswordScreen = lazy(() =>
+  import('@features/auth/features/reset-password/screen/new-password-screen.tsx').then((m) => ({
+    default: m.NewPasswordScreen,
   })),
 );
 const Setup2faScreen = lazy(() =>
@@ -70,6 +75,12 @@ const AcceptInviteScreen = lazy(() =>
 
 // ── Staff ─────────────────────────────────────────────────────────────────────
 
+const RolesScreen = lazy(() =>
+  import('@features/staff/features/roles/screen/roles-screen.tsx').then((m) => ({
+    default: m.RolesScreen,
+  })),
+);
+
 const StaffDirectoryScreen = lazy(() =>
   import('@features/staff/features/staff-directory/screen/staff-directory-screen.tsx').then((m) => ({
     default: m.StaffDirectoryScreen,
@@ -96,6 +107,11 @@ const OrgChartScreen = lazy(() =>
 const PatientListScreen = lazy(() =>
   import('@features/patients/features/patient-list/screen/patient-list-screen.tsx').then((m) => ({
     default: m.PatientListScreen,
+  })),
+);
+const TransfersScreen = lazy(() =>
+  import('@features/patients/features/patient-transfers/screen/transfers-screen.tsx').then((m) => ({
+    default: m.TransfersScreen,
   })),
 );
 const PatientRegisterScreen = lazy(() =>
@@ -252,7 +268,8 @@ export function AppRoutes() {
       <Route path={ROUTES.LOGIN} element={<Lazy><LoginScreen /></Lazy>} />
       <Route path={ROUTES.REGISTER} element={<Lazy><RegisterScreen /></Lazy>} />
       <Route path={ROUTES.FORGOT_PASSWORD} element={<Lazy><ForgotPasswordScreen /></Lazy>} />
-      <Route path={ROUTES.RESET_PASSWORD} element={<Lazy><ResetPasswordScreen /></Lazy>} />
+      <Route path={ROUTES.RESET_PASSWORD} element={<Lazy><EnterCodeScreen /></Lazy>} />
+      <Route path={ROUTES.RESET_PASSWORD_NEW} element={<Lazy><NewPasswordScreen /></Lazy>} />
       <Route path={ROUTES.SETUP_2FA} element={<Lazy><Setup2faScreen /></Lazy>} />
       <Route path="/invitations/:token" element={<Lazy><AcceptInviteScreen /></Lazy>} />
 
@@ -279,11 +296,13 @@ export function AppRoutes() {
         <Route path="staff" element={<Lazy><StaffDirectoryScreen /></Lazy>} />
         <Route path="staff/invite" element={<Lazy><StaffInviteScreen /></Lazy>} />
         <Route path="staff/org-chart" element={<Lazy><OrgChartScreen /></Lazy>} />
+        <Route path="staff/roles" element={<Lazy><RolesScreen /></Lazy>} />
         <Route path="staff/:staffId" element={<Lazy><StaffProfileScreen /></Lazy>} />
 
         {/* Patients */}
         <Route path="patients" element={<Lazy><PatientListScreen /></Lazy>} />
         <Route path="patients/register" element={<Lazy><PatientRegisterScreen /></Lazy>} />
+        <Route path="patients/transfers" element={<Lazy><TransfersScreen /></Lazy>} />
         <Route path="patients/:code" element={<Lazy><PatientProfileScreen /></Lazy>} />
 
         {/* EMR Chart */}

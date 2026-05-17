@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { apiClient, EP } from '@medcord/api';
-import type { StaffRole } from '@shared/types/hospital.ts';
 import type { ApiResponse } from '@shared/types/api.ts';
 import type { Invitation } from '../../../shared/types/staff.ts';
 
 export interface InvitePayload {
   readonly email: string;
-  readonly role: StaffRole;
+  readonly role: string;
   readonly department?: string;
   readonly unit?: string;
 }
@@ -30,7 +29,7 @@ export function useInviteStaff(hospitalId: string) {
 
 export interface BulkInviteEntry {
   readonly email: string;
-  readonly role: StaffRole;
+  readonly role: string;
   readonly department?: string;
   readonly unit?: string;
 }

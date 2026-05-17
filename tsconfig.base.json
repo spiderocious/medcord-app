@@ -20,6 +20,8 @@
       "@medcord/core/*": ["./packages/core/src/*"],
       "@medcord/api": ["./packages/api/src/index.ts"],
       "@medcord/api/*": ["./packages/api/src/*"],
+      "@medcord/rbac": ["./packages/rbac/src/index.ts"],
+      "@medcord/rbac/*": ["./packages/rbac/src/*"],
       "@icons": ["./packages/ui/src/icons/index.ts"]
     }
   }

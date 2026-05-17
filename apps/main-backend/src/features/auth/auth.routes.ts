@@ -7,12 +7,15 @@ import { authenticate } from '@middlewares/auth.middleware.js';
 import { authService } from './auth.service.js';
 import {
   ChangePasswordBody,
+  GenerateResetCodeBody,
   LoginBody,
   LogoutBody,
   RefreshBody,
   RegisterBody,
+  ResetPasswordBody,
   UpdateMeBody,
   Verify2faBody,
+  VerifyResetCodeBody,
 } from './auth.schema.js';
 
 const router: IRouter = Router();
@@ -98,6 +101,34 @@ router.patch(
   asyncHandler(async (req, res) => {
     const body = ChangePasswordBody.parse(req.body);
     await authService.changePassword(req.user!.id, body);
+    return ResponseUtil.noContent(res);
+  }),
+);
+
+router.post(
+  '/generate-reset-code',
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const body = GenerateResetCodeBody.parse(req.body);
+    const result = await authService.generateResetCode(req.user!.id, body);
+    return ResponseUtil.ok(res, result);
+  }),
+);
+
+router.post(
+  '/verify-reset-code',
+  asyncHandler(async (req, res) => {
+    const body = VerifyResetCodeBody.parse(req.body);
+    const result = await authService.verifyResetCode(body);
+    return ResponseUtil.ok(res, result);
+  }),
+);
+
+router.post(
+  '/reset-password',
+  asyncHandler(async (req, res) => {
+    const body = ResetPasswordBody.parse(req.body);
+    await authService.resetPassword(body);
     return ResponseUtil.noContent(res);
   }),
 );

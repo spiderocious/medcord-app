@@ -1,5 +1,6 @@
 export const ERROR_CODES = [
   'validation_error',
+  'bad_request',
   'unauthorized',
   'forbidden',
   'not_found',

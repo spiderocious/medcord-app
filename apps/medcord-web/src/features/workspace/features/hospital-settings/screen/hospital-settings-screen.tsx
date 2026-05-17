@@ -10,8 +10,9 @@ import { SettingsModules } from './parts/settings-modules.tsx';
 import { SettingsDomain } from './parts/settings-domain.tsx';
 import { SettingsUsage } from './parts/settings-usage.tsx';
 import { SettingsDangerZone } from './parts/settings-danger-zone.tsx';
+import { SettingsAuditLog } from './parts/settings-audit-log.tsx';
 
-type SettingsTab = 'general' | 'branding' | 'modules' | 'domain' | 'usage' | 'danger';
+type SettingsTab = 'general' | 'branding' | 'modules' | 'domain' | 'usage' | 'audit' | 'danger';
 
 interface TabDef {
   readonly id: SettingsTab;
@@ -25,6 +26,7 @@ const TABS: ReadonlyArray<TabDef> = [
   { id: 'modules', label: 'Modules' },
   { id: 'domain', label: 'Domain' },
   { id: 'usage', label: 'Usage' },
+  { id: 'audit', label: 'Audit Log' },
   { id: 'danger', label: 'Danger Zone', danger: true },
 ];
 
@@ -101,6 +103,9 @@ export function HospitalSettingsScreen() {
           </Case>
           <Case when={activeTab === 'usage'}>
             <SettingsUsage hospital={hospital!} />
+          </Case>
+          <Case when={activeTab === 'audit'}>
+            <SettingsAuditLog hospitalId={hospital!.id} />
           </Case>
           <Default>
             <SettingsDangerZone hospital={hospital!} />

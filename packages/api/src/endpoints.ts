@@ -9,7 +9,8 @@ export const EP = {
   AUTH_REFRESH: 'api/v1/auth/refresh',
   AUTH_LOGOUT: 'api/v1/auth/logout',
   AUTH_ME: 'api/v1/auth/me',
-  AUTH_FORGOT_PASSWORD: 'api/v1/auth/forgot-password',
+  AUTH_GENERATE_RESET_CODE: 'api/v1/auth/generate-reset-code',
+  AUTH_VERIFY_RESET_CODE: 'api/v1/auth/verify-reset-code',
   AUTH_RESET_PASSWORD: 'api/v1/auth/reset-password',
   AUTH_SETUP_2FA: 'api/v1/auth/setup-2fa',
   AUTH_VERIFY_2FA: 'api/v1/auth/verify-2fa',
@@ -27,6 +28,7 @@ export const EP = {
 
   // Staff — mounted at /api/v1/hospitals/:hospitalId
   HOSPITAL_STAFF: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/staff`,
+  HOSPITAL_STAFF_ME: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/staff/me`,
   HOSPITAL_STAFF_MEMBER: (hospitalId: string, memberId: string) =>
     `api/v1/hospitals/${hospitalId}/staff/${memberId}`,
   HOSPITAL_STAFF_SUSPEND: (hospitalId: string, memberId: string) =>
@@ -142,6 +144,9 @@ export const EP = {
 
   // Search
   HOSPITAL_SEARCH: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/search`,
+
+  // Audit log
+  HOSPITAL_AUDIT_LOG: (hospitalId: string) => `api/v1/hospitals/${hospitalId}/audit-log`,
 
   // Admin — mounted at /admin (NOT /api/v1/)
   ADMIN_STATS: 'admin/stats',

@@ -10,8 +10,10 @@ declare global {
       hospitalMember?: {
         memberId: string;
         hospitalId: string;
-        role: StaffRole;
+        role: string;
         status: 'active' | 'suspended';
+        isSuperAdmin: boolean;
+        permissions: Set<string>;
       };
     }
   }
@@ -21,7 +23,7 @@ export const requireRole = (...roles: StaffRole[]) =>
   (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user) return next(new UnauthorizedError());
     if (!req.hospitalMember) return next(new ForbiddenError('Not a member of this hospital'));
-    if (!roles.includes(req.hospitalMember.role)) {
+    if (!(roles as string[]).includes(req.hospitalMember.role)) {
       return next(new ForbiddenError('Insufficient role'));
     }
     next();

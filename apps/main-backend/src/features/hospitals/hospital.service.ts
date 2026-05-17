@@ -1,5 +1,6 @@
 import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { newId } from '@lib/ids.js';
+import { seedDefaultRoles } from '@lib/seed-roles.js';
 
 import { hospitalRepo } from './hospital.repo.js';
 import type { IHospital } from './hospital.model.js';
@@ -43,6 +44,8 @@ export const hospitalService = {
       joinedAt: new Date(),
     });
 
+    await seedDefaultRoles(hospital.id);
+
     return hospital;
   },
 
@@ -56,6 +59,7 @@ export const hospitalService = {
   async get(hospitalId: string) {
     const hospital = await hospitalRepo.findById(hospitalId);
     if (!hospital) throw new NotFoundError('Hospital');
+    await seedDefaultRoles(hospitalId);
     return hospital;
   },
 

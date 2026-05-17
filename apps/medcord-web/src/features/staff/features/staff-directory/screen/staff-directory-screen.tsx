@@ -4,7 +4,9 @@ import { Loadable, Show, Repeat } from 'meemaw';
 
 import { AppButton, AppText } from '@medcord/ui';
 import { IconUserPlus, IconNetwork, IconUsers, IconSearch } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { ROUTES } from '@shared/constants/routes.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { useHospitalBySlug } from '@shared/api/use-hospital-by-slug.ts';
 import { useStaff } from '../api/use-staff.ts';
 import {
@@ -23,6 +25,7 @@ export function StaffDirectoryScreen() {
   const { slug = '' } = useParams<{ slug: string }>();
   const { data: hospital } = useHospitalBySlug(slug);
   const hospitalId = hospital?.id ?? '';
+  const { can } = usePermissions();
 
   const { filter, setSearch, setRole, setStatus, reset: resetFilter } = useStaffFilter();
   const [page, setPage] = useState(1);
@@ -82,9 +85,11 @@ export function StaffDirectoryScreen() {
               Org chart
             </AppButton>
           </Link>
-          <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
-            <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite</AppButton>
-          </Link>
+          <Show when={can(PERMISSIONS.STAFF_INVITE)}>
+            <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
+              <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite</AppButton>
+            </Link>
+          </Show>
         </div>
       </div>
 
@@ -150,9 +155,11 @@ export function StaffDirectoryScreen() {
                   <AppText variant="body-sm" className="mt-1 mb-6 text-charcoal-700">
                     Invite your first team member to get started.
                   </AppText>
-                  <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
-                    <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite staff</AppButton>
-                  </Link>
+                  <Show when={can(PERMISSIONS.STAFF_INVITE)}>
+                    <Link to={ROUTES.HOSPITAL_STAFF_INVITE(slug)}>
+                      <AppButton leadingIcon={<IconUserPlus size={14} />}>Invite staff</AppButton>
+                    </Link>
+                  </Show>
                 </div>
               )
             }

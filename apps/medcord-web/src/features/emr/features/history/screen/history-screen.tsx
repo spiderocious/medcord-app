@@ -1,8 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
 import { useHistory } from '../api/use-history.ts';
 import type { Diagnosis } from '../../../shared/types/emr.ts';
@@ -12,6 +14,7 @@ export function HistoryScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const { code = '' } = useParams<{ slug: string; code: string }>();
+  const { can } = usePermissions();
 
   const { data: history, isLoading, error } = useHistory(activeHospitalId ?? '', code);
 
@@ -27,7 +30,9 @@ export function HistoryScreen() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Medical history</p>
-          <AppButton variant="secondary" onClick={handleEdit} disabled={!history}>Edit</AppButton>
+          <Show when={can(PERMISSIONS.EMR_HISTORY_WRITE)}>
+            <AppButton variant="secondary" onClick={handleEdit} disabled={!history}>Edit</AppButton>
+          </Show>
         </div>
 
         <Loadable
@@ -42,8 +47,7 @@ export function HistoryScreen() {
                 <div className="rounded-xl border border-forest-900/10 bg-white p-5 shadow-sm space-y-3">
                   <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Diagnoses</p>
                   <div className="divide-y divide-forest-900/10">
-                    <Repeat each={history!.diagnoses as Diagnosis[]}>
-
+                    <Repeat each={(history?.diagnoses ?? []) as Diagnosis[]}>
                       {(d) => (
                         <div key={d.icd10Code} className="py-2">
                           <p className="text-sm font-medium text-charcoal-900">{d.description}</p>
@@ -81,7 +85,7 @@ export function HistoryScreen() {
                 <div className="rounded-xl border border-forest-900/10 bg-white p-5 shadow-sm space-y-3">
                   <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Family history</p>
                   <ul className="space-y-1">
-                    <Repeat each={history!.familyHistory as string[]}>
+                    <Repeat each={(history?.familyHistory ?? []) as string[]}>
                       {(item: string) => (
                         <li key={item} className="text-sm text-charcoal-900">· {item}</li>
                       )}
@@ -93,7 +97,7 @@ export function HistoryScreen() {
               <Show when={history?.notes !== undefined}>
                 <div className="rounded-xl border border-forest-900/10 bg-white p-5 shadow-sm">
                   <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60 mb-2">Notes</p>
-                  <p className="text-sm text-charcoal-900">{history!.notes}</p>
+                  <p className="text-sm text-charcoal-900">{history?.notes}</p>
                 </div>
               </Show>
             </div>

@@ -13,6 +13,8 @@ export interface IUser {
   twoFactorSecret?: string | undefined;
   twoFactorEnabled: boolean;
   tokenVersion: number;
+  passwordResetCode?: string;
+  passwordResetCodeExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +35,8 @@ const userSchema = new Schema<IUserDocument>(
     twoFactorSecret: { type: String, select: false },
     twoFactorEnabled: { type: Boolean, default: false },
     tokenVersion: { type: Number, default: 0, select: false },
+    passwordResetCode: { type: String, index: true },
+    passwordResetCodeExpiresAt: { type: Date },
   },
   { timestamps: true, collection: 'users' },
 );

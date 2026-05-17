@@ -18,6 +18,7 @@ import {
   useAdvanceLabStatus,
   useRecordLabResult,
 } from '../api/use-lab-orders.ts';
+import { ResultSignoffPanel } from './parts/result-signoff-panel.tsx';
 import type { LabOrder, LabOrderStatus, LabStateHistory } from '../../../shared/types/lab.ts';
 
 const FILE_SERVICE = import.meta.env.VITE_FILE_SERVICE as string ?? 'https://go-file-service-production.up.railway.app';
@@ -267,7 +268,7 @@ export function LabOrderDetailScreen() {
 
   const { data: order, isLoading, error } = useGetLabOrder(hospitalId, patientId, orderId);
 
-  const canAdvance = order?.status !== 'result_released';
+  const canAdvance = order?.status !== 'result_released' && order?.status !== 'result_ready';
   const showResultPanel =
     order !== undefined &&
     (order.result !== undefined ||
@@ -367,7 +368,7 @@ export function LabOrderDetailScreen() {
                         <div>
                           <dt className="text-xs text-charcoal-700/60">Sample collected</dt>
                           <dd className="mt-0.5 text-sm font-medium text-charcoal-900">
-                            {new Date(order.sampleCollectedAt!).toLocaleString()}
+                            {new Date(order.sampleCollectedAt ?? '').toLocaleString()}
                           </dd>
                         </div>
                       </Show>
@@ -389,6 +390,9 @@ export function LabOrderDetailScreen() {
                       </Show>
                     </dl>
                   </div>
+
+                  {/* Sign-off panel */}
+                  <ResultSignoffPanel order={order} hospitalId={hospitalId} />
 
                   {/* Result panel */}
                   <Show when={showResultPanel}>

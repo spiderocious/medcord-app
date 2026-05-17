@@ -2,8 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
 import { IconPlus, IconFileText } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
 import { useDocuments } from '../api/use-documents.ts';
 import type { ChartDocument, ChartDocumentCategory } from '../../../shared/types/emr.ts';
@@ -21,6 +23,7 @@ export function DocumentsScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const { code = '' } = useParams<{ slug: string; code: string }>();
+  const { can } = usePermissions();
 
   const { data: documents, isLoading, error } = useDocuments(activeHospitalId ?? '', code);
 
@@ -29,15 +32,17 @@ export function DocumentsScreen() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Documents</p>
-          <AppButton
-            variant="secondary"
-            leadingIcon={<IconPlus size={14} />}
-            onClick={() => DrawerService.showCustomModal('Upload document', () => (
-              <UploadDocumentForm hospitalId={activeHospitalId ?? ''} patientId={code} />
-            ))}
-          >
-            Upload document
-          </AppButton>
+          <Show when={can(PERMISSIONS.EMR_DOCUMENTS_WRITE)}>
+            <AppButton
+              variant="secondary"
+              leadingIcon={<IconPlus size={14} />}
+              onClick={() => DrawerService.showCustomModal('Upload document', () => (
+                <UploadDocumentForm hospitalId={activeHospitalId ?? ''} patientId={code} />
+              ))}
+            >
+              Upload document
+            </AppButton>
+          </Show>
         </div>
 
         <Loadable

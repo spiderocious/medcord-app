@@ -2,8 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
 import { IconPlus } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
 import { useMedications } from '../api/use-medications.ts';
 import type { Medication, MedicationStatus } from '../../../shared/types/emr.ts';
@@ -26,6 +28,7 @@ export function MedicationsScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const { code = '' } = useParams<{ slug: string; code: string }>();
+  const { can } = usePermissions();
 
   const { data: medications, isLoading, error } = useMedications(activeHospitalId ?? '', code);
 
@@ -40,15 +43,17 @@ export function MedicationsScreen() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Medications</p>
-          <AppButton
-            variant="secondary"
-            leadingIcon={<IconPlus size={14} />}
-            onClick={() => DrawerService.showCustomModal('Add medication', () => (
-              <AddMedicationForm hospitalId={activeHospitalId ?? ''} patientId={code} />
-            ))}
-          >
-            Add medication
-          </AppButton>
+          <Show when={can(PERMISSIONS.EMR_MEDICATIONS_WRITE)}>
+            <AppButton
+              variant="secondary"
+              leadingIcon={<IconPlus size={14} />}
+              onClick={() => DrawerService.showCustomModal('Add medication', () => (
+                <AddMedicationForm hospitalId={activeHospitalId ?? ''} patientId={code} />
+              ))}
+            >
+              Add medication
+            </AppButton>
+          </Show>
         </div>
 
         <Loadable
@@ -79,7 +84,9 @@ export function MedicationsScreen() {
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[med.status]}`}>
                         {STATUS_LABEL[med.status]}
                       </span>
-                      <AppButton variant="ghost" onClick={() => handleUpdate(med)}>Update</AppButton>
+                      <Show when={can(PERMISSIONS.EMR_MEDICATIONS_WRITE)}>
+                        <AppButton variant="ghost" onClick={() => handleUpdate(med)}>Update</AppButton>
+                      </Show>
                     </div>
                   </div>
                 )}

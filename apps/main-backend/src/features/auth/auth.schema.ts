@@ -45,3 +45,12 @@ export const ChangePasswordBody = z.object({
   newPassword: z.string().min(8, 'New password must be at least 8 characters').max(128, 'New password is too long'),
 });
 export type ChangePasswordBody = z.infer<typeof ChangePasswordBody>;
+
+export const GenerateResetCodeBody = z.object({ userId: z.string().min(1) });
+export type GenerateResetCodeBody = z.infer<typeof GenerateResetCodeBody>;
+
+export const VerifyResetCodeBody = z.object({ code: z.string().min(1) });
+export type VerifyResetCodeBody = z.infer<typeof VerifyResetCodeBody>;
+
+export const ResetPasswordBody = z.object({ code: z.string().min(1), password: z.string().min(8) });
+export type ResetPasswordBody = z.infer<typeof ResetPasswordBody>;

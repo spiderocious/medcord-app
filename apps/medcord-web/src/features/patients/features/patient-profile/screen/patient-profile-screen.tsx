@@ -52,13 +52,13 @@ export function PatientProfileScreen() {
         <Show when={patient !== undefined}>
           <div className="space-y-6">
             <ProfileHeader
-              patient={patient!}
+              patient={patient as Patient}
               hospitalId={activeHospitalId ?? ''}
               isFavorited={(favorites ?? []).some((f: Patient) => f.id === patient?.id)}
             />
 
             <div className="flex gap-2">
-              <Link to={ROUTES.HOSPITAL_CHART(slug, patient!.patientCode)}>
+              <Link to={ROUTES.HOSPITAL_CHART(slug, patient?.patientCode ?? '')}>
                 <AppButton variant="secondary" leadingIcon={<IconClipboard size={14} />}>
                   View chart
                 </AppButton>
@@ -67,15 +67,15 @@ export function PatientProfileScreen() {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <div className="lg:col-span-2">
-                <ProfileDemographics patient={patient!} />
+                <ProfileDemographics patient={patient as Patient} />
               </div>
               <div className="space-y-4">
-                <ProfileActions patient={patient!} hospitalId={activeHospitalId ?? ''} />
+                <ProfileActions patient={patient as Patient} hospitalId={activeHospitalId ?? ''} />
                 <Show when={idCardData !== undefined}>
                   <IdCardPanel
-                    idCard={idCardData!.idCard}
+                    idCard={idCardData?.idCard as NonNullable<typeof idCardData>['idCard']}
                     hospitalId={activeHospitalId ?? ''}
-                    patientId={patient!.id}
+                    patientId={patient?.id ?? ''}
                   />
                 </Show>
               </div>

@@ -120,7 +120,7 @@ export function AcceptInviteScreen() {
   return (
     <AuthLayout
       title="You've been invited"
-      subtitle={`Invited by ${invitedBy.name} · Expires ${expiresAt}`}
+      subtitle={`Invited by ${invitedBy.name ?? 'Unknown'} · Expires ${expiresAt}`}
     >
       <div className="space-y-5">
         {/* Hospital card */}
@@ -209,7 +209,7 @@ export function AcceptInviteScreen() {
 
           <Show when={submitError !== null}>
             <div role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 space-y-1">
-              <p>{submitError}</p>
+              <AppText variant="body-sm" as="p">{submitError}</AppText>
               <Show when={alreadyExists}>
                 <Link
                   to={`${ROUTES.LOGIN}?next=${encodeURIComponent(ROUTES.INVITATION_ACCEPT(token))}`}

@@ -4,8 +4,8 @@ import { asyncHandler } from '@lib/http/asyncHandler.js';
 import { ResponseUtil } from '@lib/response.js';
 import { authenticate } from '@middlewares/auth.middleware.js';
 import { hospitalScope } from '@middlewares/hospital-scope.middleware.js';
-import { requireRole } from '@middlewares/require-role.middleware.js';
-import { CLINICAL_ROLES, PRESCRIBER_ROLES } from '@shared/types/roles.types.js';
+import { requirePermission } from '@middlewares/require-permission.middleware.js';
+import { PERMISSIONS } from '@medcord/rbac';
 
 import {
   AddChartDocumentBody,
@@ -29,6 +29,7 @@ router.use(authenticate, hospitalScope);
 
 router.get(
   '/chart',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const summary = await emrService.getChartSummary(
       req.params['hospitalId'] as string,
@@ -43,6 +44,7 @@ router.get(
 
 router.get(
   '/chart/vitals',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const limit = req.query['limit'] ? Number(req.query['limit']) : undefined;
     const vitals = await emrService.listVitals(
@@ -57,6 +59,7 @@ router.get(
 
 router.post(
   '/chart/vitals',
+  requirePermission(PERMISSIONS.EMR_VITALS_RECORD),
   asyncHandler(async (req, res) => {
     const body = RecordVitalsBody.parse(req.body);
     const vitals = await emrService.recordVitals(
@@ -73,6 +76,7 @@ router.post(
 
 router.get(
   '/chart/medications',
+  requirePermission(PERMISSIONS.EMR_MEDICATIONS_VIEW),
   asyncHandler(async (req, res) => {
     const medications = await emrService.listMedications(
       req.params['hospitalId'] as string,
@@ -85,7 +89,7 @@ router.get(
 
 router.post(
   '/chart/medications',
-  requireRole(...PRESCRIBER_ROLES),
+  requirePermission(PERMISSIONS.EMR_MEDICATIONS_WRITE),
   asyncHandler(async (req, res) => {
     const body = AddMedicationBody.parse(req.body);
     const medication = await emrService.addMedication(
@@ -100,7 +104,7 @@ router.post(
 
 router.patch(
   '/chart/medications/:medId',
-  requireRole(...PRESCRIBER_ROLES),
+  requirePermission(PERMISSIONS.EMR_MEDICATIONS_WRITE),
   asyncHandler(async (req, res) => {
     const body = UpdateMedicationBody.parse(req.body);
     const medication = await emrService.updateMedication(
@@ -118,6 +122,7 @@ router.patch(
 
 router.get(
   '/chart/history',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const history = await emrService.getHistory(
       req.params['hospitalId'] as string,
@@ -130,7 +135,7 @@ router.get(
 
 router.patch(
   '/chart/history',
-  requireRole(...CLINICAL_ROLES),
+  requirePermission(PERMISSIONS.EMR_HISTORY_WRITE),
   asyncHandler(async (req, res) => {
     const body = AddMedicalHistoryBody.parse(req.body);
     const history = await emrService.updateHistory(
@@ -147,6 +152,7 @@ router.patch(
 
 router.get(
   '/chart/procedures',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const procedures = await emrService.listProcedures(
       req.params['hospitalId'] as string,
@@ -159,7 +165,7 @@ router.get(
 
 router.post(
   '/chart/procedures',
-  requireRole(...CLINICAL_ROLES),
+  requirePermission(PERMISSIONS.EMR_PROCEDURES_WRITE),
   asyncHandler(async (req, res) => {
     const body = AddProcedureBody.parse(req.body);
     const procedure = await emrService.addProcedure(
@@ -176,6 +182,7 @@ router.post(
 
 router.get(
   '/chart/immunizations',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const immunizations = await emrService.listImmunizations(
       req.params['hospitalId'] as string,
@@ -188,7 +195,7 @@ router.get(
 
 router.post(
   '/chart/immunizations',
-  requireRole(...CLINICAL_ROLES),
+  requirePermission(PERMISSIONS.EMR_IMMUNIZATIONS_WRITE),
   asyncHandler(async (req, res) => {
     const body = AddImmunizationBody.parse(req.body);
     const immunization = await emrService.addImmunization(
@@ -205,6 +212,7 @@ router.post(
 
 router.get(
   '/chart/documents',
+  requirePermission(PERMISSIONS.EMR_VIEW),
   asyncHandler(async (req, res) => {
     const documents = await emrService.listDocuments(
       req.params['hospitalId'] as string,
@@ -217,6 +225,7 @@ router.get(
 
 router.post(
   '/chart/documents',
+  requirePermission(PERMISSIONS.EMR_DOCUMENTS_WRITE),
   asyncHandler(async (req, res) => {
     const body = AddChartDocumentBody.parse(req.body);
     const document = await emrService.addDocument(
@@ -231,6 +240,7 @@ router.post(
 
 router.patch(
   '/chart/documents/:docId',
+  requirePermission(PERMISSIONS.EMR_DOCUMENTS_WRITE),
   asyncHandler(async (req, res) => {
     const body = UpdateChartDocumentBody.parse(req.body);
     const document = await emrService.updateDocument(
@@ -248,7 +258,7 @@ router.patch(
 
 router.get(
   '/chart/access-log',
-  requireRole('super_admin', 'hospital_admin'),
+  requirePermission(PERMISSIONS.EMR_ACCESS_LOG_VIEW),
   asyncHandler(async (req, res) => {
     const page = req.query['page'] ? Number(req.query['page']) : 1;
     const limit = req.query['limit'] ? Number(req.query['limit']) : 20;
@@ -267,6 +277,7 @@ router.get(
 
 router.post(
   '/chart/break-glass',
+  requirePermission(PERMISSIONS.EMR_BREAK_GLASS),
   asyncHandler(async (req, res) => {
     const body = BreakGlassBody.parse(req.body);
     await emrService.breakGlass(

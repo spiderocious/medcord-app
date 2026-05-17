@@ -220,7 +220,7 @@ export function ReviewItemScreen() {
                         <div>
                           <p className="text-xs text-charcoal-700/60">Reviewed at</p>
                           <p className="mt-0.5 text-sm font-medium text-charcoal-900">
-                            {new Date(item.reviewedAt!).toLocaleString()}
+                            {new Date(item.reviewedAt ?? '').toLocaleString()}
                           </p>
                         </div>
                       </Show>

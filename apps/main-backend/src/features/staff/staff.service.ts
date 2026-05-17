@@ -4,10 +4,15 @@ import { ConflictError, ForbiddenError, NotFoundError } from '@lib/errors.js';
 import { emailService } from '@lib/email.js';
 import { newId, newRawId } from '@lib/ids.js';
 import { signAccessToken, signRefreshToken } from '@lib/jwt.js';
+import { resolveAllPermissions } from '@lib/permissions.js';
 import { hospitalRepo } from '@features/hospitals/hospital.repo.js';
 import { authRepo } from '@features/auth/auth.repo.js';
 import { UserModel } from '@features/auth/auth.model.js';
+import { HospitalMemberModel } from '@features/hospitals/hospital.model.js';
 import type { PaginatedResult } from '@shared/types/service.types.js';
+
+import { PERMISSION_DESCRIPTIONS, PERMISSION_GROUPS } from '@medcord/rbac';
+import { resolvePermissions } from '@lib/permissions.js';
 
 import { staffRepo } from './staff.repo.js';
 import type {
@@ -47,6 +52,9 @@ export const staffService = {
   async invite(hospitalId: string, invitedBy: string, body: InviteBody) {
     const hospital = await hospitalRepo.findById(hospitalId);
     if (!hospital) throw new NotFoundError('Hospital');
+
+    const roleExists = await staffRepo.findRoleBySlug(hospitalId, body.role);
+    if (!roleExists) throw new NotFoundError('Role');
 
     const existing = await staffRepo.findPendingInvitation(hospitalId, body.email);
     if (existing) throw new ConflictError('A pending invitation already exists for this email');
@@ -152,7 +160,9 @@ export const staffService = {
     await staffRepo.updateInvitation(inv.id, { status: 'accepted' });
 
     const hospital = await hospitalRepo.findById(inv.hospitalId);
-    const accessToken = signAccessToken({ sub: userId, email: inv.email, tokenVersion: 0 });
+    const memberships = await HospitalMemberModel.find({ userId, status: 'active' }).lean();
+    const hospitalPermissions = await resolveAllPermissions(memberships as Parameters<typeof resolveAllPermissions>[0]);
+    const accessToken = signAccessToken({ sub: userId, email: inv.email, tokenVersion: 0, hospitalPermissions });
     const refreshToken = signRefreshToken({ sub: userId, tokenVersion: 0 });
 
     return {
@@ -225,10 +235,27 @@ export const staffService = {
     return enriched;
   },
 
+  async getMyMembership(hospitalId: string, userId: string) {
+    const member = await staffRepo.findMember(hospitalId, userId);
+    if (!member) throw new NotFoundError('Staff membership');
+    const [enriched] = await enrichMembers([member as IHospitalMember]);
+    const permissions = await resolvePermissions(member as IHospitalMember);
+    return { ...enriched, permissions };
+  },
+
   async updateMember(hospitalId: string, memberId: string, body: UpdateMemberBody) {
     const member = await staffRepo.findMemberById(memberId);
     if (!member || member.hospitalId !== hospitalId) throw new NotFoundError('Staff member');
-    return staffRepo.updateMember(memberId, body as Partial<IHospitalMember>);
+    if (body.role !== undefined) {
+      const roleExists = await staffRepo.findRoleBySlug(hospitalId, body.role);
+      if (!roleExists) throw new NotFoundError('Role');
+    }
+    const updated = await staffRepo.updateMember(memberId, body as Partial<IHospitalMember>);
+    // If role changed, revoke the user's session so permissions are re-resolved at next login
+    if (body.role !== undefined && body.role !== member.role) {
+      await authRepo.bumpTokenVersion(member.userId);
+    }
+    return updated;
   },
 
   async suspendMember(hospitalId: string, memberId: string, requesterId: string) {
@@ -252,7 +279,12 @@ export const staffService = {
   },
 
   async listRoles(hospitalId: string) {
-    return staffRepo.listRoles(hospitalId);
+    const roles = await staffRepo.listRoles(hospitalId);
+    return {
+      roles,
+      permissionDescriptions: PERMISSION_DESCRIPTIONS,
+      permissionGroups: PERMISSION_GROUPS,
+    };
   },
 
   async createRole(hospitalId: string, body: CreateRoleBody) {
@@ -262,13 +294,29 @@ export const staffService = {
       name: body.name,
       slug: body.slug,
       permissions: body.permissions,
+      isSystem: false,
     });
+  },
+
+  async deleteRole(hospitalId: string, roleId: string) {
+    const role = await staffRepo.findRoleById(roleId);
+    if (!role || role.hospitalId !== hospitalId) throw new NotFoundError('Role');
+    if (role.isSystem) throw new ForbiddenError('System roles cannot be deleted');
+    return staffRepo.deleteRole(roleId);
   },
 
   async updateRole(hospitalId: string, roleId: string, body: UpdateRoleBody) {
     const role = await staffRepo.findRoleById(roleId);
     if (!role || role.hospitalId !== hospitalId) throw new NotFoundError('Role');
-    return staffRepo.updateRole(roleId, body as Partial<ICustomRole>);
+    if (role.isSystem) throw new ForbiddenError('System roles cannot be modified');
+    const updated = await staffRepo.updateRole(roleId, body as Partial<ICustomRole>);
+    // If permissions changed, revoke sessions of all members assigned this custom role
+    if (body.permissions !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const affectedMembers = await HospitalMemberModel.find({ hospitalId, role: role.slug } as any).lean();
+      await Promise.all(affectedMembers.map((m) => authRepo.bumpTokenVersion(m.userId)));
+    }
+    return updated;
   },
 
   async getOrgChart(hospitalId: string) {

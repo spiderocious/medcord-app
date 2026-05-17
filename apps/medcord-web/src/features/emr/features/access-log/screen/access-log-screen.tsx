@@ -2,8 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Loadable, Show, Repeat } from 'meemaw';
 import { AppButton, DrawerService } from '@medcord/ui';
 import { IconLock } from '@icons';
+import { PERMISSIONS } from '@medcord/rbac';
 import { useHospitalSlug } from '@shared/hooks/use-hospital-slug.ts';
 import { useAuth } from '@shared/hooks/use-auth.ts';
+import { usePermissions } from '@shared/hooks/use-permissions.ts';
 import { ChartLayout } from '../../../shared/chart-layout.tsx';
 import { useAccessLog } from '../api/use-access-log.ts';
 import type { ChartAccessLog } from '../../../shared/types/emr.ts';
@@ -13,6 +15,7 @@ export function AccessLogScreen() {
   const slug = useHospitalSlug();
   const { activeHospitalId } = useAuth();
   const { code = '' } = useParams<{ slug: string; code: string }>();
+  const { can } = usePermissions();
 
   const { data, isLoading, error } = useAccessLog(activeHospitalId ?? '', code);
 
@@ -27,9 +30,11 @@ export function AccessLogScreen() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wider text-charcoal-700/60">Access audit log</p>
-          <AppButton variant="ghost" leadingIcon={<IconLock size={14} />} onClick={handleBreakGlass}>
-            Break glass
-          </AppButton>
+          <Show when={can(PERMISSIONS.EMR_BREAK_GLASS)}>
+            <AppButton variant="ghost" leadingIcon={<IconLock size={14} />} onClick={handleBreakGlass}>
+              Break glass
+            </AppButton>
+          </Show>
         </div>
 
         <Loadable
